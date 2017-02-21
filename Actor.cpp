@@ -9,16 +9,8 @@
 // what grasshoppers do during a tick
 void Grasshopper::doSomething()
 {
-// TODO: make sure no pebbles along path
-
 	// lose one hit point
-	points--;
-
-	// if dead
-	//if (points <= 0)
-
-	// sleeping
-	// fix walking
+	m_points--;
 
 	Direction dir = getDirection();
 	int x = getX(), y = getY();

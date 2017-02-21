@@ -1,5 +1,6 @@
 //////////////////// CLASS DECLARATIONS ///////////////////////
 
+const int NUM_ACTORS = 14;
 
 ///////////////////////////////////////////////////////////////
 ////////////////////////// ACTOR //////////////////////////////
@@ -15,7 +16,7 @@ class Actor: public GraphObject {
 	public:
 		// Constructor
 		Actor(int imageID, int startX, int startY, Direction dir, int depth, int points = 0)
-	    : GraphObject(imageID, startX, startY, dir, depth) { m_points = points; }
+	    : GraphObject(imageID, startX, startY, dir, depth) { m_points = points; m_ticks = 0;}
 
 		// Destructor
 		virtual ~Actor() {}
@@ -25,9 +26,12 @@ class Actor: public GraphObject {
 		
 		int getPoints() {return m_points;} // return number of points
 		void setPoints(int modifiedPoints) { m_points = modifiedPoints;} // set points to new value
+		bool isDead() {return m_points == 0;}
+		virtual bool isSleeping() = 0;
 		
 	private:
 		int m_points;
+		int m_ticks;
 };
 
 #endif // ACTOR_H_
@@ -53,6 +57,7 @@ class Pebble: public Actor{
 
 		// Public Interface
 		virtual void doSomething() {return;} // Pebble should do nothing during tick
+		virtual bool isSleeping() {return true;} // pebble always sleeping
 };
 
 #endif // PEBBLE_H_
@@ -76,7 +81,7 @@ class Grasshopper: public Actor {
 
 		// Public Interface
 		virtual void doSomething();
-		
+		virtual bool isSleeping() {return m_ticks%3 != 0}
 	private:
 		// generate random direction
 		Direction randDir()
