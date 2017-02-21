@@ -9,40 +9,22 @@
 // what grasshoppers do during a tick
 void Grasshopper::doSomething()
 {
+// TODO: make sure no pebbles along path
 
 	// lose one hit point
 	points--;
 
+	// if dead
+	//if (points <= 0)
+
+	// sleeping
+	// fix walking
+
 	Direction dir = getDirection();
 	int x = getX(), y = getY();
-	switch (dir)
-	{
-		case up:
-		{
-			moveTo(x, y - distance);
-			break;
-		}
 
-		case right:
-		{
-			moveTo(x - distance, y);
-			break;
-		}
+	//for (int )
 
-		case down:
-		{
-			moveTo(x, y + distance);
-			break;
-		}
-
-		case left:
-		{
-			moveTo(x + distance, y);
-			break;
-		}
-
-		case none: break;
-	}
 
 	// new random direction
 	setDirection(randDir());
@@ -51,4 +33,3 @@ void Grasshopper::doSomething()
 	distance = randInt(2, 10);
 
 }
-
