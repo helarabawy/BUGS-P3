@@ -5,7 +5,9 @@
 #include "GameWorld.h"
 #include "GameConstants.h"
 #include <string>
+#include <vector>
 
+using namespace std;
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
 class StudentWorld : public GameWorld
@@ -15,17 +17,18 @@ public:
 	 : GameWorld(assetDir)
 	{}
 
+	~StudentWorld() {cleanUp();}
+
 	virtual int init();
 
 	virtual int move();
 
-	virtual void cleanUp()
-	{
-	}
+	virtual void cleanUp();
 
 private:
 	vector<Actor*> virtualWorld[NUM_ACTORS]; // 15 types of game objects
 	bool loadField();
+	void updateDisplayText();
 	int currTicks;
 };
 

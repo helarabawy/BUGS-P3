@@ -1,6 +1,4 @@
-//////////////////// CLASS DECLARATIONS ///////////////////////
 
-const int NUM_ACTORS = 14;
 
 ///////////////////////////////////////////////////////////////
 ////////////////////////// ACTOR //////////////////////////////
@@ -11,12 +9,15 @@ const int NUM_ACTORS = 14;
 
 #include "GraphObject.h"
 
+const int NUM_ACTORS = 14;
+
+
 class Actor: public GraphObject {
 
 	public:
 		// Constructor
 		Actor(int imageID, int startX, int startY, Direction dir, int depth, int points = 0)
-	    : GraphObject(imageID, startX, startY, dir, depth) { m_points = points; m_ticks = 0;}
+	    : GraphObject(imageID, startX, startY, dir, depth) { m_points = points;}
 
 		// Destructor
 		virtual ~Actor() {}
@@ -26,12 +27,11 @@ class Actor: public GraphObject {
 		
 		int getPoints() {return m_points;} // return number of points
 		void setPoints(int modifiedPoints) { m_points = modifiedPoints;} // set points to new value
-		bool isDead() {return m_points == 0;}
+		virtual bool isDead() {return m_points == 0;}
 		virtual bool isSleeping() = 0;
 		
 	private:
 		int m_points;
-		int m_ticks;
 };
 
 #endif // ACTOR_H_
@@ -81,7 +81,8 @@ class Grasshopper: public Actor {
 
 		// Public Interface
 		virtual void doSomething();
-		virtual bool isSleeping() {return m_ticks%3 != 0}
+		virtual bool isSleeping() {return ticks%3 != 0;}
+
 	private:
 		// generate random direction
 		Direction randDir()
@@ -99,6 +100,7 @@ class Grasshopper: public Actor {
 
 		int points = 500;
 		int distance = randInt(2, 10);
+		int ticks = 0;
 };
 
 #endif // GRASSHOPPER_H_

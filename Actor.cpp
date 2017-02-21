@@ -10,7 +10,7 @@
 void Grasshopper::doSomething()
 {
 	// lose one hit point
-	m_points--;
+	setPoints(getPoints() - 1);
 
 	Direction dir = getDirection();
 	int x = getX(), y = getY();
