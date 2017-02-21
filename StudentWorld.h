@@ -15,23 +15,18 @@ public:
 	{
 	}
 
-	virtual int init()
-	{
-		return GWSTATUS_CONTINUE_GAME;
-	}
+	virtual int init();
 
-	virtual int move()
-	{
-		  // This code is here merely to allow the game to build, run, and terminate after you hit enter.
-		  // Notice that the return value GWSTATUS_NO_WINNER will cause our framework to end the simulation.
-		return GWSTATUS_NO_WINNER;
-	}
+	virtual int move();
 
 	virtual void cleanUp()
 	{
 	}
 
 private:
+	
+	bool loadField();
+	int currTicks;
 };
 
 #endif // STUDENTWORLD_H_
