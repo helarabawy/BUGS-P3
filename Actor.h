@@ -16,7 +16,7 @@ class Actor: public GraphObject {
 
 	public:
 		// Constructor
-		Actor(int imageID, int startX, int startY, Direction dir, int depth, int points = 0)
+		Actor(int imageID, int startX, int startY, Direction dir, int depth, int points = 1)
 	    : GraphObject(imageID, startX, startY, dir, depth) { m_points = points;}
 
 		// Destructor
@@ -50,7 +50,7 @@ class Pebble: public Actor{
 
 	public:
 		// Constructor
-		Pebble(int startX, int startY): Actor(IID_ROCK, startX, startY, right, 1) {}
+		Pebble(int startX, int startY): Actor(IID_ROCK, startX, startY, right,/*pebble doesn't move*/ 0, 1) {}
 	
 		// Destructor
 		virtual ~Pebble() {}
@@ -73,7 +73,7 @@ class Grasshopper: public Actor {
 
 	public:
 		// Constructor
-		Grasshopper(int ImageID, int startX, int startY)
+		Grasshopper(int ImageID, int startX, int startY, int points)
 		: Actor(ImageID, startX, startY, /*random direction*/ randDir(), /*random distance*/ distance, points) {}
 
 		// Destructor
@@ -98,9 +98,8 @@ class Grasshopper: public Actor {
 			}
 		}
 
-		int points = 500;
-		int distance = randInt(2, 10);
 		int ticks = 0;
+		int distance = randInt(2, 10);
 };
 
 #endif // GRASSHOPPER_H_
@@ -117,13 +116,13 @@ class BabyGrasshopper: public Grasshopper {
 
 	public:
 		// Constructor
-		BabyGrasshopper(int startX, int startY): Grasshopper(IID_BABY_GRASSHOPPER, startX, startY) {}
+		BabyGrasshopper(int startX, int startY): Grasshopper(IID_BABY_GRASSHOPPER, startX, startY, 500) {}
 
 		// Destructor
-		virtual ~BabyGrasshopper();
+		virtual ~BabyGrasshopper() {}
 
 		// Public Interface
-		virtual void doSomething();
+		//virtual void doSomething(); not differentiated functionality yet
 		
 };
 
