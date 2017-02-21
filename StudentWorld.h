@@ -8,7 +8,6 @@
 #include <vector>
 
 using namespace std;
-// Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
 class StudentWorld : public GameWorld
 {
@@ -17,7 +16,7 @@ public:
 	 : GameWorld(assetDir)
 	{}
 
-	~StudentWorld() {cleanUp();}
+	virtual ~StudentWorld() {cleanUp();}
 
 	virtual int init();
 

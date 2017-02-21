@@ -26,7 +26,7 @@ int StudentWorld::move()
 	currTicks++;
 	
 	// Give each actor a chance to do something
-	for (int i = 0; i <= NUM_ACTORS; i++)
+	for (int i = 0; i < NUM_ACTORS; i++)
 	{
 		// iterator to iterate current vector
 		vector<Actor*> :: iterator it;

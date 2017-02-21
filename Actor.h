@@ -94,7 +94,7 @@ class Grasshopper: public Actor {
 				case 2: return right;
 				case 3: return down;
 				case 4: return left;
-				default:return none; // check if none should be an option
+				default:return none; // TODO: check if none should be an option
 			}
 		}
 
