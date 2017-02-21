@@ -1,7 +1,10 @@
+#include "Actor.h"
 #include "StudentWorld.h"
 #include "Field.h"
 #include <string>
 #include <vector>
+#include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -52,7 +55,7 @@ int StudentWorld::move()
 	
 	// TODO: make this helper function
 	// Update the simulation Status Line
-	updateDisplayText();   // update the ticks/ant stats text at screen top
+	updateDisplayText();
 	
 	if (currTicks == 2000)
 	{
@@ -74,10 +77,21 @@ void StudentWorld::cleanUp()
 		for (int j = 0; j < virtualWorld[i].size(); j++)
 		{
 			virtualWorld[i].erase(it);
-			delete virtualWorld[i][j];
-
 		}
 	}
+}
+
+
+bool StudentWorld::hasPebble(int x, int y)
+{
+	vector<Actor*> :: iterator itr;
+	itr = virtualWorld[IID_ROCK].begin();
+	for (int i = 0; i < virtualWorld[IID_ROCK].size(); i++, itr++)
+	{
+		if ((*itr)->getX() == x && (*itr)->getY() == y)
+			return true;
+	}
+	return false;
 }
 
 bool StudentWorld::loadField()
@@ -86,10 +100,10 @@ bool StudentWorld::loadField()
    Field f;
 
    string fieldFile = getFieldFilename();
-   bool loadedFieldFileSuccessfully = f.loadField(fieldFile); // TODO: does this even return bool?
+   Field::LoadResult lr = f.loadField(fieldFile); // TODO: does this even return bool?
 
    // load field
-   if (!f.loadField(fieldFile))
+   if (lr != Field::load_success)
 	   return false;     // something bad happened!
 
    // TODO: make sure perimeter is all pebbles?
@@ -127,3 +141,5 @@ void StudentWorld::updateDisplayText()
 	// TODO: figure out how ticks must be to the right of 5 characters
 	cout << "Ticks:" << currTicks;
 }
+
+

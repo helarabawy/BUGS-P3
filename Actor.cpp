@@ -11,54 +11,54 @@ void Grasshopper::doSomething()
 {
 	// lose one hit point
 	setPoints(getPoints() - 1);
-	ticks++;
 
 	// check if died
 	if (isDead() || isSleeping())
 		return; // TODO: should move() function deal with dead grasshoppers?
 
+	//another tick
+	ticks++;
+
 	Direction dir = getDirection();
 	int oldX = getX();
 	int oldY = getY();
 
-	// TODO: figure out incremental movement
-	// TODO: HOW TO CHECK IF THERE IS A PEBBLE
+	// TODO: check incremental movement logic
 	for (int i = 0; i < distance; i++)
 	{
+		// make movement based on direction and roadblocks
 		switch (dir)
 		{
 			case up:
 			{
-				if (!hasPebble(oldX, oldY - i))
-					moveTo(oldX, oldY - i);
-				else
-					i = distance;
+				if (!hasPebble(oldX, oldY - i)) {moveTo(oldX, oldY - i);}
+				else {i = distance;}
+
 				break;
 			}
+
 			case right:
 			{
-				if (!hasPebble(oldX + i, oldY))
-					moveTo(oldX + i, oldY);
-				else
-					i = distance;
+				if (!hasPebble(oldX + i, oldY)) {moveTo(oldX + i, oldY);}
+				else {i = distance;}
+
 				break;
 			}
 			case down:
 			{
-				if (!hasPebble(oldX, oldY + i))
-					moveTo(oldX, oldY + i);
-				else
-					i = distance;
+				if (!hasPebble(oldX, oldY + i)) {moveTo(oldX, oldY + i);}
+				else {i = distance;}
+
 				break;
 			}
 			case left:
 			{
-				if (!hasPebble(oldX - i, oldY))
-					moveTo(oldX - i, oldY);
-				else
-					i = distance;
+				if (!hasPebble(oldX - i, oldY)) {moveTo(oldX - i, oldY);}
+				else {i = distance;}
+
 				break;
 			}
+
 		}
 	}
 

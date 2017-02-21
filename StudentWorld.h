@@ -1,7 +1,6 @@
 #ifndef STUDENTWORLD_H_
 #define STUDENTWORLD_H_
 
-#include "Actor.h"
 #include "GameWorld.h"
 #include "GameConstants.h"
 #include <string>
@@ -9,6 +8,7 @@
 
 using namespace std;
 
+class Actor;
 class StudentWorld : public GameWorld
 {
 public:
@@ -24,20 +24,10 @@ public:
 
 	virtual void cleanUp();
 
-	bool hasPebble(int x, int y)
-	{
-		vector<Actor*> :: iterator itr;
-		itr = virtualWorld[IID_ROCK].begin();
-		for (int i = 0; i < virtualWorld[IID_ROCK].size(); i++, itr++)
-		{
-			if ((*itr)->getX() == x && (*itr)->getY() == y)
-				return true;
-		}
-		return false;
-	}
+	bool hasPebble(int x, int y);
 
 private:
-	vector<Actor*> virtualWorld[NUM_ACTORS]; // 15 types of game objects
+	vector<Actor*> virtualWorld[15]; // 15 types of game objects
 	bool loadField();
 	void updateDisplayText();
 	int currTicks;

@@ -8,11 +8,10 @@
 #define ACTOR_H_
 
 #include "GraphObject.h"
-//#include "StudentWorld.h"
+#include "StudentWorld.h"
 
 const int NUM_ACTORS = 14;
 
-class StudentWorld;
 class Actor: public GraphObject {
 
 	public:
@@ -28,7 +27,8 @@ class Actor: public GraphObject {
 		
 		int getPoints() {return m_points;} // return number of points
 		void setPoints(int modifiedPoints) { m_points = modifiedPoints;} // set points to new value
-		bool hasPebble(int x, int y) {return m_game->hasPebble(x, y);} // TODO: fix x, y confusion
+		//bool hasPebble(int x, int y) {return m_game->hasPebble(x, y);} // TODO: fix x, y confusion
+		/*temporary*/ bool hasPebble(int x, int y) {return true;}
 		virtual bool isDead() {return m_points == 0;}
 		virtual bool isSleeping() = 0;
 		
@@ -38,7 +38,6 @@ class Actor: public GraphObject {
 		StudentWorld* m_game;
 };
 
-#endif // ACTOR_H_
 
 
 
@@ -78,7 +77,8 @@ class Grasshopper: public Actor {
 	public:
 		// Constructor
 		Grasshopper(StudentWorld* game, int ImageID, int startX, int startY, int points)
-		: Actor(game, ImageID, startX, startY, /*random direction*/ randDir(), /*random distance*/ distance, points) {}
+		: ticks(0), distance(randInt(2, 10)), // member variables
+		Actor(game, ImageID, startX, startY, /*random direction*/ randDir(), /*random distance*/ distance, points) {}
 
 		// Destructor
 		virtual ~Grasshopper() {}
@@ -102,8 +102,8 @@ class Grasshopper: public Actor {
 			}
 		}
 
-		int ticks = 0;
-		int distance = randInt(2, 10);
+		int ticks;
+		int distance;
 };
 
 #endif // GRASSHOPPER_H_
@@ -131,3 +131,5 @@ class BabyGrasshopper: public Grasshopper {
 };
 
 #endif // BABYGRASSHOPPER_H_
+
+#endif // ACTOR_H_
