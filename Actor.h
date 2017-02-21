@@ -8,16 +8,17 @@
 #define ACTOR_H_
 
 #include "GraphObject.h"
+//#include "StudentWorld.h"
 
 const int NUM_ACTORS = 14;
 
-
+class StudentWorld;
 class Actor: public GraphObject {
 
 	public:
 		// Constructor
-		Actor(int imageID, int startX, int startY, Direction dir, int depth, int points = 1)
-	    : GraphObject(imageID, startX, startY, dir, depth) { m_points = points;}
+		Actor(StudentWorld* game, int imageID, int startX, int startY, Direction dir, int depth, int points = 1)
+	    : GraphObject(imageID, startX, startY, dir, depth) { m_points = points; m_game = game;}
 
 		// Destructor
 		virtual ~Actor() {}
@@ -27,11 +28,14 @@ class Actor: public GraphObject {
 		
 		int getPoints() {return m_points;} // return number of points
 		void setPoints(int modifiedPoints) { m_points = modifiedPoints;} // set points to new value
+		bool hasPebble(int x, int y) {return m_game->hasPebble(x, y);} // TODO: fix x, y confusion
 		virtual bool isDead() {return m_points == 0;}
 		virtual bool isSleeping() = 0;
 		
+
 	private:
 		int m_points;
+		StudentWorld* m_game;
 };
 
 #endif // ACTOR_H_
@@ -50,7 +54,7 @@ class Pebble: public Actor{
 
 	public:
 		// Constructor
-		Pebble(int startX, int startY): Actor(IID_ROCK, startX, startY, right,/*pebble doesn't move*/ 0, 1) {}
+		Pebble(StudentWorld* game, int startX, int startY): Actor(game, IID_ROCK, startX, startY, right,/*pebble doesn't move*/ 0, 1) {}
 	
 		// Destructor
 		virtual ~Pebble() {}
@@ -73,8 +77,8 @@ class Grasshopper: public Actor {
 
 	public:
 		// Constructor
-		Grasshopper(int ImageID, int startX, int startY, int points)
-		: Actor(ImageID, startX, startY, /*random direction*/ randDir(), /*random distance*/ distance, points) {}
+		Grasshopper(StudentWorld* game, int ImageID, int startX, int startY, int points)
+		: Actor(game, ImageID, startX, startY, /*random direction*/ randDir(), /*random distance*/ distance, points) {}
 
 		// Destructor
 		virtual ~Grasshopper() {}
@@ -116,7 +120,7 @@ class BabyGrasshopper: public Grasshopper {
 
 	public:
 		// Constructor
-		BabyGrasshopper(int startX, int startY): Grasshopper(IID_BABY_GRASSHOPPER, startX, startY, 500) {}
+		BabyGrasshopper(StudentWorld* game, int startX, int startY): Grasshopper(game, IID_BABY_GRASSHOPPER, startX, startY, 500) {}
 
 		// Destructor
 		virtual ~BabyGrasshopper() {}

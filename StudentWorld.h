@@ -24,6 +24,18 @@ public:
 
 	virtual void cleanUp();
 
+	bool hasPebble(int x, int y)
+	{
+		vector<Actor*> :: iterator itr;
+		itr = virtualWorld[IID_ROCK].begin();
+		for (int i = 0; i < virtualWorld[IID_ROCK].size(); i++, itr++)
+		{
+			if ((*itr)->getX() == x && (*itr)->getY() == y)
+				return true;
+		}
+		return false;
+	}
+
 private:
 	vector<Actor*> virtualWorld[NUM_ACTORS]; // 15 types of game objects
 	bool loadField();

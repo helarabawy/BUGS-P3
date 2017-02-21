@@ -105,12 +105,12 @@ bool StudentWorld::loadField()
 		   {
 		   	   case '*':
 		   	   {
-		   		   virtualWorld[IID_ROCK].push_back(new Pebble(y, x));
+		   		   virtualWorld[IID_ROCK].push_back(new Pebble(this, y, x));
 		   		   break;
 		   	   }
 			   case 'g':
 			   {
-				   virtualWorld[IID_BABY_GRASSHOPPER].push_back(new BabyGrasshopper(y, x));
+				   virtualWorld[IID_BABY_GRASSHOPPER].push_back(new BabyGrasshopper(this, y, x));
 				   break;
 			   }
 			   default: break;
