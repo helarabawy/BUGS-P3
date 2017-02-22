@@ -10,8 +10,6 @@
 #include "GraphObject.h"
 #include "StudentWorld.h"
 
-const int NUM_ACTORS = 14;
-
 class Actor: public GraphObject {
 
 	public:
@@ -27,8 +25,7 @@ class Actor: public GraphObject {
 		
 		int getPoints() {return m_points;} // return number of points
 		void setPoints(int modifiedPoints) { m_points = modifiedPoints;} // set points to new value
-		//bool hasPebble(int x, int y) {return m_game->hasPebble(x, y);} // TODO: fix x, y confusion
-		/*temporary*/ bool hasPebble(int x, int y) {return true;}
+		bool hasPebble(int x, int y) {return m_game->hasPebble(x, y);} // TODO: fix x, y confusion
 		virtual bool isDead() {return m_points == 0;}
 		virtual bool isSleeping() = 0;
 		
@@ -131,5 +128,6 @@ class BabyGrasshopper: public Grasshopper {
 };
 
 #endif // BABYGRASSHOPPER_H_
+
 
 #endif // ACTOR_H_

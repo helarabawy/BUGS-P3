@@ -16,11 +16,17 @@ GameWorld* createStudentWorld(string assetDir)
 int StudentWorld::init()
 {
 	currTicks = 0;
-	
+	cerr << "init() called with " << currTicks << " ticks" << endl; // TODO: delete this
 	if (!loadField())
-		return GWSTATUS_LEVEL_ERROR;
+		{
+			cerr << "error loading field" << endl; // TODO: delete this
+			return GWSTATUS_LEVEL_ERROR;
+		}
 	else
-		return GWSTATUS_CONTINUE_GAME;
+		{
+			cerr << "field loaded and init sucessfully" << endl; // TODO: delete this
+			return GWSTATUS_CONTINUE_GAME;
+		}
 }
 
 
@@ -102,11 +108,14 @@ bool StudentWorld::loadField()
    string fieldFile = getFieldFilename();
    Field::LoadResult lr = f.loadField(fieldFile); // TODO: does this even return bool?
 
+   cerr << "OPTIONS==> load_success: " << Field::load_success <<", load_fail_file_not_found: " <<  Field::load_fail_file_not_found << ", load_fail_bad_format: " << Field::load_fail_bad_format << endl;
+   cerr << "load result: " << lr;
+
    // load field
    if (lr != Field::load_success)
-	   return false;     // something bad happened!
+	   { cerr << "field was not loaded successfully" << endl; return false;}     // something bad happened!
 
-   // TODO: make sure perimeter is all pebbles?
+   cerr << "loading field file successful" << endl; // TODO: delete this
    // building virtual world from file info
    // TODO: fix x, y confusion
    for (int x = 0; x < VIEW_WIDTH; x++)

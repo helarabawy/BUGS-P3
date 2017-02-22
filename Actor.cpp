@@ -22,7 +22,7 @@ void Grasshopper::doSomething()
 	Direction dir = getDirection();
 	int oldX = getX();
 	int oldY = getY();
-
+// TODO: maybe make helper funtions so this function is smaller, esp for movement
 	// TODO: check incremental movement logic
 	for (int i = 0; i < distance; i++)
 	{

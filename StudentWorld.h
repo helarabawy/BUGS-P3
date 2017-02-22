@@ -6,9 +6,11 @@
 #include <string>
 #include <vector>
 
+const int NUM_ACTORS = 14;
 using namespace std;
 
 class Actor;
+
 class StudentWorld : public GameWorld
 {
 public:
@@ -27,7 +29,7 @@ public:
 	bool hasPebble(int x, int y);
 
 private:
-	vector<Actor*> virtualWorld[15]; // 15 types of game objects
+	vector<Actor*> virtualWorld[NUM_ACTORS]; // 15 types of game objects
 	bool loadField();
 	void updateDisplayText();
 	int currTicks;
