@@ -74,8 +74,8 @@ class Grasshopper: public Actor {
 	public:
 		// Constructor
 		Grasshopper(StudentWorld* game, int ImageID, int startX, int startY, int points)
-		: ticks(0), distance(randInt(2, 10)), // member variables
-		Actor(game, ImageID, startX, startY, /*random direction*/ randDir(), /*random distance*/ distance, points) {}
+		: ticks(0), distanceToMove(randInt(2, 10)), // member variables
+		Actor(game, ImageID, startX, startY, /*random direction*/ randDir(), /*random distance*/ distanceToMove, points) {}
 
 		// Destructor
 		virtual ~Grasshopper() {}
@@ -100,7 +100,7 @@ class Grasshopper: public Actor {
 		}
 
 		int ticks;
-		int distance;
+		int distanceToMove;
 };
 
 #endif // GRASSHOPPER_H_

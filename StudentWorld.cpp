@@ -38,21 +38,23 @@ int StudentWorld::move()
 	for (int i = 0; i < NUM_ACTORS; i++)
 	{
 		// iterator to iterate current vector
-		vector<Actor*> :: iterator it;
-		it = virtualWorld[i].begin();
+		//vector<Actor*> :: iterator it;
+		//it = virtualWorld[i].begin();
 
 		// calling every alive/awake actor to doSomething
 		for (int j = 0; j < virtualWorld[i].size(); j++)
 		{
-			Actor* q = *it;
+			//Actor* q = *it;
 
+			if (i == IID_BABY_GRASSHOPPER)
+				cerr << endl << "==>" << "GRASSHOPPER #" << j+1 << endl;
+			Actor* q = virtualWorld[i][j];
 			// TODO: review logic here
-			int oldX = q->getX(), oldY = q->getY(); // TODO: is this necessary, doesn't every actor update its pos in doSomething()?
-				q->doSomething();
+			q->doSomething();
 
 			// remove dead actors
-			if (q->isDead())
-				virtualWorld[i].erase(it);
+			if (q->isDead()) break;
+				//delete virtualWorld[i][j];
 		}
 	}
 	
@@ -75,13 +77,11 @@ void StudentWorld::cleanUp()
 	// TODO: see if this is correct, should i use iterator?
 	for (int i = 0; i <= NUM_ACTORS; i++)
 	{
-		vector<Actor*> :: iterator it;
-		it = virtualWorld[i].begin();
 		for (int j = 0; j < virtualWorld[i].size(); j++)
 		{
-			delete *it;
-			virtualWorld[i].erase(it);
+			delete virtualWorld[i][j];
 		}
+		virtualWorld[i].clear();
 	}
 }
 
@@ -135,12 +135,15 @@ bool StudentWorld::loadField()
    return true;
 }
 
+#include <sstream>
 
 void StudentWorld::updateDisplayText()
 {
-	// refer to string streams
-	// TODO: figure out how ticks must be to the right of 5 characters
-	//cout << "Ticks:" << currTicks << endl;
+	string text = "Ticks: ";
+	ostringstream oss;
+	oss << text << currTicks;
+
+	setGameStatText(oss.str());
 }
 
 

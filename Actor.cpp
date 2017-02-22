@@ -12,61 +12,87 @@ void Grasshopper::doSomething()
 	// lose one hit point
 	setPoints(getPoints() - 1);
 
-	// check if died
-	if (isDead() || isSleeping())
-		return; // TODO: should move() function deal with dead grasshoppers?
+	cerr << "Points: " << getPoints() << endl;
 
 	//another tick
-	ticks++;
+		ticks++;
+	// check if died
+	if (isDead() || isSleeping()) {cerr << endl << "DEAD/ASLEEP" << endl; return;}
+	 // TODO: should move() function deal with dead grasshoppers?
+cerr << "AWAKE" << endl;
+
 
 	Direction dir = getDirection();
+
 	int oldX = getX();
 	int oldY = getY();
-// TODO: maybe make helper funtions so this function is smaller, esp for movement
-	// TODO: check incremental movement logic
-	for (int i = 0; i < distance; i++)
+
+	cout << "Dist: " << distanceToMove << endl;
+	// make movement based on direction and roadblocks
+	switch (dir)
 	{
-		// make movement based on direction and roadblocks
-		switch (dir)
+		case up:
 		{
-			case up:
+			if (!hasPebble(oldX, oldY + 1))
 			{
-				if (!hasPebble(oldX, oldY - i)) {moveTo(oldX, oldY - i);}
-				else {i = distance;}
-
-				break;
+				cerr << "called moveTo up" << endl;
+				moveTo(oldX, oldY + 1);
+				distanceToMove--;
 			}
+			else {distanceToMove = 0;}
 
-			case right:
+			break;
+		}
+
+		case right:
+		{
+			if (!hasPebble(oldX + 1, oldY))
 			{
-				if (!hasPebble(oldX + i, oldY)) {moveTo(oldX + i, oldY);}
-				else {i = distance;}
-
-				break;
+				cerr << "called moveTo right" << endl;
+				moveTo(oldX + 1, oldY);
+				distanceToMove--;
 			}
-			case down:
+			else {distanceToMove = 0;}
+
+			break;
+		}
+		case down:
+		{
+			if (!hasPebble(oldX, oldY - 1))
 			{
-				if (!hasPebble(oldX, oldY + i)) {moveTo(oldX, oldY + i);}
-				else {i = distance;}
-
-				break;
+				cerr << "called moveTo down" << endl;
+				moveTo(oldX, oldY - 1);
+				distanceToMove--;
 			}
-			case left:
+			else {distanceToMove = 0;}
+
+			break;
+		}
+		case left:
+		{
+			if (!hasPebble(oldX - 1, oldY))
 			{
-				if (!hasPebble(oldX - i, oldY)) {moveTo(oldX - i, oldY);}
-				else {i = distance;}
-
-				break;
+				cerr << "called moveTo left" << endl;
+				moveTo(oldX - 1, oldY);
+				distanceToMove--;
 			}
+			else {distanceToMove = 0;}
 
+			break;
+		}
+		default:
+		{
+			cerr << "should never reach here" << endl;
 		}
 	}
 
+	cerr << "after moving: " << distanceToMove << endl;
+	if (distanceToMove == 0)
+	{
+		// new random direction
+		setDirection(randDir());
 
-	// new random direction
-	setDirection(randDir());
-
-	// new random distance
-	distance = randInt(2, 10);
-
+		// new random distance
+		distanceToMove = randInt(2, 10);
+	}
 }
