@@ -75,14 +75,19 @@ class Water: public Actor{
 
 	public:
 		// Constructor
-		Water(StudentWorld* game, int startX, int startY): Actor(game, IID_WATER_POOL, startX, startY, right,/*pool doesn't move*/ 0, 1) {}
+		Water(StudentWorld* game, int startX, int startY): Actor(game, IID_WATER_POOL, startX, startY, right,/*pool doesn't move*/ 2, 1)
+		{m_game = game;}
 
 		// Destructor
 		virtual ~Water() {}
 
 		// Public Interface
-		virtual void doSomething() {return;} // Pebble should do nothing during tick
+		virtual void doSomething() {return;}//{m_game->stunInsects(getX(), getY())} // Pebble should do nothing during tick
 		virtual bool isSleeping() {return true;} // pebble always sleeping
+
+	private:
+		StudentWorld* m_game;
+
 };
 
 #endif // WATER_H_
