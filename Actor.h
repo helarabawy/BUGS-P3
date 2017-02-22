@@ -26,7 +26,7 @@ class Actor: public GraphObject {
 		int getPoints() {return m_points;} // return number of points
 		void setPoints(int modifiedPoints) { m_points = modifiedPoints;} // set points to new value
 		bool hasPebble(int x, int y) {return m_game->hasPebble(x, y);} // TODO: fix x, y confusion
-		virtual bool isDead() {return m_points == 0;}
+		virtual bool isDead() {return m_points <= 0;}
 		virtual bool isSleeping() = 0;
 		
 

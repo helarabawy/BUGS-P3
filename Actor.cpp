@@ -17,8 +17,19 @@ void Grasshopper::doSomething()
 	//another tick
 		ticks++;
 	// check if died
-	if (isDead() || isSleeping()) {cerr << endl << "DEAD/ASLEEP" << endl; return;}
-	 // TODO: should move() function deal with dead grasshoppers?
+	if (isDead())
+	{
+		cerr << "DEAD!!!!!!!!!!!" <<  endl;
+		return;
+	}
+
+	if (isSleeping())
+	{
+		cerr << "ASLEEP!" << endl;
+		return;
+	}
+
+	// TODO: should move() function deal with dead grasshoppers?
 cerr << "AWAKE" << endl;
 
 

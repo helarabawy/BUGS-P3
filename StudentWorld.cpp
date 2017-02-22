@@ -39,22 +39,26 @@ int StudentWorld::move()
 	{
 		// iterator to iterate current vector
 		//vector<Actor*> :: iterator it;
-		//it = virtualWorld[i].begin();
 
 		// calling every alive/awake actor to doSomething
+		//for (it = virtualWorld[i].begin(); it != virtualWorld[i].end(); it++)
 		for (int j = 0; j < virtualWorld[i].size(); j++)
 		{
-			//Actor* q = *it;
+			Actor* q = virtualWorld[i][j];
+
 
 			if (i == IID_BABY_GRASSHOPPER)
-				cerr << endl << "==>" << "GRASSHOPPER #" << j+1 << endl;
-			Actor* q = virtualWorld[i][j];
+			cerr << endl << "==>" << "GRASSHOPPER #" << j+1 << endl;
+			//Actor* q = virtualWorld[i][j];
 			// TODO: review logic here
 			q->doSomething();
 
 			// remove dead actors
-			if (q->isDead()) break;
-				//delete virtualWorld[i][j];
+			if (q->isDead()){
+				cerr << "KILLING GRASSHOPPER #"  << j+1 << endl;
+				delete virtualWorld[i][j];
+				virtualWorld[i].erase(virtualWorld[i].begin() + j);
+			}
 		}
 	}
 	
