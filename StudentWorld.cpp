@@ -44,8 +44,13 @@ int StudentWorld::move()
 
 			// remove dead actors
 			if (q->isDead()){
+				int x = q->getX();
+				int y = q->getY();
 				delete virtualWorld[i][j];
 				virtualWorld[i].erase(virtualWorld[i].begin() + j);
+				// food where actor died
+				if (i != IID_FOOD)
+					virtualWorld[IID_FOOD].push_back(new Food(this, x, y, 100));
 			}
 		}
 	}
@@ -87,6 +92,17 @@ bool StudentWorld::isBlocked(int x, int y)
 	return false;
 }
 
+void StudentWorld::stunInsects(int x, int y)
+{
+	// how do i stun this
+	vector<Actor*> :: iterator itr;
+	itr = virtualWorld[IID_BABY_GRASSHOPPER].begin();
+	for (int i = 0; i < virtualWorld[IID_BABY_GRASSHOPPER].size(); i++, itr++)
+	{
+		if ((*itr)->getX() == x && (*itr)->getY() == y)
+			(*itr)->stun();
+	}
+}
 
 bool StudentWorld::isStunned(int x, int y)
 {
@@ -100,6 +116,30 @@ bool StudentWorld::isStunned(int x, int y)
 	return false;
 }
 
+bool StudentWorld::hasFood(int x, int y)
+{
+	vector<Actor*> :: iterator itr;
+	itr = virtualWorld[IID_FOOD].begin();
+	for (int i = 0; i < virtualWorld[IID_FOOD].size(); i++, itr++)
+	{
+		if ((*itr)->getX() == x && (*itr)->getY() == y)
+			return true;
+	}
+	return false;
+}
+
+// this is logically wrong
+void StudentWorld::depleteFood(int x, int y, int pts)
+{
+	vector<Actor*> :: iterator itr;
+	itr = virtualWorld[IID_BABY_GRASSHOPPER].begin();
+	for (int i = 0; i < virtualWorld[IID_BABY_GRASSHOPPER].size(); i++, itr++)
+	{
+		if ((*itr)->getX() == x && (*itr)->getY() == y)
+			(*itr)->setPoints(((*itr)->getPoints - pts));
+	}
+
+}
 
 bool StudentWorld::loadField()
 {
@@ -137,14 +177,13 @@ bool StudentWorld::loadField()
 			 {
 				 virtualWorld[IID_WATER_POOL].push_back(new Water(this, x, y));
 			 }
-/*
 
-			 // found poison
-			 if (item == Field::FieldItem::poison)
+			 // found food
+			 if (item == Field::FieldItem::food)
 			 {
-				 virtualWorld[IID_POISON].push_back(new Poison(this, x, y));
+				 virtualWorld[IID_FOOD].push_back(new Food(this, x, y));
 			 }
-*/
+
 		 }
 	  }
 	

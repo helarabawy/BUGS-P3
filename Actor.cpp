@@ -24,6 +24,7 @@ void Grasshopper::doSomething()
 		decrementStunnedTicks();
 		return;
 	}
+	unstun();
 
 	// current direction
 	Direction dir = getDirection();
@@ -82,6 +83,8 @@ void Grasshopper::doSomething()
 		}
 	}
 
+	eat();
+
 	if (distanceToMove <= 0)
 	{
 		// new random direction
@@ -92,7 +95,28 @@ void Grasshopper::doSomething()
 	}
 }
 
+// bad look at this
+void Grasshopper::eat()
+{
+	if (!hasFood())
+		return;
 
+	if (getPoints() >= 200)
+	{
+		// grasshopper eating
+		setPoints(getPoints() + 200);
+
+		// removing food
+		m_game->depleteFood(getX(), getY(), 200);
+	} else {
+		// grasshopper eating
+		setPoints(getPoints() + );
+
+		// removing food
+		m_game->depleteFood(getX(), getY(), 200);
+	}
+
+}
 
 ///////////////////////////////////////////////////////////////
 ////////////// BABY GRASSHOPPER IMPLEMENTATION ////////////////
@@ -100,11 +124,11 @@ void Grasshopper::doSomething()
 
 bool BabyGrasshopper::isStunned()
 {
-	if (m_game->isStunned(getX(), getY()) && stunnedTicks == 0)
+	if (checkStunStatus() == true && stunnedTicks == 0)
 	{
 		stunnedTicks = 2;
 		return true;
-	} else if (m_game->isStunned(getX(), getY()) && stunnedTicks == 1)
+	} else if (checkStunStatus() == true && stunnedTicks == 1)
 		return true;
 	 else if (stunnedTicks == -1)
 	 {

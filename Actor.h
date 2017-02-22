@@ -23,14 +23,26 @@ class Actor: public GraphObject {
 		// Public Interface
 		virtual void doSomething() = 0;
 		
+		// dealing with points
 		int getPoints() {return m_points;} // return number of points
 		void setPoints(int modifiedPoints) { m_points = modifiedPoints;} // set points to new value
+
+		// roadblocks
 		bool isBlocked(int x, int y) {return m_game->isBlocked(x, y);} // TODO: fix x, y confusion
+
+		// dealing with getting stunned
+		void stun() {stunned = true;}
+		void unstun() {stunned = false;}
+		bool checkStunStatus() {return stunned;}
+
+		// status
 		virtual bool isDead() {return m_points <= 0;}
-		virtual bool isSleeping() = 0;
+		virtual bool isSleeping() {return true;};
+		bool hasFood() {return m_game->hasFood(getX(), getY());}
 		
 
 	private:
+		bool stunned = false;
 		int m_points;
 		StudentWorld* m_game;
 };
@@ -57,7 +69,6 @@ class Pebble: public Actor{
 
 		// Public Interface
 		virtual void doSomething() {return;} // Pebble should do nothing during tick
-		virtual bool isSleeping() {return true;} // pebble always sleeping
 };
 
 #endif // PEBBLE_H_
@@ -82,8 +93,8 @@ class Water: public Actor{
 		virtual ~Water() {}
 
 		// Public Interface
-		virtual void doSomething() {return;}//{m_game->stunInsects(getX(), getY())} // Pebble should do nothing during tick
-		virtual bool isSleeping() {return true;} // pebble always sleeping
+		virtual void doSomething() {m_game->stunInsects(getX(), getY());} // Pebble should do nothing during tick
+
 
 	private:
 		StudentWorld* m_game;
@@ -92,6 +103,36 @@ class Water: public Actor{
 
 #endif // WATER_H_
 
+
+
+///////////////////////////////////////////////////////////////
+////////////////////////// FOOD ///////////////////////////////
+///////////////////////////////////////////////////////////////
+
+#ifndef FOOD_H_
+#define FOOD_H_
+
+
+class Food: public Actor{
+
+	public:
+		// Constructor
+		Food(StudentWorld* game, int startX, int startY, int startPts = 6000): Actor(game, IID_FOOD, startX, startY, right,/*food doesn't move*/ 2, startPts)
+		{m_game = game;}
+
+		// Destructor
+		virtual ~Food() {}
+
+		// Public Interface
+		virtual void doSomething() {return;} // food should do nothing during tick
+
+
+	private:
+		StudentWorld* m_game;
+
+};
+
+#endif // WATER_H_
 
 ///////////////////////////////////////////////////////////////
 //////////////////////// GRASSHOPPER //////////////////////////
@@ -117,6 +158,8 @@ class Grasshopper: public Actor {
 		virtual bool isStunned() {return false;}
 		virtual void decrementStunnedTicks() = 0;
 
+		void eat();
+
 	private:
 		// generate random direction
 		Direction randDir()
@@ -134,6 +177,7 @@ class Grasshopper: public Actor {
 
 		int ticks;
 		int distanceToMove;
+
 };
 
 #endif // GRASSHOPPER_H_

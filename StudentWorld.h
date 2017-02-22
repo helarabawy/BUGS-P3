@@ -27,7 +27,10 @@ public:
 	virtual void cleanUp();
 
 	bool isBlocked(int x, int y);
+	void stunInsects(int x, int y);
 	bool isStunned(int x, int y);
+	bool hasFood(int x, int y);
+	void depleteFood(int x, int y, int pts);
 
 private:
 	vector<Actor*> virtualWorld[NUM_ACTORS]; // 15 types of game objects
