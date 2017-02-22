@@ -1,5 +1,6 @@
 #include "Actor.h"
 #include "StudentWorld.h"
+#include "GameConstants.h"
 #include "Field.h"
 #include <string>
 #include <vector>
@@ -7,6 +8,8 @@
 #include <sstream>
 
 using namespace std;
+
+
 
 GameWorld* createStudentWorld(string assetDir)
 {
@@ -33,19 +36,22 @@ int StudentWorld::move()
 	currTicks++;
 	
 	// Give each actor a chance to do something
-	for (int i = 0; i < NUM_ACTORS; i++)
+	for (int i = 0; i < VIEW_WIDTH; i++)
 	{
 		// calling every alive/awake actor to doSomething
-		for (int j = 0; j < virtualWorld[i].size(); j++)
+		for (int j = 0; j < VIEW_HEIGHT; j++)
 		{
-			Actor* q = virtualWorld[i][j];
+			Coord c;
+			c.x = i;
+			c.y = j;
+			Actor* q = virtualWorld[c];
 
 			q->doSomething();
 
 			// remove dead actors
 			if (q->isDead()){
-				delete virtualWorld[i][j];
-				virtualWorld[i].erase(virtualWorld[i].begin() + j);
+				delete virtualWorld[c];
+				virtualWorld[c].erase(virtualWorld[c]);
 			}
 		}
 	}
@@ -63,13 +69,14 @@ int StudentWorld::move()
 
 void StudentWorld::cleanUp()
 {
-	for (int i = 0; i < NUM_ACTORS; i++)
+	for (int i = 0; i < VIEW_WIDTH; i++)
 	{
-		for (int j = 0; j < virtualWorld[i].size(); j++)
+		for (int j = 0; j < VIEW_HEIGHT; j++)
 		{
 
-			delete virtualWorld[i][j];
-			virtualWorld[i].erase(virtualWorld[i].begin() + j);
+			Coord c = {.x = i, .y = j};
+			delete virtualWorld[c];
+			virtualWorld.erase(virtualWorld[c]);
 		}
 	}
 }
@@ -77,13 +84,13 @@ void StudentWorld::cleanUp()
 
 bool StudentWorld::hasPebble(int x, int y)
 {
-	vector<Actor*> :: iterator itr;
-	itr = virtualWorld[IID_ROCK].begin();
-	for (int i = 0; i < virtualWorld[IID_ROCK].size(); i++, itr++)
-	{
-		if ((*itr)->getX() == x && (*itr)->getY() == y)
-			return true;
-	}
+	map<Coord, Actor*> ::iterator itr;
+	Coord c = {.x = i, .y = j};
+	itr = virtualWorld.find(c);
+
+	if ((*itr)->getX() == x && (*itr)->getY() == y)
+		return true;
+
 	return false;
 }
 
@@ -105,17 +112,20 @@ bool StudentWorld::loadField()
 		 for (int y = 0; y < VIEW_HEIGHT; y++)
 		 {
 			 Field::FieldItem item = f.getContentsOf(y, x);
+			 Coord c;
+			 c.x = x;
+			 c.y = y;
 
 			 // found a rock
 			 if (item == Field::FieldItem::rock)
 			 {
-				 virtualWorld[IID_ROCK].push_back(new Pebble(this, x, y));
+				 virtualWorld[c] = new Pebble(this, x, y);
 			 }
 
 			 // found a grasshopper
 			 if (item == Field::FieldItem::grasshopper)
 			 {
-				 virtualWorld[IID_BABY_GRASSHOPPER].push_back(new BabyGrasshopper(this, x, y));
+				 virtualWorld[c] = new BabyGrasshopper(this, x, y);
 			 }
 		 }
 	  }

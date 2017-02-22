@@ -9,6 +9,31 @@
 const int NUM_ACTORS = 15;
 using namespace std;
 
+/*
+	bool operator<(const Coord &a, const Coord &b)
+	{
+		if (a < b)
+			return true;
+		return false;
+	}
+*/
+
+
+struct Coord {
+		int x;
+		int y;
+	};
+
+
+bool operator<(const Coord &a, const Coord &b)
+{
+	if (a.x < b.x)
+		return true;
+	return false;
+}
+
+
+
 class Actor;
 
 class StudentWorld : public GameWorld
@@ -28,11 +53,23 @@ public:
 
 	bool hasPebble(int x, int y);
 
+
+
+
 private:
-	vector<Actor*> virtualWorld[NUM_ACTORS]; // 15 types of game objects
+	map<Coord, Actor*> virtualWorld; // class container
+
+
+//	template <typename Data>
+//	Data max(Data x, Data y)
+
+
 	bool loadField();
 	void updateDisplayText();
+
 	int currTicks;
 };
+
+
 
 #endif // STUDENTWORLD_H_
