@@ -12,33 +12,20 @@ void Grasshopper::doSomething()
 	// lose one hit point
 	setPoints(getPoints() - 1);
 
-	cerr << "Points: " << getPoints() << endl;
-
 	//another tick
-		ticks++;
+	ticks++;
+
 	// check if died
-	if (isDead())
-	{
-		cerr << "DEAD!!!!!!!!!!!" <<  endl;
+	if (isDead() || isSleeping())
 		return;
-	}
 
-	if (isSleeping())
-	{
-		cerr << "ASLEEP!" << endl;
-		return;
-	}
-
-	// TODO: should move() function deal with dead grasshoppers?
-cerr << "AWAKE" << endl;
-
-
+	// current direction
 	Direction dir = getDirection();
 
+	// current x, y
 	int oldX = getX();
 	int oldY = getY();
 
-	cout << "Dist: " << distanceToMove << endl;
 	// make movement based on direction and roadblocks
 	switch (dir)
 	{
@@ -46,7 +33,6 @@ cerr << "AWAKE" << endl;
 		{
 			if (!hasPebble(oldX, oldY + 1))
 			{
-				cerr << "called moveTo up" << endl;
 				moveTo(oldX, oldY + 1);
 				distanceToMove--;
 			}
@@ -59,7 +45,6 @@ cerr << "AWAKE" << endl;
 		{
 			if (!hasPebble(oldX + 1, oldY))
 			{
-				cerr << "called moveTo right" << endl;
 				moveTo(oldX + 1, oldY);
 				distanceToMove--;
 			}
@@ -71,7 +56,6 @@ cerr << "AWAKE" << endl;
 		{
 			if (!hasPebble(oldX, oldY - 1))
 			{
-				cerr << "called moveTo down" << endl;
 				moveTo(oldX, oldY - 1);
 				distanceToMove--;
 			}
@@ -83,7 +67,6 @@ cerr << "AWAKE" << endl;
 		{
 			if (!hasPebble(oldX - 1, oldY))
 			{
-				cerr << "called moveTo left" << endl;
 				moveTo(oldX - 1, oldY);
 				distanceToMove--;
 			}
@@ -91,14 +74,9 @@ cerr << "AWAKE" << endl;
 
 			break;
 		}
-		default:
-		{
-			cerr << "should never reach here" << endl;
-		}
 	}
 
-	cerr << "after moving: " << distanceToMove << endl;
-	if (distanceToMove == 0)
+	if (distanceToMove <= 0)
 	{
 		// new random direction
 		setDirection(randDir());
