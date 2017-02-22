@@ -102,22 +102,25 @@ bool StudentWorld::hasPebble(int x, int y)
 
 bool StudentWorld::loadField()
 {
-   string fieldFileName;
    Field f;
-
    string fieldFile = getFieldFilename();
-   Field::LoadResult lr = f.loadField(fieldFile); // TODO: does this even return bool?
 
-   cerr << "OPTIONS==> load_success: " << Field::load_success <<", load_fail_file_not_found: " <<  Field::load_fail_file_not_found << ", load_fail_bad_format: " << Field::load_fail_bad_format << endl;
-   cerr << "load result: " << lr;
+   string error;
+   
+ if (f.loadField(fieldFile, error) != Field::LoadResult::load_success)
+ {
+ 	setError(fieldFile + " " + error);
+ 	return false; // something bad happened!
+ }
+// int x = 0;
+// int y = 5;
+// Field::FieldItem item = f.getContentsOf(x,y); // note it’s x,y and not y,x!!!
+// if (item == Field::FieldItem::rock)
+// cout << "A pebble should be placed at 0,5 in the field\n"; 
+ // building virtual world from file info
 
-   // load field
-   if (lr != Field::load_success)
-	   { cerr << "field was not loaded successfully" << endl; return false;}     // something bad happened!
-
-   cerr << "loading field file successful" << endl; // TODO: delete this
-   // building virtual world from file info
-   // TODO: fix x, y confusion
+	
+// TODO: fix x, y confusion
    for (int x = 0; x < VIEW_WIDTH; x++)
    {
 	   for (int y = 0; y < VIEW_HEIGHT; y++)
