@@ -19,6 +19,12 @@ void Grasshopper::doSomething()
 	if (isDead() || isSleeping())
 		return;
 
+	if (isStunned())
+	{
+		decrementStunnedTicks();
+		return;
+	}
+
 	// current direction
 	Direction dir = getDirection();
 
@@ -31,7 +37,7 @@ void Grasshopper::doSomething()
 	{
 		case up:
 		{
-			if (!hasPebble(oldX, oldY + 1))
+			if (!isBlocked(oldX, oldY + 1))
 			{
 				moveTo(oldX, oldY + 1);
 				distanceToMove--;
@@ -43,7 +49,7 @@ void Grasshopper::doSomething()
 
 		case right:
 		{
-			if (!hasPebble(oldX + 1, oldY))
+			if (!isBlocked(oldX + 1, oldY))
 			{
 				moveTo(oldX + 1, oldY);
 				distanceToMove--;
@@ -54,7 +60,7 @@ void Grasshopper::doSomething()
 		}
 		case down:
 		{
-			if (!hasPebble(oldX, oldY - 1))
+			if (!isBlocked(oldX, oldY - 1))
 			{
 				moveTo(oldX, oldY - 1);
 				distanceToMove--;
@@ -65,7 +71,7 @@ void Grasshopper::doSomething()
 		}
 		case left:
 		{
-			if (!hasPebble(oldX - 1, oldY))
+			if (!isBlocked(oldX - 1, oldY))
 			{
 				moveTo(oldX - 1, oldY);
 				distanceToMove--;
@@ -85,3 +91,26 @@ void Grasshopper::doSomething()
 		distanceToMove = randInt(2, 10);
 	}
 }
+
+
+
+///////////////////////////////////////////////////////////////
+////////////// BABY GRASSHOPPER IMPLEMENTATION ////////////////
+///////////////////////////////////////////////////////////////
+
+bool BabyGrasshopper::isStunned()
+{
+	if (m_game->isStunned(getX(), getY()) && stunnedTicks == 0)
+	{
+		stunnedTicks = 2;
+		return true;
+	} else if (m_game->isStunned(getX(), getY()) && stunnedTicks == 1)
+		return true;
+	 else if (stunnedTicks == -1)
+	 {
+		stunnedTicks = 0;
+		return false;
+	 } else
+		return false;
+}
+

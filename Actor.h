@@ -25,7 +25,7 @@ class Actor: public GraphObject {
 		
 		int getPoints() {return m_points;} // return number of points
 		void setPoints(int modifiedPoints) { m_points = modifiedPoints;} // set points to new value
-		bool hasPebble(int x, int y) {return m_game->hasPebble(x, y);} // TODO: fix x, y confusion
+		bool isBlocked(int x, int y) {return m_game->isBlocked(x, y);} // TODO: fix x, y confusion
 		virtual bool isDead() {return m_points <= 0;}
 		virtual bool isSleeping() = 0;
 		
@@ -62,6 +62,32 @@ class Pebble: public Actor{
 
 #endif // PEBBLE_H_
 
+
+///////////////////////////////////////////////////////////////
+///////////////////////// WATER ///////////////////////////////
+///////////////////////////////////////////////////////////////
+
+#ifndef WATER_H_
+#define WATER_H_
+
+
+class Water: public Actor{
+
+	public:
+		// Constructor
+		Water(StudentWorld* game, int startX, int startY): Actor(game, IID_WATER_POOL, startX, startY, right,/*pool doesn't move*/ 0, 1) {}
+
+		// Destructor
+		virtual ~Water() {}
+
+		// Public Interface
+		virtual void doSomething() {return;} // Pebble should do nothing during tick
+		virtual bool isSleeping() {return true;} // pebble always sleeping
+};
+
+#endif // WATER_H_
+
+
 ///////////////////////////////////////////////////////////////
 //////////////////////// GRASSHOPPER //////////////////////////
 ///////////////////////////////////////////////////////////////
@@ -83,6 +109,8 @@ class Grasshopper: public Actor {
 		// Public Interface
 		virtual void doSomething();
 		virtual bool isSleeping() {return ticks%3 != 0;}
+		virtual bool isStunned() {return false;}
+		virtual void decrementStunnedTicks() = 0;
 
 	private:
 		// generate random direction
@@ -117,13 +145,25 @@ class BabyGrasshopper: public Grasshopper {
 
 	public:
 		// Constructor
-		BabyGrasshopper(StudentWorld* game, int startX, int startY): Grasshopper(game, IID_BABY_GRASSHOPPER, startX, startY, 500) {}
+		BabyGrasshopper(StudentWorld* game, int startX, int startY): Grasshopper(game, IID_BABY_GRASSHOPPER, startX, startY, 500)
+		{ m_game = game;}
 
 		// Destructor
 		virtual ~BabyGrasshopper() {}
 
 		// Public Interface
 		//virtual void doSomething(); not differentiated functionality yet
+		virtual bool isStunned();
+		virtual void decrementStunnedTicks()
+		{
+			if (stunnedTicks == 1)
+				stunnedTicks -= 2;
+			else stunnedTicks--;
+		}
+
+	private:
+		int stunnedTicks = 0;
+		StudentWorld* m_game;
 		
 };
 
