@@ -16,7 +16,7 @@ class StudentWorld : public GameWorld
 public:
 	StudentWorld(std::string assetDir)
 	 : GameWorld(assetDir)
-	{}
+	{ filename = assetDir; }
 
 	virtual ~StudentWorld() {cleanUp();}
 
@@ -26,6 +26,7 @@ public:
 
 	virtual void cleanUp();
 
+	string getFieldFilename() {return filename;}
 	bool hasPebble(int x, int y);
 
 private:
@@ -33,6 +34,7 @@ private:
 	bool loadField();
 	void updateDisplayText();
 	int currTicks;
+	string filename;
 };
 
 #endif // STUDENTWORLD_H_

@@ -104,14 +104,17 @@ bool StudentWorld::loadField()
 {
    Field f;
    string fieldFile = getFieldFilename();
-
+   cerr << "Filename: " << fieldFile << endl;
    string error;
    
  if (f.loadField(fieldFile, error) != Field::LoadResult::load_success)
  {
+	cerr << "ERROR: " << error << endl;
  	setError(fieldFile + " " + error);
  	return false; // something bad happened!
  }
+
+ cerr << "FILE LOADED SUCCESSFULLY" << endl;
 // int x = 0;
 // int y = 5;
 // Field::FieldItem item = f.getContentsOf(x,y); // note it’s x,y and not y,x!!!
