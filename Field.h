@@ -117,7 +117,8 @@ public:
 		}
 		if (row >= 0)  // too few lines
         {
-            error = "Field file has fewer than ";
+			error = filename; ////
+            error += " Field file has fewer than ";
             error += std::to_string(VIEW_HEIGHT);
             error += " lines";
             return load_fail_bad_format;

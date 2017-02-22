@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-const int NUM_ACTORS = 14;
+const int NUM_ACTORS = 15;
 using namespace std;
 
 class Actor;
@@ -16,7 +16,7 @@ class StudentWorld : public GameWorld
 public:
 	StudentWorld(std::string assetDir)
 	 : GameWorld(assetDir)
-	{ filename = assetDir; }
+	{ }
 
 	virtual ~StudentWorld() {cleanUp();}
 
@@ -26,7 +26,6 @@ public:
 
 	virtual void cleanUp();
 
-	string getFieldFilename() {return filename;}
 	bool hasPebble(int x, int y);
 
 private:
@@ -34,7 +33,6 @@ private:
 	bool loadField();
 	void updateDisplayText();
 	int currTicks;
-	string filename;
 };
 
 #endif // STUDENTWORLD_H_

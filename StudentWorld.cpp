@@ -48,10 +48,7 @@ int StudentWorld::move()
 
 			// TODO: review logic here
 			int oldX = q->getX(), oldY = q->getY(); // TODO: is this necessary, doesn't every actor update its pos in doSomething()?
-			if (!q->isDead() || !q->isSleeping())
-			{
 				q->doSomething();
-			}
 
 			// remove dead actors
 			if (q->isDead())
@@ -82,6 +79,7 @@ void StudentWorld::cleanUp()
 		it = virtualWorld[i].begin();
 		for (int j = 0; j < virtualWorld[i].size(); j++)
 		{
+			delete *it;
 			virtualWorld[i].erase(it);
 		}
 	}
@@ -109,44 +107,32 @@ bool StudentWorld::loadField()
    
  if (f.loadField(fieldFile, error) != Field::LoadResult::load_success)
  {
-	cerr << "ERROR: " << error << endl;
  	setError(fieldFile + " " + error);
  	return false; // something bad happened!
  }
 
  cerr << "FILE LOADED SUCCESSFULLY" << endl;
-// int x = 0;
-// int y = 5;
-// Field::FieldItem item = f.getContentsOf(x,y); // note it’s x,y and not y,x!!!
-// if (item == Field::FieldItem::rock)
-// cout << "A pebble should be placed at 0,5 in the field\n"; 
- // building virtual world from file info
-
 	
 // TODO: fix x, y confusion
    for (int x = 0; x < VIEW_WIDTH; x++)
    {
 	   for (int y = 0; y < VIEW_HEIGHT; y++)
 	   {
-		   char ch = f.getContentsOf(y, x);
+		   Field::FieldItem item = f.getContentsOf(y, x);
 
-		   switch (ch)
+		   if (item == Field::FieldItem::rock)
 		   {
-		   	   case '*':
-		   	   {
-		   		   virtualWorld[IID_ROCK].push_back(new Pebble(this, y, x));
-		   		   break;
-		   	   }
-			   case 'g':
-			   {
-				   virtualWorld[IID_BABY_GRASSHOPPER].push_back(new BabyGrasshopper(this, y, x));
-				   break;
-			   }
-			   default: break;
+			   virtualWorld[IID_ROCK].push_back(new Pebble(this, x, y));
 		   }
 
+		   if (item == Field::FieldItem::grasshopper)
+		   {
+			   virtualWorld[IID_BABY_GRASSHOPPER].push_back(new BabyGrasshopper(this, x, y));
+		   }
 	   }
    }
+
+   return true;
 }
 
 
@@ -154,7 +140,7 @@ void StudentWorld::updateDisplayText()
 {
 	// refer to string streams
 	// TODO: figure out how ticks must be to the right of 5 characters
-	cout << "Ticks:" << currTicks;
+	//cout << "Ticks:" << currTicks << endl;
 }
 
 
