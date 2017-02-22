@@ -88,6 +88,7 @@ bool StudentWorld::isBlocked(int x, int y)
 	Coord c = {.x = i, .y = j};
 	itr = virtualWorld.find(c);
 
+	// this is dumb the commits kinda merged in an annoying way, ignore I will fix
 	if ((*itr)->getX() == x && (*itr)->getY() == y)
 		return true;
 
@@ -97,13 +98,15 @@ bool StudentWorld::isBlocked(int x, int y)
 
 bool StudentWorld::isStunned(int x, int y)
 {
-	vector<Actor*> :: iterator itr;
-	itr = virtualWorld[IID_WATER_POOL].begin();
-	for (int i = 0; i < virtualWorld[IID_WATER_POOL].size(); i++, itr++)
-	{
-		if ((*itr)->getX() == x && (*itr)->getY() == y)
-			return true;
-	}
+	map<Coord, Actor*> ::iterator itr;
+	Coord c = {.x = i, .y = j};
+	itr = virtualWorld.find(c);
+
+
+	// this is dumb the commits kinda merged in an annoying way, ignore I will fix
+	if ((*itr)->getX() == x && (*itr)->getY() == y)
+		return true;
+
 	return false;
 }
 
@@ -145,7 +148,7 @@ bool StudentWorld::loadField()
 			 // found water
 			 if (item == Field::FieldItem::water)
 			 {
-				 virtualWorld[IID_WATER_POOL].push_back(new Water(this, x, y));
+				 virtualWorld[c] = new Water(this, x, y));
 			 }
 /*
 
