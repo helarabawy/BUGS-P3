@@ -19,20 +19,6 @@ using namespace std;
 */
 
 
-struct Coord {
-		int x;
-		int y;
-	};
-
-
-bool operator<(const Coord &a, const Coord &b)
-{
-	if (a.x < b.x)
-		return true;
-	return false;
-}
-
-
 
 class Actor;
 
@@ -57,6 +43,20 @@ public:
 
 
 private:
+
+
+	struct Coord {
+			int x;
+			int y;
+	};
+
+	bool operator<(const Coord &a, const Coord &b) const
+	{
+		if (a.x < b.x)
+			return true;
+		return false;
+	}
+
 	map<Coord, Actor*> virtualWorld; // class container
 
 
