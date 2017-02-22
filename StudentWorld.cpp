@@ -82,7 +82,7 @@ void StudentWorld::cleanUp()
 }
 
 
-bool StudentWorld::hasPebble(int x, int y)
+bool StudentWorld::isBlocked(int x, int y)
 {
 	map<Coord, Actor*> ::iterator itr;
 	Coord c = {.x = i, .y = j};
@@ -93,6 +93,20 @@ bool StudentWorld::hasPebble(int x, int y)
 
 	return false;
 }
+
+
+bool StudentWorld::isStunned(int x, int y)
+{
+	vector<Actor*> :: iterator itr;
+	itr = virtualWorld[IID_WATER_POOL].begin();
+	for (int i = 0; i < virtualWorld[IID_WATER_POOL].size(); i++, itr++)
+	{
+		if ((*itr)->getX() == x && (*itr)->getY() == y)
+			return true;
+	}
+	return false;
+}
+
 
 bool StudentWorld::loadField()
 {
@@ -127,6 +141,20 @@ bool StudentWorld::loadField()
 			 {
 				 virtualWorld[c] = new BabyGrasshopper(this, x, y);
 			 }
+
+			 // found water
+			 if (item == Field::FieldItem::water)
+			 {
+				 virtualWorld[IID_WATER_POOL].push_back(new Water(this, x, y));
+			 }
+/*
+
+			 // found poison
+			 if (item == Field::FieldItem::poison)
+			 {
+				 virtualWorld[IID_POISON].push_back(new Poison(this, x, y));
+			 }
+*/
 		 }
 	  }
 	

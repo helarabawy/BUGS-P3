@@ -37,7 +37,8 @@ public:
 
 	virtual void cleanUp();
 
-	bool hasPebble(int x, int y);
+	bool isBlocked(int x, int y);
+	bool isStunned(int x, int y);
 
 
 
