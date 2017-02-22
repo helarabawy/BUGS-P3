@@ -9,15 +9,17 @@
 const int NUM_ACTORS = 15;
 using namespace std;
 
-/*
-	bool operator<(const Coord &a, const Coord &b)
-	{
-		if (a < b)
-			return true;
-		return false;
-	}
-*/
+struct Coord {
+		int x;
+		int y;
+};
 
+bool Coord::operator<(const Coord &a)
+{
+	if (x < a.x)
+		return true;
+	return false;
+}
 
 
 class Actor;
@@ -46,17 +48,7 @@ public:
 private:
 
 
-	struct Coord {
-			int x;
-			int y;
-	};
 
-	bool operator<(const Coord &a, const Coord &b) const
-	{
-		if (a.x < b.x)
-			return true;
-		return false;
-	}
 
 	map<Coord, Actor*> virtualWorld; // class container
 
