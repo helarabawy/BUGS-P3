@@ -34,6 +34,7 @@ public:
 
 	// change status at (x, y)*/
 	void stunInsects(int x, int y);
+	void poisonInsects(int x, int y);
 	//void depleteFood(int x, int y, int pts);*/
 
 private:

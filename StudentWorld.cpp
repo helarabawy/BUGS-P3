@@ -131,7 +131,22 @@ void StudentWorld::stunInsects(int x, int y)
 		if ((*it)->isAnimate())
 			(*it)->stun();
 	}
+}
 
+// POISON INSECTS AT (x, y)
+void StudentWorld::poisonInsects(int x, int y)
+{
+	// convert x, y
+	int id = x*VIEW_WIDTH + y; // TODO: verify this
+
+	// defining iterator at id
+/*	list<Actor*>::const_iterator it;
+
+	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
+	{
+		if ((*it)->isAnimate())
+			(*it)->poison();
+	}*/
 }
 
 // LOAD FIELD INTO CONTAINER
@@ -176,13 +191,17 @@ bool StudentWorld::loadField()
 			 virtualWorld[i].push_back(new Water(this, x, y));
 		 }
 
-/*		 // found poison
+		 // found water
+		 if (item == Field::FieldItem::food)
+		 {
+			 virtualWorld[i].push_back(new Food(this, x, y));
+		 }
+
+		 // found poison
 		 if (item == Field::FieldItem::poison)
 		 {
 			 virtualWorld[IID_POISON].push_back(new Poison(this, x, y));
 		 }
-*/
-
 
 	  }
 	

@@ -13,11 +13,11 @@ class Actor: public GraphObject {
 
 	public:
 		// Constructor
-		Actor(StudentWorld* game, int imageID, int startX, int startY, Direction dir, int depth)
+		Actor(StudentWorld* game, int imageID, int startX, int startY, Direction dir, int depth = 0)
 	    : GraphObject(imageID, startX, startY, dir, depth) { m_game = game;}
 
 		// Destructor
-		virtual ~Actor() {delete m_game;}
+		virtual ~Actor() {}
 
 		// Public Interface
 		virtual void doSomething() = 0;
@@ -43,11 +43,11 @@ class InanimateActor: public Actor{
 
 	public:
 		// Constructor
-		InanimateActor(StudentWorld* game, int imageID, int startX, int startY, int depth): Actor(game, imageID, startX, startY, right, depth)
+		InanimateActor(StudentWorld* game, int imageID, int startX, int startY, int depth = 2): Actor(game, imageID, startX, startY, right, depth)
 		{m_game = game;}
 
 		// Destructor
-		virtual ~InanimateActor() {delete m_game;}
+		virtual ~InanimateActor() {}
 
 		// Public Interface
 		virtual void doSomething() = 0;
@@ -96,11 +96,11 @@ class Water: public InanimateActor{
 
 	public:
 		// Constructor
-		Water(StudentWorld* game, int startX, int startY): InanimateActor(game, IID_WATER_POOL, startX, startY, 2)
+		Water(StudentWorld* game, int startX, int startY): InanimateActor(game, IID_WATER_POOL, startX, startY)
 		{m_game = game;}
 
 		// Destructor
-		virtual ~Water() {delete m_game;}
+		virtual ~Water() {}
 
 		// Public Interface
 		virtual void doSomething() {m_game->stunInsects(getX(), getY());}
@@ -110,7 +110,68 @@ class Water: public InanimateActor{
 		StudentWorld* m_game;
 };
 
-#endif // PEBBLE_H_
+#endif // WATER_H_
+
+
+
+///////////////////////////////////////////////////////////////
+/////////////////////////// FOOD //////////////////////////////
+///////////////////////////////////////////////////////////////
+
+#ifndef FOOD_H_
+#define FOOD_H_
+
+class Food: public InanimateActor{
+
+	public:
+		// Constructor
+		Food(StudentWorld* game, int startX, int startY, int foodPts = 6000): InanimateActor(game, IID_FOOD, startX, startY)
+		{m_game = game;}
+
+		// Destructor
+		virtual ~Food() {}
+
+		// Public Interface
+		virtual void doSomething() {return;}
+
+		virtual bool isBlocker() {return false;}
+
+	private:
+		StudentWorld* m_game;
+		int m_foodPts;
+};
+
+#endif // FOOD_H_
+
+
+///////////////////////////////////////////////////////////////
+////////////////////////// POISON /////////////////////////////
+///////////////////////////////////////////////////////////////
+
+#ifndef POISON_H_
+#define POISON_H_
+
+class Poison: public InanimateActor{
+
+	public:
+		// Constructor
+		Poison(StudentWorld* game, int startX, int startY): InanimateActor(game, IID_POISON, startX, startY)
+		{m_game = game;}
+
+		// Destructor
+		virtual ~Poison() {}
+
+		// Public Interface
+		virtual void doSomething() {m_game->poisonInsects(getX(), getY());}
+
+		virtual bool isBlocker() {return false;}
+
+	private:
+		StudentWorld* m_game;
+		int m_foodPts;
+};
+
+#endif // FOOD_H_
 
 
 ///////////////////////////////////////////////////////////////
@@ -124,11 +185,11 @@ class AnimateActor : public Actor{
 
 	public:
 		// Constructor
-		AnimateActor(StudentWorld* game, int imageID, int startX, int startY, Direction dir, int depth, int healthPts): Actor(game, imageID, startX, startY, dir, depth)
+		AnimateActor(StudentWorld* game, int imageID, int startX, int startY, Direction dir, int healthPts): Actor(game, imageID, startX, startY, dir)
 		{m_game = game; m_points = healthPts;}
 
 		// Destructor
-		virtual ~AnimateActor() {delete m_game;}
+		virtual ~AnimateActor() {}
 
 		// Public Interface
 		virtual bool isAnimate() {return true;}
@@ -174,7 +235,7 @@ class Grasshopper: public AnimateActor {
 		// Constructor
 		Grasshopper(StudentWorld* game, int ImageID, int startX, int startY, int points)
 		: ticks(0), distanceToMove(randInt(2, 10)), // member variables
-		AnimateActor(game, ImageID, startX, startY, /*random direction*/ randDir(), /*random distance*/ distanceToMove, points) {}
+		AnimateActor(game, ImageID, startX, startY, /*random direction*/ randDir(), points) {}
 
 		// Destructor
 		virtual ~Grasshopper() {}
@@ -212,7 +273,7 @@ class BabyGrasshopper: public Grasshopper {
 		{ m_game = game;}
 
 		// Destructor
-		virtual ~BabyGrasshopper() {delete m_game;}
+		virtual ~BabyGrasshopper() {}
 
 		// Public Interface
 		//virtual void doSomething(); not differentiated functionality yet
@@ -230,7 +291,6 @@ class BabyGrasshopper: public Grasshopper {
 #endif // BABYGRASSHOPPER_H_
 
 
-
 ///////////////////////////////////////////////////////////////
 ///////////////////// ADULT GRASSHOPPER ///////////////////////
 ///////////////////////////////////////////////////////////////
@@ -246,7 +306,7 @@ class AdultGrasshopper: public Grasshopper {
 		{ m_game = game;}
 
 		// Destructor
-		virtual ~AdultGrasshopper() {delete m_game;}
+		virtual ~AdultGrasshopper() {}
 
 		// Public Interface
 		//virtual void doSomething(); not differentiated functionality yet
