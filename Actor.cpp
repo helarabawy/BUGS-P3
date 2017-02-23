@@ -19,6 +19,7 @@ void Grasshopper::doSomething()
 	if (isDead() || isSleeping())
 		return;
 
+	cout << "1. check stun status: " <<  checkStunStatus() << endl;
 	if (isStunned())
 	{
 		decrementStunnedTicks();
@@ -102,6 +103,7 @@ void Grasshopper::doSomething()
 bool BabyGrasshopper::isStunned()
 {
 
+	cerr << "2. check stun status: " << checkStunStatus() << endl;
 	if (checkStunStatus() == true && stunnedTicks == 0)
 	{
 		stunnedTicks = 2;

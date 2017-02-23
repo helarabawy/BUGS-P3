@@ -106,33 +106,6 @@ bool StudentWorld::isBlocked(int x, int y)
 	return false;
 }
 
-
-// CHECK IF ACTOR IS STUNNED AT (x, y)
-bool StudentWorld::isStunned(int x, int y)
-{
-
-	// convert x, y
-	int id = x*VIEW_WIDTH + y; // TODO: verify this
-
-	// defining iterator at id
-	list<Actor*>::const_iterator it;
-
-	// calling all actors at (x, y) to do sth
-	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
-	{
-		// found a stunner!
-		if ((*it)->checkStunStatus() == true)
-		{
-			cerr << "stunned" << endl;
-			return true;
-		}
-	}
-
-	// no stunner found
-	return false;
-}
-
-
 // STUN INSECTS AT (x, y)
 void StudentWorld::stunInsects(int x, int y)
 {
@@ -144,6 +117,7 @@ void StudentWorld::stunInsects(int x, int y)
 
 	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
 	{
+		cerr << "STUNNING AT ID: " << id << endl;
 		(*it)->stun();
 	}
 

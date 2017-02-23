@@ -34,7 +34,7 @@ class Actor: public GraphObject {
 		bool isBlocked(int x, int y) {return m_game->isBlocked(x, y);} // TODO: fix x, y confusion
 
 		// stunning
-		void stun() {stunned = true;}
+		void stun() {stunned = true; cerr << "I just got stunned: " << checkStunStatus() << endl;}
 		void unstun() {stunned = false;}
 		bool checkStunStatus() {return stunned;}
 
@@ -171,6 +171,7 @@ class BabyGrasshopper: public Grasshopper {
 
 		// Public Interface
 		//virtual void doSomething(); not differentiated functionality yet
+
 		virtual bool isStunned();
 		virtual void decrementStunnedTicks()
 		{
