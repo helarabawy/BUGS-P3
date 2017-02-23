@@ -29,12 +29,12 @@ public:
 
 	// status at (x, y)
 	bool isBlocked(int x, int y);
-	bool isStunned(int x, int y);
+	/*bool isStunned(int x, int y);
 	//bool hasFood(int x, int y);
 
 	// change status at (x, y)
 	void stunInsects(int x, int y);
-	//void depleteFood(int x, int y, int pts);
+	//void depleteFood(int x, int y, int pts);*/
 
 private:
 

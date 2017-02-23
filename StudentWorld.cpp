@@ -77,8 +77,17 @@ void StudentWorld::cleanUp()
 {
 	for (int i = 0; i < VIEW_WIDTH*VIEW_HEIGHT; i++)
 	{
-		// TODO: delete pointers?
-		virtualWorld[i].clear();
+		// defining iterator at (x, y)'s list of Actor*
+		list<Actor*>::const_iterator it;
+
+		// calling all actors at (x, y) to do sth
+		for (it = virtualWorld[i].begin(); it != virtualWorld[i].end(); it++)
+		{
+			 delete *it;
+			 virtualWorld[i].erase(it);
+
+			 it = virtualWorld[i].begin();
+		}
 	}
 }
 
@@ -107,7 +116,7 @@ bool StudentWorld::isBlocked(int x, int y)
 }
 
 // STUN INSECTS AT (x, y)
-void StudentWorld::stunInsects(int x, int y)
+/*void StudentWorld::stunInsects(int x, int y)
 {
 	// convert x, y
 	int id = x*VIEW_WIDTH + y; // TODO: verify this
@@ -121,7 +130,7 @@ void StudentWorld::stunInsects(int x, int y)
 		(*it)->stun();
 	}
 
-}
+}*/
 
 // LOAD FIELD INTO CONTAINER
 bool StudentWorld::loadField()
@@ -159,12 +168,12 @@ bool StudentWorld::loadField()
 			 virtualWorld[i].push_back(new BabyGrasshopper(this, x, y));
 		 }
 
-		 // found water
+/*		 // found water
 		 if (item == Field::FieldItem::water)
 		 {
 			 virtualWorld[i].push_back(new Water(this, x, y));
 		 }
-/*
+
 		 // found poison
 		 if (item == Field::FieldItem::poison)
 		 {

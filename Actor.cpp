@@ -19,13 +19,12 @@ void Grasshopper::doSomething()
 	if (isDead() || isSleeping())
 		return;
 
-	cout << "1. check stun status: " <<  checkStunStatus() << endl;
-	if (isStunned())
+	/*if (isStunned())
 	{
 		decrementStunnedTicks();
 		return;
 	}
-	unstun();
+	unstun();*/
 
 	// current direction
 	Direction dir = getDirection();
@@ -100,6 +99,7 @@ void Grasshopper::doSomething()
 ////////////// BABY GRASSHOPPER IMPLEMENTATION ////////////////
 ///////////////////////////////////////////////////////////////
 
+/*
 bool BabyGrasshopper::isStunned()
 {
 
@@ -122,4 +122,5 @@ bool BabyGrasshopper::isStunned()
 	 } else
 		return false;
 }
+*/
 

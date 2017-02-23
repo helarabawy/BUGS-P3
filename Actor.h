@@ -33,10 +33,12 @@ class Actor: public GraphObject {
 		virtual bool isBlocker() {return false;}
 		bool isBlocked(int x, int y) {return m_game->isBlocked(x, y);} // TODO: fix x, y confusion
 
+/*
 		// stunning
 		void stun() {stunned = true; cerr << "I just got stunned: " << checkStunStatus() << endl;}
 		void unstun() {stunned = false;}
 		bool checkStunStatus() {return stunned;}
+*/
 
 		// status
 		virtual bool isDead() {return m_points <= 0;}
@@ -45,12 +47,10 @@ class Actor: public GraphObject {
 
 
 	private:
-		bool stunned = false;
+		// bool stunned = false;
 		int m_points;
 		StudentWorld* m_game;
 };
-
-
 
 
 ///////////////////////////////////////////////////////////////
@@ -78,10 +78,12 @@ class Pebble: public Actor{
 #endif // PEBBLE_H_
 
 
+
 ///////////////////////////////////////////////////////////////
 ///////////////////////// WATER ///////////////////////////////
 ///////////////////////////////////////////////////////////////
 
+/*
 #ifndef WATER_H_
 #define WATER_H_
 
@@ -90,7 +92,7 @@ class Water: public Actor{
 
 	public:
 		// Constructor
-		Water(StudentWorld* game, int startX, int startY): Actor(game, IID_WATER_POOL, startX, startY, right,/*pool doesn't move*/ 2, 1)
+		Water(StudentWorld* game, int startX, int startY): Actor(game, IID_WATER_POOL, startX, startY, right,pool doesn't move 2, 1)
 		{m_game = game;}
 
 		// Destructor
@@ -104,6 +106,7 @@ class Water: public Actor{
 };
 
 #endif // WATER_H_
+*/
 
 
 ///////////////////////////////////////////////////////////////
@@ -127,9 +130,9 @@ class Grasshopper: public Actor {
 		// Public Interface
 		virtual void doSomething();
 		virtual bool isSleeping() {return ticks%3 != 0;}
-		virtual bool isStunned() = 0;
+	/*	virtual bool isStunned() = 0;
 		virtual void decrementStunnedTicks() = 0;
-
+*/
 	private:
 		// generate random direction
 		Direction randDir()
@@ -172,6 +175,7 @@ class BabyGrasshopper: public Grasshopper {
 		// Public Interface
 		//virtual void doSomething(); not differentiated functionality yet
 
+/*
 		virtual bool isStunned();
 		virtual void decrementStunnedTicks()
 		{
@@ -179,9 +183,10 @@ class BabyGrasshopper: public Grasshopper {
 				stunnedTicks -= 2;
 			else stunnedTicks--;
 		}
+*/
 
 	private:
-		int stunnedTicks = 0;
+//		int stunnedTicks = 0;
 		StudentWorld* m_game;
 		
 };
