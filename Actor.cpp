@@ -93,34 +93,46 @@ void Grasshopper::doSomething()
 	}
 }
 
-
+GraphObject::Direction Grasshopper::randDir()
+{
+	int rand = randInt(1, 4);
+	switch(rand)
+	{
+		case 1: return GraphObject::up;
+		case 2: return GraphObject::right;
+		case 3: return GraphObject::down;
+		case 4: return GraphObject::left;
+		default:return GraphObject::none; // TODO: check if none should be an option
+	}
+}
 
 ///////////////////////////////////////////////////////////////
 ////////////// BABY GRASSHOPPER IMPLEMENTATION ////////////////
 ///////////////////////////////////////////////////////////////
 
-/*
 bool BabyGrasshopper::isStunned()
 {
-
-	cerr << "2. check stun status: " << checkStunStatus() << endl;
 	if (checkStunStatus() == true && stunnedTicks == 0)
 	{
 		stunnedTicks = 2;
-		cerr << "is stunned" << endl;
 		return true;
 	} else if (checkStunStatus() == true && stunnedTicks == 1)
 	{
-		cerr << "is stunned" << endl;
 		return true;
 	}
 	 else if (stunnedTicks == -1)
 	 {
-		 cerr << "not stunned" << endl;
 		stunnedTicks = 0;
 		return false;
 	 } else
 		return false;
 }
-*/
+
+void BabyGrasshopper::decrementStunnedTicks()
+{
+	if (stunnedTicks == 1)
+		stunnedTicks -= 2;
+	else stunnedTicks--;
+}
+
 

@@ -49,13 +49,15 @@ int StudentWorld::move()
 			 (*it)->doSomething();
 
 			 // remove dead actors
-			 if ((*it)->isDead())
+			 if ((*it)->isAnimate())
 			 {
+				 if ((*it)->isDead())
+				 {
+					 delete *it;
+					 virtualWorld[i].erase(it);
 
-				 delete *it;
-				 virtualWorld[i].erase(it);
-
-				 it = virtualWorld[i].begin();
+					 it = virtualWorld[i].begin();
+			 	 }
 			 }
 		 }
 	}
@@ -116,7 +118,7 @@ bool StudentWorld::isBlocked(int x, int y)
 }
 
 // STUN INSECTS AT (x, y)
-/*void StudentWorld::stunInsects(int x, int y)
+void StudentWorld::stunInsects(int x, int y)
 {
 	// convert x, y
 	int id = x*VIEW_WIDTH + y; // TODO: verify this
@@ -126,11 +128,11 @@ bool StudentWorld::isBlocked(int x, int y)
 
 	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
 	{
-		cerr << "STUNNING AT ID: " << id << endl;
-		(*it)->stun();
+		if ((*it)->isAnimate())
+			(*it)->stun();
 	}
 
-}*/
+}
 
 // LOAD FIELD INTO CONTAINER
 bool StudentWorld::loadField()
@@ -168,13 +170,13 @@ bool StudentWorld::loadField()
 			 virtualWorld[i].push_back(new BabyGrasshopper(this, x, y));
 		 }
 
-/*		 // found water
+		 // found water
 		 if (item == Field::FieldItem::water)
 		 {
 			 virtualWorld[i].push_back(new Water(this, x, y));
 		 }
 
-		 // found poison
+/*		 // found poison
 		 if (item == Field::FieldItem::poison)
 		 {
 			 virtualWorld[IID_POISON].push_back(new Poison(this, x, y));
