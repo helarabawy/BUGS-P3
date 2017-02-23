@@ -3,19 +3,17 @@
 #include "GameConstants.h"
 #include "Field.h"
 #include <string>
-#include <vector>
+#include <list>
 #include <iostream>
-#include <sstream>
 
 using namespace std;
-
-
 
 GameWorld* createStudentWorld(string assetDir)
 {
 	return new StudentWorld(assetDir);
 }
 
+// STARTING SIMULATION
 int StudentWorld::init()
 {
 	currTicks = 0;
@@ -30,31 +28,38 @@ int StudentWorld::init()
 		}
 }
 
-
+// DOING EACH MOVE
 int StudentWorld::move()
 {
 	currTicks++;
 	
 	// Give each actor a chance to do something
-	for (int i = 0; i < VIEW_WIDTH; i++)
+	for(int i = 0; i < VIEW_WIDTH*VIEW_HEIGHT; i++)
 	{
-		// calling every alive/awake actor to doSomething
-		for (int j = 0; j < VIEW_HEIGHT; j++)
-		{
-			Coord c;
-			c.x = i;
-			c.y = j;
-			Actor* q = virtualWorld[c];
+		 // translating int to x and y values
+		 int x = i/VIEW_WIDTH;
+		 int y = i%VIEW_WIDTH;
 
-			q->doSomething();
+		 // defining iterator at (x, y)'s list of Actor*
+		 list<Actor*>::const_iterator it;
 
-			// remove dead actors
-			if (q->isDead()){
-				delete virtualWorld[c];
-				virtualWorld[c].erase(virtualWorld[c]);
-			}
-		}
+		 // calling all actors at (x, y) to do sth
+		 for (it = virtualWorld[i].begin(); it != virtualWorld[i].end(); it++)
+		 {
+			 (*it)->doSomething();
+
+			 // remove dead actors
+			 if ((*it)->isDead())
+			 {
+
+				 delete *it;
+				 virtualWorld[i].erase(it);
+
+				 it = virtualWorld[i].begin();
+			 }
+		 }
 	}
+
 	
 	updateDisplayText();
 	
@@ -67,50 +72,84 @@ int StudentWorld::move()
 	return GWSTATUS_CONTINUE_GAME;
 }
 
+// CLEAN UP SIMULATION
 void StudentWorld::cleanUp()
 {
-	for (int i = 0; i < VIEW_WIDTH; i++)
+	for (int i = 0; i < VIEW_WIDTH*VIEW_HEIGHT; i++)
 	{
-		for (int j = 0; j < VIEW_HEIGHT; j++)
-		{
-
-			Coord c = {.x = i, .y = j};
-			delete virtualWorld[c];
-			virtualWorld.erase(virtualWorld[c]);
-		}
+		// TODO: delete pointers?
+		virtualWorld[i].clear();
 	}
 }
 
 
+// CHECK IF ACTOR IS BLOCKED AT (x, y)
 bool StudentWorld::isBlocked(int x, int y)
 {
-	map<Coord, Actor*> ::iterator itr;
-	Coord c = {.x = i, .y = j};
-	itr = virtualWorld.find(c);
+	// convert x, y
+	int id = x*VIEW_WIDTH + y; // TODO: verify this
 
-	// this is dumb the commits kinda merged in an annoying way, ignore I will fix
-	if ((*itr)->getX() == x && (*itr)->getY() == y)
-		return true;
+	// defining iterator at id
+	list<Actor*>::const_iterator it;
 
+	// calling all actors at (x, y) to do sth
+	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
+	{
+		// found a blocker!
+		if ((*it)->isBlocker())
+		{
+			return true;
+		}
+	}
+
+	// no blocker found
 	return false;
 }
 
 
+// CHECK IF ACTOR IS STUNNED AT (x, y)
 bool StudentWorld::isStunned(int x, int y)
 {
-	map<Coord, Actor*> ::iterator itr;
-	Coord c = {.x = i, .y = j};
-	itr = virtualWorld.find(c);
 
+	// convert x, y
+	int id = x*VIEW_WIDTH + y; // TODO: verify this
 
-	// this is dumb the commits kinda merged in an annoying way, ignore I will fix
-	if ((*itr)->getX() == x && (*itr)->getY() == y)
-		return true;
+	// defining iterator at id
+	list<Actor*>::const_iterator it;
 
+	// calling all actors at (x, y) to do sth
+	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
+	{
+		// found a stunner!
+		if ((*it)->checkStunStatus() == true)
+		{
+			cerr << "stunned" << endl;
+			return true;
+		}
+	}
+
+	// no stunner found
 	return false;
 }
 
 
+// STUN INSECTS AT (x, y)
+void StudentWorld::stunInsects(int x, int y)
+{
+	// convert x, y
+	int id = x*VIEW_WIDTH + y; // TODO: verify this
+
+	// defining iterator at id
+	list<Actor*>::const_iterator it;
+
+	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
+	{
+		(*it)->stun();
+	}
+
+}
+
+// LOAD FIELD INTO CONTAINER
 bool StudentWorld::loadField()
 {
 	  Field f;
@@ -124,48 +163,50 @@ bool StudentWorld::loadField()
 		return false; // something bad happened!
 	 }
 
-	 for (int x = 0; x < VIEW_WIDTH; x++)
+	 // filling container
+	 for (int i = 0; i < VIEW_HEIGHT * VIEW_WIDTH; i++)
 	 {
-		 for (int y = 0; y < VIEW_HEIGHT; y++)
+		 // translating int to x and y values
+		 int x = i/VIEW_WIDTH;
+		 int y = i%VIEW_WIDTH;
+
+		 // storing item at (x, y)
+		 Field::FieldItem item = f.getContentsOf(y, x);
+
+		 // found a rock
+		 if (item == Field::FieldItem::rock)
 		 {
-			 Field::FieldItem item = f.getContentsOf(y, x);
-			 Coord c;
-			 c.x = x;
-			 c.y = y;
-
-			 // found a rock
-			 if (item == Field::FieldItem::rock)
-			 {
-				 virtualWorld[c] = new Pebble(this, x, y);
-			 }
-
-			 // found a grasshopper
-			 if (item == Field::FieldItem::grasshopper)
-			 {
-				 virtualWorld[c] = new BabyGrasshopper(this, x, y);
-			 }
-
-			 // found water
-			 if (item == Field::FieldItem::water)
-			 {
-				 virtualWorld[c] = new Water(this, x, y));
-			 }
-/*
-
-			 // found poison
-			 if (item == Field::FieldItem::poison)
-			 {
-				 virtualWorld[IID_POISON].push_back(new Poison(this, x, y));
-			 }
-*/
+			 virtualWorld[i].push_back(new Pebble(this, x, y));
 		 }
+
+		 // found a grasshopper
+		 if (item == Field::FieldItem::grasshopper)
+		 {
+			 virtualWorld[i].push_back(new BabyGrasshopper(this, x, y));
+		 }
+
+		 // found water
+		 if (item == Field::FieldItem::water)
+		 {
+			 virtualWorld[i].push_back(new Water(this, x, y));
+		 }
+/*
+		 // found poison
+		 if (item == Field::FieldItem::poison)
+		 {
+			 virtualWorld[IID_POISON].push_back(new Poison(this, x, y));
+		 }
+*/
+
+
 	  }
 	
 	  return true;
 }
 
-#include <sstream>
 
+// UPDATE DISPLAY TEXT
+#include <sstream>
 void StudentWorld::updateDisplayText()
 {
 	string text = "Ticks: ";

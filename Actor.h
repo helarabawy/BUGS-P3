@@ -23,14 +23,29 @@ class Actor: public GraphObject {
 		// Public Interface
 		virtual void doSomething() = 0;
 		
+		// dealing with points
 		int getPoints() {return m_points;} // return number of points
 		void setPoints(int modifiedPoints) { m_points = modifiedPoints;} // set points to new value
+
+		// STATUS
+
+		// blocking
+		virtual bool isBlocker() {return false;}
 		bool isBlocked(int x, int y) {return m_game->isBlocked(x, y);} // TODO: fix x, y confusion
+
+		// stunning
+		void stun() {stunned = true;}
+		void unstun() {stunned = false;}
+		bool checkStunStatus() {return stunned;}
+
+		// status
 		virtual bool isDead() {return m_points <= 0;}
-		virtual bool isSleeping() = 0;
+		virtual bool isSleeping() {return true;}
 		
 
+
 	private:
+		bool stunned = false;
 		int m_points;
 		StudentWorld* m_game;
 };
@@ -57,7 +72,7 @@ class Pebble: public Actor{
 
 		// Public Interface
 		virtual void doSomething() {return;} // Pebble should do nothing during tick
-		virtual bool isSleeping() {return true;} // pebble always sleeping
+		virtual bool isBlocker() {return true;}
 };
 
 #endif // PEBBLE_H_
@@ -82,12 +97,10 @@ class Water: public Actor{
 		virtual ~Water() {}
 
 		// Public Interface
-		virtual void doSomething() {return;}//{m_game->stunInsects(getX(), getY())} // Pebble should do nothing during tick
-		virtual bool isSleeping() {return true;} // pebble always sleeping
+		virtual void doSomething() {m_game->stunInsects(getX(), getY());}
 
 	private:
 		StudentWorld* m_game;
-
 };
 
 #endif // WATER_H_
@@ -114,7 +127,7 @@ class Grasshopper: public Actor {
 		// Public Interface
 		virtual void doSomething();
 		virtual bool isSleeping() {return ticks%3 != 0;}
-		virtual bool isStunned() {return false;}
+		virtual bool isStunned() = 0;
 		virtual void decrementStunnedTicks() = 0;
 
 	private:

@@ -4,7 +4,7 @@
 #include "GameWorld.h"
 #include "GameConstants.h"
 #include <string>
-#include <vector>
+#include <list>
 
 const int NUM_ACTORS = 15;
 using namespace std;
@@ -27,26 +27,18 @@ public:
 
 	virtual void cleanUp();
 
+	// status at (x, y)
 	bool isBlocked(int x, int y);
 	bool isStunned(int x, int y);
+	//bool hasFood(int x, int y);
 
-
-
+	// change status at (x, y)
+	void stunInsects(int x, int y);
+	//void depleteFood(int x, int y, int pts);
 
 private:
-	struct Coord {
-			int x;
-			int y;
-	};
 
-	bool Coord::operator<(const Coord &a, const Coord &b) const
-	{
-		if (a.x < b.x)
-			return true;
-		return false;
-	}
-
-	map<Coord, Actor*> virtualWorld; // class container
+	map<int, list<Actor*>> virtualWorld; // class container
 
 	bool loadField();
 	void updateDisplayText();

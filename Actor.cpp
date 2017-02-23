@@ -24,6 +24,7 @@ void Grasshopper::doSomething()
 		decrementStunnedTicks();
 		return;
 	}
+	unstun();
 
 	// current direction
 	Direction dir = getDirection();
@@ -100,14 +101,20 @@ void Grasshopper::doSomething()
 
 bool BabyGrasshopper::isStunned()
 {
-	if (m_game->isStunned(getX(), getY()) && stunnedTicks == 0)
+
+	if (checkStunStatus() == true && stunnedTicks == 0)
 	{
 		stunnedTicks = 2;
+		cerr << "is stunned" << endl;
 		return true;
-	} else if (m_game->isStunned(getX(), getY()) && stunnedTicks == 1)
+	} else if (checkStunStatus() == true && stunnedTicks == 1)
+	{
+		cerr << "is stunned" << endl;
 		return true;
+	}
 	 else if (stunnedTicks == -1)
 	 {
+		 cerr << "not stunned" << endl;
 		stunnedTicks = 0;
 		return false;
 	 } else
