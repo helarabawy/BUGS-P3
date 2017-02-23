@@ -53,6 +53,8 @@ int StudentWorld::move()
 			 {
 				 if ((*it)->isDead())
 				 {
+					 // body decomposes
+					 virtualWorld[i].push_back(new Food(this, x, y, 100));
 					 delete *it;
 					 virtualWorld[i].erase(it);
 
