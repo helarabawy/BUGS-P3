@@ -327,7 +327,14 @@ class AdultGrasshopper: public Grasshopper {
 	private:
 		void bite();
 		void jump();
+		void jumpTo(int x, int y);
 
+		struct Coord{
+			int x;
+			int y;
+		}
+
+		vector<Coord> jumpOptions;
 
 		StudentWorld* m_game;
 

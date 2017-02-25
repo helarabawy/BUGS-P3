@@ -157,16 +157,58 @@ void BabyGrasshopper::grow()
 
 void AdultGrasshopper::doFunction()
 {
-	bite();
-	jump();
+	// 1/3 chances to bite
+	if (randInt(1,3) == 1)
+		bite();
+
+	// 1/10 chances to jump
+	if (randInt(1, 10) == 1)
+		jump(1);
 }
 
 void AdultGrasshopper::bite()
 {
-
+	// DO STUFF
 }
 
+const int TOTAL_POSSIBLE_SLOTS = 100;
+#include <cmath>
 void AdultGrasshopper::jump()
 {
+	// no more options left
+	if (jumpOptions.size() == TOTAL_POSSIBLE_SLOTS)
+		return;
+
+	int radius = randInt(1, 10);
+	int angle = randInt(0, 364);
+
+	// defining x & y
+	int x = ceil(radius*cos(angle*PI/180));
+	int y = ceil(radius*sin(angle*PI/180));
+
+	// checking if slot is open
+	if (m_game(isBlocked(x, y)))
+	{
+		Coord c;
+		c.x = x;
+		c.y = y;
+
+		for (int i = 0; i < jumpOptions.size(); i++)
+		{
+			// found an already checked coordinate
+			if (jumpOptions[i].x == c.x && jumpOptions[i].y == c.y)
+				jump();
+		}
+		// no repeated coordinates, store this one
+		jumpOptions.push_back(c);
+		jump();
+	} else
+		jumpTo(x, y); // found a place to jump to
+}
+
+void jumpTo(int x, int y)
+{
+	m_game->moveActor(this, getX(), getY(), x, y);
+	moveTo(x, y);
 
 }

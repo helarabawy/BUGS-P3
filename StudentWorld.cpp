@@ -306,7 +306,10 @@ void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 			}
 
 		}
+
+	// new adult grasshopper
 	virtualWorld[id].push_back(new AdultGrasshopper(this, x, y));
+	// new food where baby died
 	virtualWorld[id].push_back(new Food(this, x, y, 100));
 
 
