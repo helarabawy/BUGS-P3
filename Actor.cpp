@@ -9,19 +9,18 @@
 // what grasshoppers do during a tick
 void Grasshopper::doSomething()
 {
-	//cerr << checkStunStatus() << endl;
 	// lose one hit point
 	setPoints(getPoints() - 1);
-	//cerr << "POINTS: " << getPoints() << endl;
-
-	//another tick
-	ticks++;
 
 	// check if died
 	if (isDead() || isSleeping())
 		return;
 
-	unstun();
+	// DIFFERENTIATED FUNCTION
+	doFunction();
+
+	// eat
+	eat();
 
 	// current direction
 	Direction dir = getDirection();
@@ -30,6 +29,49 @@ void Grasshopper::doSomething()
 	int oldX = getX();
 	int oldY = getY();
 
+	moveStep(dir, oldX, oldY);
+
+
+}
+
+bool Grasshopper::isSleeping()
+		{
+			if (checkStunStatus() == false)
+			{
+				if (ticksToSleep == 0)
+				{
+					ticksToSleep = 2;
+					stunned = false;
+					return false;
+				} else
+				{
+					ticksToSleep--;
+					return true;
+				}
+			}
+			else
+			{
+				ticksToSleep = 9;
+				return true;
+			}
+		}
+
+
+GraphObject::Direction Grasshopper::randDir()
+{
+	int rand = randInt(1, 4);
+	switch(rand)
+	{
+		case 1: return GraphObject::up;
+		case 2: return GraphObject::right;
+		case 3: return GraphObject::down;
+		case 4: return GraphObject::left;
+		default:return GraphObject::none; // TODO: check if none should be an option
+	}
+}
+
+void Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
+{
 	// make movement based on direction and roadblocks
 	switch (dir)
 	{
@@ -94,19 +136,37 @@ void Grasshopper::doSomething()
 	}
 }
 
-GraphObject::Direction Grasshopper::randDir()
-{
-	int rand = randInt(1, 4);
-	switch(rand)
-	{
-		case 1: return GraphObject::up;
-		case 2: return GraphObject::right;
-		case 3: return GraphObject::down;
-		case 4: return GraphObject::left;
-		default:return GraphObject::none; // TODO: check if none should be an option
-	}
-}
-
 ///////////////////////////////////////////////////////////////
 ////////////// BABY GRASSHOPPER IMPLEMENTATION ////////////////
 ///////////////////////////////////////////////////////////////
+
+void BabyGrasshopper::doFunction()
+{
+	grow();
+}
+
+void BabyGrasshopper::grow()
+{
+	if (getPoints() >= 1600)
+		m_game->growGrasshopper(this, getX(), getY());
+}
+
+///////////////////////////////////////////////////////////////
+///////////// ADULT GRASSHOPPER IMPLEMENTATION ////////////////
+///////////////////////////////////////////////////////////////
+
+void AdultGrasshopper::doFunction()
+{
+	bite();
+	jump();
+}
+
+void AdultGrasshopper::bite()
+{
+
+}
+
+void AdultGrasshopper::jump()
+{
+
+}

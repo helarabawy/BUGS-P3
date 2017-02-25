@@ -37,18 +37,14 @@ int StudentWorld::move()
 	// Give each actor a chance to do something
 	for(int i = 0; i < VIEW_WIDTH*VIEW_HEIGHT; i++)
 	{
-		 // translating int to x and y values
-		 int x = i/VIEW_WIDTH;
-		 int y = i%VIEW_WIDTH;
-
 		 // defining iterator at (x, y)'s list of Actor*
 		 list<Actor*>::const_iterator it;
 
 		 // calling all actors at (x, y) to do sth
 		 for (it = virtualWorld[i].begin(); it != virtualWorld[i].end(); it++)
 		 {
-//			 if ((*it)->isAnimate())
-//				 cerr << "Insect: " << endl;
+			 if ((*it)->isAnimate())
+				 cerr << "Insect: " << endl;
 
 			 (*it)->doSomething();
 
@@ -125,10 +121,9 @@ void StudentWorld::stunInsects(int x, int y)
 
 	// defining iterator at id
 	list<Actor*>::const_iterator it;
-
 	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
 	{
-		if ((*it)->isAnimate() == true)
+		//if ((*it)->isAnimate() == true)
 		{
 			//cerr << "STUNNED" << endl;
 			cerr << "STUNNING SOMETHING" << endl;
@@ -291,4 +286,28 @@ void StudentWorld::updateDisplayText()
 	oss << text << currTicks;
 
 	setGameStatText(oss.str());
+}
+
+
+void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
+{
+	int id = x*VIEW_WIDTH + y;
+
+	// iterating through old id's linked list to get rid of that actor
+	list<Actor*>::iterator it;
+	for (it = virtualWorld[id].begin();
+		it != virtualWorld[id].end(); it++)
+		{
+			// found that pointer and erase it
+			if ((*it) == bgh)
+			{
+				virtualWorld[id].erase(it); // TODO
+				break;
+			}
+
+		}
+	virtualWorld[id].push_back(new AdultGrasshopper(this, x, y));
+	virtualWorld[id].push_back(new Food(this, x, y, 100));
+
+
 }

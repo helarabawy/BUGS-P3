@@ -105,7 +105,7 @@ class Water: public InanimateActor{
 		virtual ~Water() {}
 
 		// Public Interface
-		virtual void doSomething() {m_game->stunInsects(getX(), getY());}
+		virtual void doSomething() {cerr << "STUNNING INSECTS AT " << getX() << ", " << getY() << endl; m_game->stunInsects(getX(), getY());}
 		virtual bool isBlocker() {return false;}
 
 	private:
@@ -213,7 +213,7 @@ class AnimateActor : public Actor{
 		virtual bool isBlocker() {return false;}
 
 		// stunning
-		virtual void stun() {cerr << "STUNNED" << endl; stunned = true;}
+		virtual void stun() {cerr << "I just got stunned" << endl; stunned = true;}
 		void unstun() {stunned = false;}
 		virtual bool checkStunStatus() {return stunned;}
 
@@ -243,7 +243,7 @@ class Grasshopper: public AnimateActor {
 	public:
 		// Constructor
 		Grasshopper(StudentWorld* game, int ImageID, int startX, int startY, int points)
-		: ticks(0), distanceToMove(randInt(2, 10)), // member variables
+		: distanceToMove(randInt(2, 10)), // member variables
 		AnimateActor(game, ImageID, startX, startY, /*random direction*/ randDir(), points) {m_game = game;}
 
 		// Destructor
@@ -253,44 +253,18 @@ class Grasshopper: public AnimateActor {
 		virtual void doSomething();
 
 		// stunning
-		void unstun() {stunned = false; stunSleep = false;}
 		virtual bool checkStunStatus() {return stunned;}
+		virtual bool isSleeping();
 
-
-
-		virtual bool isSleeping()
-		{
-			if (checkStunStatus() == false)
-				return ticks%3 != 0;
-			else
-			{
-				// it's stunned, sleeping patterns are different
-				if (stunSleep == false)
-				{
-					ticks = 0;
-					stunSleep = true;
-				}
-				// WRONG
-				if (ticks != 0)
-				{
-					if (ticks%9 != 0) return true;
-					else {
-						unstun();
-						stunSleep = false;
-						ticks = 0;
-						return false;
-					}
-				}
-				else return true;
-			}
-		}
+		void moveStep(Direction dir, int oldX, int oldY);
+		void eat();
+		void virtual doFunction() = 0;
 
 	private:
 		// generate random direction
 		GraphObject::Direction randDir();
-		bool stunSleep = false;
+		int ticksToSleep = 0;
 		bool stunned = false;
-		int ticks;
 		int distanceToMove;
 		StudentWorld* m_game;
 };
@@ -314,13 +288,11 @@ class BabyGrasshopper: public Grasshopper {
 
 		// Destructor
 		virtual ~BabyGrasshopper() {}
-
-		// Public Interface
-		//virtual void doSomething(); not differentiated functionality yet
-
-
+		void grow();
+		void virtual doFunction();
 
 	private:
+
 		int stunnedTicks = 0;
 		StudentWorld* m_game;
 		
@@ -350,9 +322,13 @@ class AdultGrasshopper: public Grasshopper {
 		// Public Interface
 		//virtual void doSomething(); not differentiated functionality yet
 
+		void virtual doFunction();
 
 	private:
-//		int stunnedTicks = 0;
+		void bite();
+		void jump();
+
+
 		StudentWorld* m_game;
 
 };
