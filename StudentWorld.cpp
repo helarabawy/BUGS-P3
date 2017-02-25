@@ -32,7 +32,8 @@ int StudentWorld::init()
 int StudentWorld::move()
 {
 	currTicks++;
-	
+	cerr << endl << "TICKS: " <<  currTicks << endl;
+
 	// Give each actor a chance to do something
 	for(int i = 0; i < VIEW_WIDTH*VIEW_HEIGHT; i++)
 	{
@@ -46,7 +47,11 @@ int StudentWorld::move()
 		 // calling all actors at (x, y) to do sth
 		 for (it = virtualWorld[i].begin(); it != virtualWorld[i].end(); it++)
 		 {
+			 if ((*it)->isAnimate())
+				 cerr << "Insect: " << endl;
+
 			 (*it)->doSomething();
+
 
 			 // remove dead actors
 			 removeDeadActors(it, i);
@@ -54,9 +59,13 @@ int StudentWorld::move()
 			 it = virtualWorld[i].begin();
 
 		 }
-	}
 
+	}
 	
+	// perform all pointer redirecting
+	redirectActorPtrs();
+	toMove.clear();
+
 	updateDisplayText();
 	
 	if (currTicks == 2000)
@@ -114,7 +123,7 @@ bool StudentWorld::isBlocked(int x, int y)
 // STUN INSECTS AT (x, y)
 void StudentWorld::stunInsects(int x, int y)
 {
-	// convert x, y
+	/*// convert x, y
 	int id = x*VIEW_WIDTH + y; // TODO: verify this
 
 	// defining iterator at id
@@ -124,18 +133,20 @@ void StudentWorld::stunInsects(int x, int y)
 	{
 		if ((*it)->isAnimate() == true)
 		{
+			cerr << "STUNNED" << endl;
 			//cerr << "STUNNING SOMETHING" << endl;
 			(*it)->stun();
 			//cerr << (*it)->checkStunStatus() << endl;
 		}
 	}
-}
+*/}
 
 // POISON INSECTS AT (x, y)
 void StudentWorld::poisonInsects(int x, int y)
 {
-	// convert x, y
+/*	// convert x, y
 	int id = x*VIEW_WIDTH + y; // TODO: verify this
+
 
 	// defining iterator at id
 	list<Actor*>::const_iterator it;
@@ -147,6 +158,7 @@ void StudentWorld::poisonInsects(int x, int y)
 			(*it)->poison();
 		}
 	}
+*/
 }
 
 // REMOVE DEAD INSECTS
@@ -156,8 +168,10 @@ void StudentWorld::removeDeadActors(list<Actor*>::const_iterator it, int i)
 	{
 		 if ((*it)->isDead())
 		 {
+				cerr << "delete actor" << endl;
+
 			 // body decomposes
-			 virtualWorld[i].push_back(new Food(this, (*it)->getX(), (*it)->getY(), 100));
+			// virtualWorld[i].push_back(new Food(this, (*it)->getX(), (*it)->getY(), 100));
 			 delete *it;
 			 virtualWorld[i].erase(it);
 		 }
@@ -165,27 +179,47 @@ void StudentWorld::removeDeadActors(list<Actor*>::const_iterator it, int i)
 }
 
 // MOVE ACTOR POINTERS
-void StudentWorld::moveActorPointers(Actor* actor, int oldX, int oldY, int newX, int newY)
+void StudentWorld::moveActor(Actor* actor, int oldX, int oldY, int newX, int newY)
 {
-
 	int old_id = oldX*VIEW_WIDTH + oldY;
 	int new_id = newX*VIEW_WIDTH + newY;
 
-	list<Actor*>::const_iterator it;
+	Movable x;
+	x.oldID = old_id;
+	x.newID = new_id;
+	x.ptr = actor;
 
-	for (it = virtualWorld[old_id].begin(); it != virtualWorld[old_id].end(); it++)
+	toMove.push_back(x);
+}
+
+
+// REDIRECTING ACTOR PTS
+void StudentWorld::redirectActorPtrs()
+{
+	// do this with iterator
+	for (int i = 0; i < toMove.size(); i++)
 	{
-		if (*it == actor)
-		{
-			//cerr << "found actor" << endl;
-			virtualWorld[new_id].push_back(*it);
-			virtualWorld[old_id].erase(it);
-			//cerr << "changed pointers correctly" << endl;
-			return;
-		}
+		int old_id = toMove[i].oldID;
+		int new_id = toMove[i].newID;
+		Actor* actor = toMove[i].ptr;
+
+		// copying actor pointer to new location
+		virtualWorld[new_id].push_back(actor);
+
+		// iterating through old id's linked list to get rid of that actor
+		list<Actor*>::iterator it;
+		for (it = virtualWorld[old_id].begin();
+			it != virtualWorld[old_id].end(); it++)
+			{
+				// found that pointer and erase it
+				if ((*it) == actor)
+				{
+					virtualWorld[old_id].erase(it);
+					break;
+				}
+
+			}
 	}
-
-
 }
 
 
@@ -231,17 +265,19 @@ bool StudentWorld::loadField()
 			 virtualWorld[i].push_back(new Water(this, x, y));
 		 }
 
-		 // found food
+		 /*// found food
 		 if (item == Field::FieldItem::food)
 		 {
 			 virtualWorld[i].push_back(new Food(this, x, y));
-		 }
+		 }*/
 
+/*
 		 // found poison
 		 if (item == Field::FieldItem::poison)
 		 {
 			 virtualWorld[i].push_back(new Poison(this, x, y));
 		 }
+*/
 
 	  }
 	

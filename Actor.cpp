@@ -12,6 +12,7 @@ void Grasshopper::doSomething()
 	//cerr << checkStunStatus() << endl;
 	// lose one hit point
 	setPoints(getPoints() - 1);
+	cerr << "POINTS: " << getPoints() << endl;
 
 	//another tick
 	ticks++;
@@ -20,7 +21,7 @@ void Grasshopper::doSomething()
 	if (isDead() || isSleeping())
 		return;
 
-	unstun();
+	//unstun();
 
 	// current direction
 	Direction dir = getDirection();
@@ -37,7 +38,7 @@ void Grasshopper::doSomething()
 			if (!isBlocked(oldX, oldY + 1))
 			{
 				moveTo(oldX, oldY + 1); // move on grid
-				m_game->moveActorPointers(this, oldX, oldY, oldX, oldY + 1); // move pointers
+				m_game->moveActor(this, oldX, oldY, oldX, oldY + 1); // move pointers
 				distanceToMove--;
 			}
 			else {distanceToMove = 0;}
@@ -50,7 +51,7 @@ void Grasshopper::doSomething()
 			if (!isBlocked(oldX + 1, oldY))
 			{
 				moveTo(oldX + 1, oldY); // move on grid
-				m_game->moveActorPointers(this, oldX, oldY, oldX + 1, oldY); // move pointers
+				m_game->moveActor(this, oldX, oldY, oldX + 1, oldY); // move pointers
 				distanceToMove--;
 			}
 			else {distanceToMove = 0;}
@@ -62,7 +63,7 @@ void Grasshopper::doSomething()
 			if (!isBlocked(oldX, oldY - 1))
 			{
 				moveTo(oldX, oldY - 1);// move on grid
-				m_game->moveActorPointers(this, oldX, oldY, oldX, oldY - 1); // move pointers
+				m_game->moveActor(this, oldX, oldY, oldX, oldY - 1); // move pointers
 				distanceToMove--;
 			}
 			else {distanceToMove = 0;}
@@ -74,7 +75,7 @@ void Grasshopper::doSomething()
 			if (!isBlocked(oldX - 1, oldY))
 			{
 				moveTo(oldX - 1, oldY); // move on grid
-				m_game->moveActorPointers(this, oldX, oldY, oldX - 1, oldY); // move pointers
+				m_game->moveActor(this, oldX, oldY, oldX - 1, oldY); // move pointers
 				distanceToMove--;
 			}
 			else {distanceToMove = 0;}

@@ -119,6 +119,7 @@ class Water: public InanimateActor{
 ///////////////////////////////////////////////////////////////
 /////////////////////////// FOOD //////////////////////////////
 ///////////////////////////////////////////////////////////////
+/*
 
 #ifndef FOOD_H_
 #define FOOD_H_
@@ -144,12 +145,14 @@ class Food: public InanimateActor{
 };
 
 #endif // FOOD_H_
+*/
 
 
 ///////////////////////////////////////////////////////////////
 ////////////////////////// POISON /////////////////////////////
 ///////////////////////////////////////////////////////////////
 
+/*
 #ifndef POISON_H_
 #define POISON_H_
 
@@ -174,6 +177,7 @@ class Poison: public InanimateActor{
 };
 
 #endif // FOOD_H_
+*/
 
 
 ///////////////////////////////////////////////////////////////
@@ -214,7 +218,7 @@ class AnimateActor : public Actor{
 		virtual bool checkStunStatus() {return stunned;}
 
 		// poisoning
-		virtual void poison() {m_points -= 150; poisoned = true;}
+		virtual void poison() {/*m_points -= 150; poisoned = true;*/}
 
 	private:
 		bool stunned;
@@ -256,7 +260,7 @@ class Grasshopper: public AnimateActor {
 
 		virtual bool isSleeping()
 		{
-		//	if (checkStunStatus() == false)
+			//if (checkStunStatus() == false)
 				return ticks%3 != 0;
 			/*else
 			{
