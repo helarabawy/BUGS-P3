@@ -40,10 +40,18 @@ void Grasshopper::doSomething()
 		return;
 
 	// DIFFERENTIATED FUNCTION
-	doFunction();
+	if (doFunction() == true)
+	{
+		ticksToSleep = 2;
+		return;
+	}
 
 	// eat
-	bool willRest = eat();
+	if (eat() == true)
+	{
+		ticksToSleep = 2;
+		return;
+	}
 
 	// current direction
 	Direction dir = getDirection();
@@ -162,17 +170,17 @@ void Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
 bool Grasshopper::eat()
 {
 	// is there food? if so, eat
-//	int foodPts = m_game->eatFood(getX(), getY());
-//
-//	if (foodPts == 0) // no food to eat
-//		return false;
-//	else
-//		setPoints(getPoints() + foodPts);
-//
-//	// 50% chance to sleep if ate
-//	if (randInt(1,2) == 1)
-//		return true;
-//	else
+	int foodPts = m_game->eatFood(getX(), getY());
+
+	if (foodPts == 0) // no food to eat
+		return false;
+	else
+		setPoints(getPoints() + foodPts);
+
+	// 50% chance to sleep if ate
+	if (randInt(1,2) == 1)
+		return true;
+	else
 		return false;
 }
 
@@ -180,7 +188,7 @@ bool Grasshopper::eat()
 ////////////// BABY GRASSHOPPER IMPLEMENTATION ////////////////
 ///////////////////////////////////////////////////////////////
 
-void BabyGrasshopper::doFunction()
+bool BabyGrasshopper::doFunction()
 {
 	grow();
 }
@@ -195,21 +203,20 @@ void BabyGrasshopper::grow()
 ///////////// ADULT GRASSHOPPER IMPLEMENTATION ////////////////
 ///////////////////////////////////////////////////////////////
 
-void AdultGrasshopper::doFunction()
+bool AdultGrasshopper::doFunction()
 {
 	// 1/3 chances to bite
 	if (randInt(1,3) == 1)
-		bite();
+		if (m_game->biteRandomInsect(getX(), getY()) == true)
+			return true;
 
 	// 1/10 chances to jump
 	if (randInt(1, 10) == 1)
 		jump();
+
+	return jumped;
 }
 
-void AdultGrasshopper::bite()
-{
-	// DO STUFF
-}
 
 const int TOTAL_POSSIBLE_SLOTS = 100; // WRONG, FIGURE OUT THIS NUMBER
 #include <cmath>
@@ -249,6 +256,7 @@ void AdultGrasshopper::jump()
 
 void AdultGrasshopper::jumpTo(int x, int y)
 {
+	jumped = true;
 	m_game->moveActor(this, getX(), getY(), x, y);
 	moveTo(x, y);
 

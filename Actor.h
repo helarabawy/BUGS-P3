@@ -260,6 +260,9 @@ class AnimateActor : public Actor{
 		void unstun() {stunned = false;}
 		virtual bool checkStunStatus() {return stunned;}
 
+		// biting
+		void getBitten() {setPoints(getPoints() - 50);}
+
 		// poisoning
 		virtual void poison()
 		{
@@ -308,7 +311,7 @@ class Grasshopper: public AnimateActor {
 
 		void moveStep(Direction dir, int oldX, int oldY);
 		bool eat();
-		void virtual doFunction() = 0;
+		bool virtual doFunction() = 0;
 
 	private:
 		// generate random direction
@@ -339,7 +342,7 @@ class BabyGrasshopper: public Grasshopper {
 		virtual ~BabyGrasshopper() {}
 
 		void grow();
-		void virtual doFunction();
+		bool virtual doFunction();
 
 	private:
 		StudentWorld* m_game;
@@ -369,12 +372,12 @@ class AdultGrasshopper: public Grasshopper {
 		virtual void poison() {return;} // never gets poisoned
 
 		bool virtual checkStunStatus() {return false;} // never gets stunned
-		// Public Interface
-		//virtual void doSomething(); not differentiated functionality yet
 
-		void virtual doFunction();
+		// Public Interface
+
+		bool virtual doFunction();
+
 	private:
-		void bite();
 		void jump();
 		void jumpTo(int x, int y);
 
@@ -386,6 +389,7 @@ class AdultGrasshopper: public Grasshopper {
 		vector<Coord> jumpOptions;
 
 		StudentWorld* m_game;
+		bool jumped = false;
 
 };
 

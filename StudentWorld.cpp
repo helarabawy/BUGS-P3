@@ -123,20 +123,55 @@ void StudentWorld::hurtInsects(int x, int y, char c)
 		{
 			AnimateActor* aap = dynamic_cast<AnimateActor*>(*it);
 
-			if (c == 's')
+			if (c == 's') // STUN
 				aap->stun();
-			if (c == 'p')
-			{
-				cerr << "Before: " << aap->getPoints();
+			if (c == 'p') // POISON
 				aap->poison();
-				cerr << "// After: " << aap->getPoints() << endl;
-			}
 		}
 	}
 }
 
+// BITE RANDOM INSECT AT (x, y)
+bool StudentWorld::biteRandomInsect(int x, int y)
+{
+	int id = x*VIEW_WIDTH + y;
+	int count = 0;
+
+	list<Actor*>::const_iterator it;
+
+	// counting all "bitable" insects
+	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
+	{
+		if ((*it)->isAnimate() == true)
+			count++;
+	}
+
+	// no insects no biting
+	if (count == 0)
+		return false;
+
+	// random insect to bite
+	int address = randInt(0, count - 1);
+	int index = 0;
+
+	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
+	{
+		if ((*it)->isAnimate() == true)
+		{
+			AnimateActor* aap = dynamic_cast<AnimateActor*>(*it);
+			if (address == index)
+			{
+				aap->getBitten();
+			}
+			else
+				index++;
+		}
+	}
+	return true;
+}
+
 // INSECT EATS AT (x, y)
-/*int StudentWorld::eatFood(int x, int y)
+int StudentWorld::eatFood(int x, int y)
 {
 	// convert x, y
 	int id = x*VIEW_WIDTH + y;
@@ -166,7 +201,7 @@ void StudentWorld::hurtInsects(int x, int y, char c)
 		} else
 			return 0;
 	 }
-}*/
+}
 
 // REMOVE DEAD INSECTS
 list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor*>::const_iterator it, int i)
@@ -274,13 +309,13 @@ bool StudentWorld::loadField()
 			 virtualWorld[i].push_back(new Water(this, x, y));
 		 }
 
-/*
+
 		 // found food
 		 if (item == Field::FieldItem::food)
 		 {
 			 virtualWorld[i].push_back(new Food(this, x, y));
 		 }
-*/
+
 
 		 // found poison
 		 if (item == Field::FieldItem::poison)
@@ -319,7 +354,7 @@ void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 			// found that pointer and erase it
 			if ((*it) == bgh)
 			{
-				virtualWorld[id].erase(it); // TODO
+				virtualWorld[id].erase(it);
 				break;
 			}
 

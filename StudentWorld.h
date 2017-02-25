@@ -33,7 +33,8 @@ public:
 	//bool hasFood(int x, int y);
 
 	// change status at (x, y)*/
-	void hurtInsects(int x, int y, char c); // char could be s for stun of p for poison
+	void hurtInsects(int x, int y, char c);
+	bool biteRandomInsect(int x, int y);
 	int eatFood(int x, int y);
 	list<Actor*>::const_iterator removeDeadActorsAndGetNext(list<Actor*>::const_iterator it, int i);
 	void moveActor(Actor* actor, int oldX, int oldY, int newX, int newY);
