@@ -273,6 +273,7 @@ class Grasshopper: public AnimateActor {
 	private:
 		// generate random direction
 		int ticksToSleep = 0;
+		bool recoveringFromStun = false;
 		int distanceToMove;
 		StudentWorld* m_game;
 };

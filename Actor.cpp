@@ -63,7 +63,6 @@ bool Grasshopper::isSleeping()
 		if (ticksToSleep == 0)
 		{
 			ticksToSleep = 2;
-			unstun();
 			return false;
 		} else
 		{
@@ -73,8 +72,21 @@ bool Grasshopper::isSleeping()
 	}
 	else
 	{
-		ticksToSleep = 9;
-		return true;
+		if (recoveringFromStun == false)
+		{
+			recoveringFromStun = true;
+			ticksToSleep = 9;
+			return true;
+		} else if (recoveringFromStun == true)
+		{
+			ticksToSleep--;
+			if (ticksToSleep == 0)
+			{
+				unstun();
+				recoveringFromStun = false;
+			}
+			return true;
+		}
 	}
 }
 
