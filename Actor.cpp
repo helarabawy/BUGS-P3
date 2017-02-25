@@ -75,7 +75,7 @@ bool Grasshopper::isSleeping()
 		if (recoveringFromStun == false)
 		{
 			recoveringFromStun = true;
-			ticksToSleep = 9;
+			ticksToSleep = 8;
 			return true;
 		} else if (recoveringFromStun == true)
 		{
@@ -84,6 +84,7 @@ bool Grasshopper::isSleeping()
 			{
 				unstun();
 				recoveringFromStun = false;
+				return false;
 			}
 			return true;
 		}
