@@ -9,6 +9,7 @@
 // what grasshoppers do during a tick
 void Grasshopper::doSomething()
 {
+	//cerr << checkStunStatus() << endl;
 	// lose one hit point
 	setPoints(getPoints() - 1);
 
@@ -19,12 +20,7 @@ void Grasshopper::doSomething()
 	if (isDead() || isSleeping())
 		return;
 
-	/*if (isStunned())
-	{
-		decrementStunnedTicks();
-		return;
-	}
-	unstun();*/
+	unstun();
 
 	// current direction
 	Direction dir = getDirection();
@@ -40,7 +36,8 @@ void Grasshopper::doSomething()
 		{
 			if (!isBlocked(oldX, oldY + 1))
 			{
-				moveTo(oldX, oldY + 1);
+				moveTo(oldX, oldY + 1); // move on grid
+				m_game->moveActorPointers(this, oldX, oldY, oldX, oldY + 1); // move pointers
 				distanceToMove--;
 			}
 			else {distanceToMove = 0;}
@@ -52,7 +49,8 @@ void Grasshopper::doSomething()
 		{
 			if (!isBlocked(oldX + 1, oldY))
 			{
-				moveTo(oldX + 1, oldY);
+				moveTo(oldX + 1, oldY); // move on grid
+				m_game->moveActorPointers(this, oldX, oldY, oldX + 1, oldY); // move pointers
 				distanceToMove--;
 			}
 			else {distanceToMove = 0;}
@@ -63,7 +61,8 @@ void Grasshopper::doSomething()
 		{
 			if (!isBlocked(oldX, oldY - 1))
 			{
-				moveTo(oldX, oldY - 1);
+				moveTo(oldX, oldY - 1);// move on grid
+				m_game->moveActorPointers(this, oldX, oldY, oldX, oldY - 1); // move pointers
 				distanceToMove--;
 			}
 			else {distanceToMove = 0;}
@@ -74,7 +73,8 @@ void Grasshopper::doSomething()
 		{
 			if (!isBlocked(oldX - 1, oldY))
 			{
-				moveTo(oldX - 1, oldY);
+				moveTo(oldX - 1, oldY); // move on grid
+				m_game->moveActorPointers(this, oldX, oldY, oldX - 1, oldY); // move pointers
 				distanceToMove--;
 			}
 			else {distanceToMove = 0;}
@@ -109,30 +109,3 @@ GraphObject::Direction Grasshopper::randDir()
 ///////////////////////////////////////////////////////////////
 ////////////// BABY GRASSHOPPER IMPLEMENTATION ////////////////
 ///////////////////////////////////////////////////////////////
-
-bool BabyGrasshopper::isStunned()
-{
-	if (checkStunStatus() == true && stunnedTicks == 0)
-	{
-		stunnedTicks = 2;
-		return true;
-	} else if (checkStunStatus() == true && stunnedTicks == 1)
-	{
-		return true;
-	}
-	 else if (stunnedTicks == -1)
-	 {
-		stunnedTicks = 0;
-		return false;
-	 } else
-		return false;
-}
-
-void BabyGrasshopper::decrementStunnedTicks()
-{
-	if (stunnedTicks == 1)
-		stunnedTicks -= 2;
-	else stunnedTicks--;
-}
-
-

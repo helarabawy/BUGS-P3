@@ -49,18 +49,10 @@ int StudentWorld::move()
 			 (*it)->doSomething();
 
 			 // remove dead actors
-			 if ((*it)->isAnimate())
-			 {
-				 if ((*it)->isDead())
-				 {
-					 // body decomposes
-					 virtualWorld[i].push_back(new Food(this, x, y, 100));
-					 delete *it;
-					 virtualWorld[i].erase(it);
+			 removeDeadActors(it, i);
 
-					 it = virtualWorld[i].begin();
-			 	 }
-			 }
+			 it = virtualWorld[i].begin();
+
 		 }
 	}
 
@@ -130,8 +122,12 @@ void StudentWorld::stunInsects(int x, int y)
 
 	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
 	{
-		if ((*it)->isAnimate())
+		if ((*it)->isAnimate() == true)
+		{
+			//cerr << "STUNNING SOMETHING" << endl;
 			(*it)->stun();
+			//cerr << (*it)->checkStunStatus() << endl;
+		}
 	}
 }
 
@@ -142,14 +138,56 @@ void StudentWorld::poisonInsects(int x, int y)
 	int id = x*VIEW_WIDTH + y; // TODO: verify this
 
 	// defining iterator at id
-/*	list<Actor*>::const_iterator it;
+	list<Actor*>::const_iterator it;
 
 	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
 	{
-		if ((*it)->isAnimate())
+		if ((*it)->isAnimate() == true)
+		{
 			(*it)->poison();
-	}*/
+		}
+	}
 }
+
+// REMOVE DEAD INSECTS
+void StudentWorld::removeDeadActors(list<Actor*>::const_iterator it, int i)
+{
+	if ((*it)->isAnimate())
+	{
+		 if ((*it)->isDead())
+		 {
+			 // body decomposes
+			 virtualWorld[i].push_back(new Food(this, (*it)->getX(), (*it)->getY(), 100));
+			 delete *it;
+			 virtualWorld[i].erase(it);
+		 }
+	}
+}
+
+// MOVE ACTOR POINTERS
+void StudentWorld::moveActorPointers(Actor* actor, int oldX, int oldY, int newX, int newY)
+{
+
+	int old_id = oldX*VIEW_WIDTH + oldY;
+	int new_id = newX*VIEW_WIDTH + newY;
+
+	list<Actor*>::const_iterator it;
+
+	for (it = virtualWorld[old_id].begin(); it != virtualWorld[old_id].end(); it++)
+	{
+		if (*it == actor)
+		{
+			//cerr << "found actor" << endl;
+			virtualWorld[new_id].push_back(*it);
+			virtualWorld[old_id].erase(it);
+			//cerr << "changed pointers correctly" << endl;
+			return;
+		}
+	}
+
+
+}
+
 
 // LOAD FIELD INTO CONTAINER
 bool StudentWorld::loadField()
@@ -193,7 +231,7 @@ bool StudentWorld::loadField()
 			 virtualWorld[i].push_back(new Water(this, x, y));
 		 }
 
-		 // found water
+		 // found food
 		 if (item == Field::FieldItem::food)
 		 {
 			 virtualWorld[i].push_back(new Food(this, x, y));
@@ -202,7 +240,7 @@ bool StudentWorld::loadField()
 		 // found poison
 		 if (item == Field::FieldItem::poison)
 		 {
-			 virtualWorld[IID_POISON].push_back(new Poison(this, x, y));
+			 virtualWorld[i].push_back(new Poison(this, x, y));
 		 }
 
 	  }

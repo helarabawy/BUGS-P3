@@ -35,6 +35,8 @@ public:
 	// change status at (x, y)*/
 	void stunInsects(int x, int y);
 	void poisonInsects(int x, int y);
+	void removeDeadActors(list<Actor*>::const_iterator it, int i);
+	void moveActorPointers(Actor* actor, int oldX, int oldY, int newX, int newY);
 	//void depleteFood(int x, int y, int pts);*/
 
 private:
