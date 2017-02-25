@@ -10,10 +10,6 @@ void AnimateActor::doSomething()
 {
 	// lose one hit point
 	setPoints(getPoints() - 1);
-
-	// check if died
-	if (isDead() || isSleeping())
-		return;
 }
 
 GraphObject::Direction AnimateActor::randDir()
@@ -39,6 +35,10 @@ void Grasshopper::doSomething()
 {
 	AnimateActor::doSomething();
 
+	// check if died
+	if (isDead() || isSleeping())
+		return;
+
 	// DIFFERENTIATED FUNCTION
 	doFunction();
 
@@ -54,30 +54,29 @@ void Grasshopper::doSomething()
 
 	moveStep(dir, oldX, oldY);
 
-
 }
 
 bool Grasshopper::isSleeping()
+{
+	if (checkStunStatus() == false)
+	{
+		if (ticksToSleep == 0)
 		{
-			if (checkStunStatus() == false)
-			{
-				if (ticksToSleep == 0)
-				{
-					ticksToSleep = 2;
-					stunned = false;
-					return false;
-				} else
-				{
-					ticksToSleep--;
-					return true;
-				}
-			}
-			else
-			{
-				ticksToSleep = 9;
-				return true;
-			}
+			ticksToSleep = 2;
+			stunned = false;
+			return false;
+		} else
+		{
+			ticksToSleep--;
+			return true;
 		}
+	}
+	else
+	{
+		ticksToSleep = 9;
+		return true;
+	}
+}
 
 
 

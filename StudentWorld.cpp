@@ -43,11 +43,10 @@ int StudentWorld::move()
 		 // calling all actors at (x, y) to do sth
 		 for (it = virtualWorld[i].begin(); it != virtualWorld[i].end(); it++)
 		 {
-			 if ((*it)->isAnimate())
-				 cerr << "Insect: " << endl;
+//			 if ((*it)->isAnimate())
+//				 cerr << "Insect: " << endl;
 
 			 (*it)->doSomething();
-
 
 			 // remove dead actors
 			 removeDeadActors(it, i);
