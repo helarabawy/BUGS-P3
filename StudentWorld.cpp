@@ -124,10 +124,7 @@ void StudentWorld::stunInsects(int x, int y)
 	{
 		if ((*it)->isAnimate() == true)
 		{
-			//cerr << "STUNNED" << endl;
-			//cerr << "STUNNING SOMETHING" << endl;
 			(*it)->stun();
-			//cerr << (*it)->checkStunStatus() << endl;
 		}
 	}
 }
@@ -141,11 +138,11 @@ void StudentWorld::poisonInsects(int x, int y)
 
 	// defining iterator at id
 	list<Actor*>::const_iterator it;
-
 	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
 	{
 		if ((*it)->isAnimate() == true)
 		{
+			cerr << "POISONING AN INSECT: " << endl;
 			(*it)->poison();
 		}
 	}
@@ -161,7 +158,7 @@ void StudentWorld::removeDeadActors(list<Actor*>::const_iterator it, int i)
 				cerr << "delete actor" << endl;
 
 			 // body decomposes
-			// virtualWorld[i].push_back(new Food(this, (*it)->getX(), (*it)->getY(), 100));
+			virtualWorld[i].push_back(new Food(this, (*it)->getX(), (*it)->getY(), 100));
 			 delete *it;
 			 virtualWorld[i].erase(it);
 		 }
@@ -261,14 +258,12 @@ bool StudentWorld::loadField()
 			 virtualWorld[i].push_back(new Food(this, x, y));
 		 }
 
-
-/*
 		 // found poison
 		 if (item == Field::FieldItem::poison)
 		 {
 			 virtualWorld[i].push_back(new Poison(this, x, y));
 		 }
-*/
+
 
 	  }
 	

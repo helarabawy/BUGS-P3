@@ -119,6 +119,32 @@ class Water: public InanimateActor{
 
 #endif // WATER_H_
 
+///////////////////////////////////////////////////////////////
+///////////////////////// PEBBLE //////////////////////////////
+///////////////////////////////////////////////////////////////
+
+#ifndef POISON_H_
+#define POSION
+
+class Poison: public InanimateActor{
+
+	public:
+		// Constructor
+		Poison(StudentWorld* game, int startX, int startY): InanimateActor(game, IID_POISON, startX, startY, 2)
+		{m_game = game;}
+
+		// Destructor
+		virtual ~Poison() {}
+
+		// Public Interface
+		virtual void doSomething() {m_game->poisonInsects(getX(), getY());} // Pebble should do nothing during tick
+		virtual bool isBlocker() {return false;}
+
+	private:
+		StudentWorld* m_game;
+};
+
+#endif // PEBBLE_H_
 
 
 ///////////////////////////////////////////////////////////////
@@ -229,11 +255,21 @@ class AnimateActor : public Actor{
 		virtual bool checkStunStatus() {return stunned;}
 
 		// poisoning
-		virtual void poison() {/*m_points -= 150; poisoned = true;*/}
+		virtual void poison()
+		{
+			if (poisoned == false)
+			{
+				cerr << "GOT POISONED " << m_points;
+				m_points -= 150;
+				poisoned = true;
+				cerr << " TO " << m_points << endl;
+			} else
+				return;
+		}
 
 	private:
+		bool poisoned = false;
 		bool stunned;
-		bool poisoned;
 		StudentWorld* m_game;
 		int m_points;
 
@@ -326,14 +362,13 @@ class AdultGrasshopper: public Grasshopper {
 		// Destructor
 		virtual ~AdultGrasshopper() {}
 
-		virtual void poison() {return;}
+		virtual void poison() {return;} // never gets poisoned
 
 		bool virtual checkStunStatus() {return false;} // never gets stunned
 		// Public Interface
 		//virtual void doSomething(); not differentiated functionality yet
 
 		void virtual doFunction();
-
 	private:
 		void bite();
 		void jump();
