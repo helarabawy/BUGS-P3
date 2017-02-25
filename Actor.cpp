@@ -43,7 +43,7 @@ void Grasshopper::doSomething()
 	doFunction();
 
 	// eat
-	//eat();
+	bool willRest = eat();
 
 	// current direction
 	Direction dir = getDirection();
@@ -157,6 +157,23 @@ void Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
 		// new random distance
 		distanceToMove = randInt(2, 10);
 	}
+}
+
+bool Grasshopper::eat()
+{
+	// is there food? if so, eat
+//	int foodPts = m_game->eatFood(getX(), getY());
+//
+//	if (foodPts == 0) // no food to eat
+//		return false;
+//	else
+//		setPoints(getPoints() + foodPts);
+//
+//	// 50% chance to sleep if ate
+//	if (randInt(1,2) == 1)
+//		return true;
+//	else
+		return false;
 }
 
 ///////////////////////////////////////////////////////////////

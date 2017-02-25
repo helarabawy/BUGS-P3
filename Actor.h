@@ -21,12 +21,12 @@ class Actor: public GraphObject {
 
 		// Public Interface
 		virtual void doSomething() = 0;
+		virtual bool isEdible() {return false;};
 		virtual bool isAnimate() = 0;
 		virtual bool isDead() = 0;
 		virtual bool isBlocker() = 0;
 		virtual void stun() = 0;
 		virtual bool checkStunStatus() = 0; // delete this
-		virtual void poison() = 0;
 		virtual bool canDecay() = 0;
 		bool canDie() {return (isAnimate() || canDecay());}
 
@@ -110,7 +110,7 @@ class Water: public InanimateActor{
 		virtual ~Water() {}
 
 		// Public Interface
-		virtual void doSomething() {m_game->stunInsects(getX(), getY());}
+		virtual void doSomething() {m_game->hurtInsects(getX(), getY(), 's');}
 		virtual bool isBlocker() {return false;}
 
 	private:
@@ -137,7 +137,7 @@ class Poison: public InanimateActor{
 		virtual ~Poison() {}
 
 		// Public Interface
-		virtual void doSomething() {m_game->poisonInsects(getX(), getY());} // Pebble should do nothing during tick
+		virtual void doSomething() { m_game->hurtInsects(getX(), getY(),'p');} // Pebble should do nothing during tick
 		virtual bool isBlocker() {return false;}
 
 	private:
@@ -169,6 +169,12 @@ class Food: public InanimateActor{
 		virtual bool canDecay() {return true;}
 		virtual bool isBlocker() {return false;}
 		virtual bool isDead() {return m_foodPts == 0;}
+		virtual bool isEdible() {return true;}
+
+		void setFoodPts(int modifiedFoodPts) {m_foodPts = modifiedFoodPts;}
+		int getFoodPts() {return m_foodPts;}
+
+
 
 
 	private:
@@ -259,10 +265,8 @@ class AnimateActor : public Actor{
 		{
 			if (poisoned == false)
 			{
-				cerr << "GOT POISONED " << m_points;
 				m_points -= 150;
 				poisoned = true;
-				cerr << " TO " << m_points << endl;
 			} else
 				return;
 		}
@@ -303,7 +307,7 @@ class Grasshopper: public AnimateActor {
 		virtual bool isSleeping();
 
 		void moveStep(Direction dir, int oldX, int oldY);
-		void eat();
+		bool eat();
 		void virtual doFunction() = 0;
 
 	private:

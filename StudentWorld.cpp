@@ -38,7 +38,7 @@ int StudentWorld::move()
 	for(int i = 0; i < VIEW_WIDTH*VIEW_HEIGHT; i++)
 	{
 		 // defining iterator at (x, y)'s list of Actor*
-		 list<Actor*>::const_iterator it, nextIt;
+		 list<Actor*>::const_iterator it;
 
 		 // calling all actors at (x, y) to do sth
 		 it = virtualWorld[i].begin();
@@ -110,7 +110,7 @@ bool StudentWorld::isBlocked(int x, int y)
 }
 
 // STUN INSECTS AT (x, y)
-void StudentWorld::stunInsects(int x, int y)
+void StudentWorld::hurtInsects(int x, int y, char c)
 {
 	// convert x, y
 	int id = x*VIEW_WIDTH + y; // TODO: verify this
@@ -121,29 +121,52 @@ void StudentWorld::stunInsects(int x, int y)
 	{
 		if ((*it)->isAnimate() == true)
 		{
-			(*it)->stun();
+			AnimateActor* aap = dynamic_cast<AnimateActor*>(*it);
+
+			if (c == 's')
+				aap->stun();
+			if (c == 'p')
+			{
+				cerr << "Before: " << aap->getPoints();
+				aap->poison();
+				cerr << "// After: " << aap->getPoints() << endl;
+			}
 		}
 	}
 }
 
-// POISON INSECTS AT (x, y)
-void StudentWorld::poisonInsects(int x, int y)
+// INSECT EATS AT (x, y)
+/*int StudentWorld::eatFood(int x, int y)
 {
 	// convert x, y
-	int id = x*VIEW_WIDTH + y; // TODO: verify this
+	int id = x*VIEW_WIDTH + y;
 
-
-	// defining iterator at id
+	// defining iterator at (x, y)'s list of Actor*
 	list<Actor*>::const_iterator it;
-	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
-	{
-		if ((*it)->isAnimate() == true)
+
+	 // searching for food
+	 it = virtualWorld[id].begin();
+
+	 while(it != virtualWorld[id].end())
+	 {
+		if ((*it)->isEdible() == true)
 		{
-			cerr << "POISONING AN INSECT: " << endl;
-			(*it)->poison();
-		}
-	}
-}
+			Food* fp = dynamic_cast<Food*>(*it);
+			int foodPoints = fp->getFoodPts();
+			if (foodPoints > 200)
+			{
+				fp->setFoodPts(foodPoints - 200);
+				return 200;
+			} else
+			{
+				delete *it;
+				virtualWorld[id].erase(it);
+				return foodPoints;
+			}
+		} else
+			return 0;
+	 }
+}*/
 
 // REMOVE DEAD INSECTS
 list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor*>::const_iterator it, int i)
@@ -251,11 +274,13 @@ bool StudentWorld::loadField()
 			 virtualWorld[i].push_back(new Water(this, x, y));
 		 }
 
+/*
 		 // found food
 		 if (item == Field::FieldItem::food)
 		 {
 			 virtualWorld[i].push_back(new Food(this, x, y));
 		 }
+*/
 
 		 // found poison
 		 if (item == Field::FieldItem::poison)
@@ -304,6 +329,4 @@ void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 	virtualWorld[id].push_back(new AdultGrasshopper(this, x, y));
 	// new food where baby died
 	virtualWorld[id].push_back(new Food(this, x, y, 100));
-
-
 }
