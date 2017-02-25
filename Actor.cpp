@@ -63,7 +63,7 @@ bool Grasshopper::isSleeping()
 		if (ticksToSleep == 0)
 		{
 			ticksToSleep = 2;
-			stunned = false;
+			unstun();
 			return false;
 		} else
 		{
@@ -236,7 +236,7 @@ bool Ant::isSleeping()
 		if (ticksToSleep == 0)
 		{
 			ticksToSleep = 2;
-			stunned = false;
+			unstun();
 			return false;
 		} else
 		{

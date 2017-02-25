@@ -110,7 +110,7 @@ class Water: public InanimateActor{
 		virtual ~Water() {}
 
 		// Public Interface
-		virtual void doSomething() {cerr << "STUNNING INSECTS AT " << getX() << ", " << getY() << endl; m_game->stunInsects(getX(), getY());}
+		virtual void doSomething() {m_game->stunInsects(getX(), getY());}
 		virtual bool isBlocker() {return false;}
 
 	private:
@@ -264,7 +264,6 @@ class Grasshopper: public AnimateActor {
 		virtual void doSomething();
 
 		// stunning
-		virtual bool checkStunStatus() {return stunned;}
 		virtual bool isSleeping();
 
 		void moveStep(Direction dir, int oldX, int oldY);
@@ -274,7 +273,6 @@ class Grasshopper: public AnimateActor {
 	private:
 		// generate random direction
 		int ticksToSleep = 0;
-		bool stunned = false;
 		int distanceToMove;
 		StudentWorld* m_game;
 };
@@ -366,7 +364,7 @@ class Ant: public AnimateActor {
 	public:
 		// Constructor
 		Ant(StudentWorld* game, int imageID, int startX, int startY): AnimateActor(game, imageID, startX, startY, randDir(), 1500)
-		{ m_game = game;}
+		{ m_game = game; unstun();}
 
 		// Destructor
 		virtual ~Ant() {}
@@ -380,7 +378,6 @@ class Ant: public AnimateActor {
 		void virtual doFunction(){}
 
 	private:
-		bool stunned = false;
 		int ticksToSleep = 0;
 		StudentWorld* m_game;
 

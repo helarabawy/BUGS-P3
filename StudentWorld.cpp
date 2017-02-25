@@ -32,7 +32,7 @@ int StudentWorld::init()
 int StudentWorld::move()
 {
 	currTicks++;
-	cerr << endl << "TICKS: " <<  currTicks << endl;
+	//cerr << endl << "TICKS: " <<  currTicks << endl;
 
 	// Give each actor a chance to do something
 	for(int i = 0; i < VIEW_WIDTH*VIEW_HEIGHT; i++)
@@ -125,7 +125,7 @@ void StudentWorld::stunInsects(int x, int y)
 		if ((*it)->isAnimate() == true)
 		{
 			//cerr << "STUNNED" << endl;
-			cerr << "STUNNING SOMETHING" << endl;
+			//cerr << "STUNNING SOMETHING" << endl;
 			(*it)->stun();
 			//cerr << (*it)->checkStunStatus() << endl;
 		}
