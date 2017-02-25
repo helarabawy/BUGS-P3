@@ -223,3 +223,27 @@ void AdultGrasshopper::jumpTo(int x, int y)
 	moveTo(x, y);
 
 }
+
+
+///////////////////////////////////////////////////////////////
+////////////////////// ANT IMPLEMENTATION /////////////////////
+///////////////////////////////////////////////////////////////
+
+bool Ant::isSleeping()
+{
+	if (checkStunStatus() == true)
+	{
+		if (ticksToSleep == 0)
+		{
+			ticksToSleep = 2;
+			stunned = false;
+			return false;
+		} else
+		{
+			ticksToSleep--;
+			return true;
+		}
+	}
+	else
+		return false;
+}

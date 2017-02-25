@@ -122,7 +122,7 @@ void StudentWorld::stunInsects(int x, int y)
 	list<Actor*>::const_iterator it;
 	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
 	{
-		//if ((*it)->isAnimate() == true)
+		if ((*it)->isAnimate() == true)
 		{
 			//cerr << "STUNNED" << endl;
 			cerr << "STUNNING SOMETHING" << endl;
@@ -135,7 +135,7 @@ void StudentWorld::stunInsects(int x, int y)
 // POISON INSECTS AT (x, y)
 void StudentWorld::poisonInsects(int x, int y)
 {
-/*	// convert x, y
+	// convert x, y
 	int id = x*VIEW_WIDTH + y; // TODO: verify this
 
 
@@ -149,7 +149,6 @@ void StudentWorld::poisonInsects(int x, int y)
 			(*it)->poison();
 		}
 	}
-*/
 }
 
 // REMOVE DEAD INSECTS
@@ -263,11 +262,13 @@ bool StudentWorld::loadField()
 		 }
 
 
+/*
 		 // found poison
 		 if (item == Field::FieldItem::poison)
 		 {
 			 virtualWorld[i].push_back(new Poison(this, x, y));
 		 }
+*/
 
 	  }
 	

@@ -54,11 +54,13 @@ class InanimateActor: public Actor{
 
 		// Public Interface
 		virtual void doSomething() = 0;
+
+		// getters and setters - status
 		virtual bool isAnimate() {return false;}
 		virtual bool isDead() {return false;}
 		virtual void stun() {return;} // do nothing, can't be stunned
 		virtual bool checkStunStatus() {return false;} // delete this
-		virtual void poison() {};
+		virtual void poison(){};
 		virtual bool canDecay() {return false;}
 
 	private:
@@ -138,8 +140,10 @@ class Food: public InanimateActor{
 
 		// Public Interface
 		virtual void doSomething() {return;}
-
+		virtual bool canDecay() {return true;}
 		virtual bool isBlocker() {return false;}
+		virtual bool isDead() {return m_foodPts == 0;}
+
 
 	private:
 		StudentWorld* m_game;
@@ -147,37 +151,6 @@ class Food: public InanimateActor{
 };
 
 #endif // FOOD_H_
-
-
-///////////////////////////////////////////////////////////////
-////////////////////////// POISON /////////////////////////////
-///////////////////////////////////////////////////////////////
-
-
-#ifndef POISON_H_
-#define POISON_H_
-
-class Poison: public InanimateActor{
-
-	public:
-		// Constructor
-		Poison(StudentWorld* game, int startX, int startY): InanimateActor(game, IID_POISON, startX, startY)
-		{m_game = game;}
-
-		// Destructor
-		virtual ~Poison() {}
-
-		// Public Interface
-		virtual void doSomething() {m_game->poisonInsects(getX(), getY());}
-
-		virtual bool isBlocker() {return false;}
-
-	private:
-		StudentWorld* m_game;
-		int m_foodPts;
-};
-
-#endif // POISON_H_
 
 
 ///////////////////////////////////////////////////////////////
@@ -209,7 +182,7 @@ class Pheroneme: public InanimateActor{
 		int m_strength;
 };
 
-#endif // POISON_H_
+#endif // PHERONEME_H_
 
 
 
@@ -244,14 +217,14 @@ class AnimateActor : public Actor{
 
 		// status
 		virtual bool isDead() {return m_points <= 0;}
-		virtual bool isSleeping() {return true;}
+		virtual bool isSleeping() = 0;
 
 		// blocking
 		bool isBlocked(int x, int y) {return m_game->isBlocked(x, y);}
 		virtual bool isBlocker() {return false;}
 
 		// stunning
-		virtual void stun() {cerr << "I just got stunned" << endl; stunned = true;}
+		virtual void stun() {stunned = true;}
 		void unstun() {stunned = false;}
 		virtual bool checkStunStatus() {return stunned;}
 
@@ -325,12 +298,11 @@ class BabyGrasshopper: public Grasshopper {
 
 		// Destructor
 		virtual ~BabyGrasshopper() {}
+
 		void grow();
 		void virtual doFunction();
 
 	private:
-
-		int stunnedTicks = 0;
 		StudentWorld* m_game;
 		
 };
@@ -356,6 +328,8 @@ class AdultGrasshopper: public Grasshopper {
 		virtual ~AdultGrasshopper() {}
 
 		virtual void poison() {return;}
+
+		bool virtual checkStunStatus() {return false;} // never gets stunned
 		// Public Interface
 		//virtual void doSomething(); not differentiated functionality yet
 
@@ -401,10 +375,13 @@ class Ant: public AnimateActor {
 		// Public Interface
 		//virtual void doSomething(); not differentiated functionality yet
 
-		void virtual doFunction();
+		virtual bool isSleeping();
+
+		void virtual doFunction(){}
 
 	private:
-
+		bool stunned = false;
+		int ticksToSleep = 0;
 		StudentWorld* m_game;
 
 };
