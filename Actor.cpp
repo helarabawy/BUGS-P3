@@ -12,7 +12,7 @@ void Grasshopper::doSomething()
 	//cerr << checkStunStatus() << endl;
 	// lose one hit point
 	setPoints(getPoints() - 1);
-	cerr << "POINTS: " << getPoints() << endl;
+	//cerr << "POINTS: " << getPoints() << endl;
 
 	//another tick
 	ticks++;
@@ -21,7 +21,7 @@ void Grasshopper::doSomething()
 	if (isDead() || isSleeping())
 		return;
 
-	//unstun();
+	unstun();
 
 	// current direction
 	Direction dir = getDirection();

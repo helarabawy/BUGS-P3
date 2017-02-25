@@ -129,7 +129,7 @@ class Food: public InanimateActor{
 	public:
 		// Constructor
 		Food(StudentWorld* game, int startX, int startY, int foodPts = 6000): InanimateActor(game, IID_FOOD, startX, startY)
-		{m_game = game;}
+		{m_game = game; m_foodPts = foodPts}
 
 		// Destructor
 		virtual ~Food() {}
@@ -213,7 +213,7 @@ class AnimateActor : public Actor{
 		virtual bool isBlocker() {return false;}
 
 		// stunning
-		virtual void stun() {/*cerr << "STUNNED" << endl;*/ stunned = true;}
+		virtual void stun() {cerr << "STUNNED" << endl; stunned = true;}
 		void unstun() {stunned = false;}
 		virtual bool checkStunStatus() {return stunned;}
 
@@ -260,9 +260,9 @@ class Grasshopper: public AnimateActor {
 
 		virtual bool isSleeping()
 		{
-			//if (checkStunStatus() == false)
+			if (checkStunStatus() == false)
 				return ticks%3 != 0;
-			/*else
+			else
 			{
 				// it's stunned, sleeping patterns are different
 				if (stunSleep == false)
@@ -282,7 +282,7 @@ class Grasshopper: public AnimateActor {
 					}
 				}
 				else return true;
-			}*/
+			}
 		}
 
 	private:
@@ -340,7 +340,7 @@ class AdultGrasshopper: public Grasshopper {
 
 	public:
 		// Constructor
-		AdultGrasshopper(StudentWorld* game, int startX, int startY): Grasshopper(game, IID_ADULT_GRASSHOPPER, startX, startY, 500)
+		AdultGrasshopper(StudentWorld* game, int startX, int startY): Grasshopper(game, IID_ADULT_GRASSHOPPER, startX, startY, 1600)
 		{ m_game = game;}
 
 		// Destructor

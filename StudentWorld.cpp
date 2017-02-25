@@ -47,17 +47,14 @@ int StudentWorld::move()
 		 // calling all actors at (x, y) to do sth
 		 for (it = virtualWorld[i].begin(); it != virtualWorld[i].end(); it++)
 		 {
-			 if ((*it)->isAnimate())
-				 cerr << "Insect: " << endl;
+//			 if ((*it)->isAnimate())
+//				 cerr << "Insect: " << endl;
 
 			 (*it)->doSomething();
 
 
 			 // remove dead actors
 			 removeDeadActors(it, i);
-
-			 it = virtualWorld[i].begin();
-
 		 }
 
 	}
@@ -123,7 +120,7 @@ bool StudentWorld::isBlocked(int x, int y)
 // STUN INSECTS AT (x, y)
 void StudentWorld::stunInsects(int x, int y)
 {
-	/*// convert x, y
+	// convert x, y
 	int id = x*VIEW_WIDTH + y; // TODO: verify this
 
 	// defining iterator at id
@@ -133,13 +130,13 @@ void StudentWorld::stunInsects(int x, int y)
 	{
 		if ((*it)->isAnimate() == true)
 		{
-			cerr << "STUNNED" << endl;
-			//cerr << "STUNNING SOMETHING" << endl;
+			//cerr << "STUNNED" << endl;
+			cerr << "STUNNING SOMETHING" << endl;
 			(*it)->stun();
 			//cerr << (*it)->checkStunStatus() << endl;
 		}
 	}
-*/}
+}
 
 // POISON INSECTS AT (x, y)
 void StudentWorld::poisonInsects(int x, int y)
@@ -214,7 +211,7 @@ void StudentWorld::redirectActorPtrs()
 				// found that pointer and erase it
 				if ((*it) == actor)
 				{
-					virtualWorld[old_id].erase(it);
+					virtualWorld[old_id].erase(it); // TODO
 					break;
 				}
 
