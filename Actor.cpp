@@ -3,11 +3,10 @@
 #include "StudentWorld.h"
 
 ///////////////////////////////////////////////////////////////
-///////////////// GRASSHOPPER IMPLEMENTATION //////////////////
+/////////////// ANIMATE ACTOR IMPLEMENTATION //////////////////
 ///////////////////////////////////////////////////////////////
 
-// what grasshoppers do during a tick
-void Grasshopper::doSomething()
+void AnimateActor::doSomething()
 {
 	// lose one hit point
 	setPoints(getPoints() - 1);
@@ -15,12 +14,36 @@ void Grasshopper::doSomething()
 	// check if died
 	if (isDead() || isSleeping())
 		return;
+}
+
+GraphObject::Direction AnimateActor::randDir()
+{
+	int rand = randInt(1, 4);
+	switch(rand)
+	{
+		case 1: return GraphObject::up;
+		case 2: return GraphObject::right;
+		case 3: return GraphObject::down;
+		case 4: return GraphObject::left;
+		default:return GraphObject::none; // TODO: check if none should be an option
+	}
+}
+
+
+///////////////////////////////////////////////////////////////
+///////////////// GRASSHOPPER IMPLEMENTATION //////////////////
+///////////////////////////////////////////////////////////////
+
+// what grasshoppers do during a tick
+void Grasshopper::doSomething()
+{
+	AnimateActor::doSomething();
 
 	// DIFFERENTIATED FUNCTION
 	doFunction();
 
 	// eat
-	eat();
+	//eat();
 
 	// current direction
 	Direction dir = getDirection();
@@ -57,18 +80,6 @@ bool Grasshopper::isSleeping()
 		}
 
 
-GraphObject::Direction Grasshopper::randDir()
-{
-	int rand = randInt(1, 4);
-	switch(rand)
-	{
-		case 1: return GraphObject::up;
-		case 2: return GraphObject::right;
-		case 3: return GraphObject::down;
-		case 4: return GraphObject::left;
-		default:return GraphObject::none; // TODO: check if none should be an option
-	}
-}
 
 void Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
 {
@@ -163,7 +174,7 @@ void AdultGrasshopper::doFunction()
 
 	// 1/10 chances to jump
 	if (randInt(1, 10) == 1)
-		jump(1);
+		jump();
 }
 
 void AdultGrasshopper::bite()
@@ -171,8 +182,9 @@ void AdultGrasshopper::bite()
 	// DO STUFF
 }
 
-const int TOTAL_POSSIBLE_SLOTS = 100;
+const int TOTAL_POSSIBLE_SLOTS = 100; // WRONG, FIGURE OUT THIS NUMBER
 #include <cmath>
+const double PI = 3.1415926535897;
 void AdultGrasshopper::jump()
 {
 	// no more options left
@@ -187,7 +199,7 @@ void AdultGrasshopper::jump()
 	int y = ceil(radius*sin(angle*PI/180));
 
 	// checking if slot is open
-	if (m_game(isBlocked(x, y)))
+	if (m_game->isBlocked(x, y))
 	{
 		Coord c;
 		c.x = x;
@@ -206,7 +218,7 @@ void AdultGrasshopper::jump()
 		jumpTo(x, y); // found a place to jump to
 }
 
-void jumpTo(int x, int y)
+void AdultGrasshopper::jumpTo(int x, int y)
 {
 	m_game->moveActor(this, getX(), getY(), x, y);
 	moveTo(x, y);

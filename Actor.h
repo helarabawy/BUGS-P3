@@ -27,6 +27,8 @@ class Actor: public GraphObject {
 		virtual void stun() = 0;
 		virtual bool checkStunStatus() = 0; // delete this
 		virtual void poison() = 0;
+		virtual bool canDecay() = 0;
+		bool canDie() {return (isAnimate() || canDecay());}
 
 	private:
 		StudentWorld* m_game;
@@ -53,10 +55,11 @@ class InanimateActor: public Actor{
 		// Public Interface
 		virtual void doSomething() = 0;
 		virtual bool isAnimate() {return false;}
-		virtual bool isDead() {return true;}
+		virtual bool isDead() {return false;}
 		virtual void stun() {return;} // do nothing, can't be stunned
 		virtual bool checkStunStatus() {return false;} // delete this
 		virtual void poison() {};
+		virtual bool canDecay() {return false;}
 
 	private:
 		StudentWorld* m_game;
@@ -119,7 +122,6 @@ class Water: public InanimateActor{
 ///////////////////////////////////////////////////////////////
 /////////////////////////// FOOD //////////////////////////////
 ///////////////////////////////////////////////////////////////
-/*
 
 #ifndef FOOD_H_
 #define FOOD_H_
@@ -129,7 +131,7 @@ class Food: public InanimateActor{
 	public:
 		// Constructor
 		Food(StudentWorld* game, int startX, int startY, int foodPts = 6000): InanimateActor(game, IID_FOOD, startX, startY)
-		{m_game = game; m_foodPts = foodPts}
+		{m_game = game; m_foodPts = foodPts;}
 
 		// Destructor
 		virtual ~Food() {}
@@ -145,14 +147,13 @@ class Food: public InanimateActor{
 };
 
 #endif // FOOD_H_
-*/
 
 
 ///////////////////////////////////////////////////////////////
 ////////////////////////// POISON /////////////////////////////
 ///////////////////////////////////////////////////////////////
 
-/*
+
 #ifndef POISON_H_
 #define POISON_H_
 
@@ -176,8 +177,40 @@ class Poison: public InanimateActor{
 		int m_foodPts;
 };
 
-#endif // FOOD_H_
-*/
+#endif // POISON_H_
+
+
+///////////////////////////////////////////////////////////////
+/////////////////////// PHERONEME /////////////////////////////
+///////////////////////////////////////////////////////////////
+
+
+#ifndef PHERONEME_H_
+#define PHERONEME_H_
+
+class Pheroneme: public InanimateActor{
+
+	public:
+		// Constructor
+		Pheroneme(StudentWorld* game, int imageID, int startX, int startY): InanimateActor(game, imageID, startX, startY)
+		{m_game = game; m_strength = 256;}
+
+		// Destructor
+		virtual ~Pheroneme() {}
+
+		// Public Interface
+		virtual void doSomething() {m_strength--;}
+		virtual bool isBlocker() {return false;}
+		virtual bool canDecay() {return true;}
+		virtual bool isDead() {return m_strength == 0;}
+
+	private:
+		StudentWorld* m_game;
+		int m_strength;
+};
+
+#endif // POISON_H_
+
 
 
 ///////////////////////////////////////////////////////////////
@@ -198,7 +231,12 @@ class AnimateActor : public Actor{
 		virtual ~AnimateActor() {}
 
 		// Public Interface
+		virtual void doSomething();
+
+
 		virtual bool isAnimate() {return true;}
+		GraphObject::Direction randDir();
+		virtual bool canDecay() {return false;}
 
 		// dealing with points
 		int getPoints() {return m_points;} // return number of points
@@ -262,7 +300,6 @@ class Grasshopper: public AnimateActor {
 
 	private:
 		// generate random direction
-		GraphObject::Direction randDir();
 		int ticksToSleep = 0;
 		bool stunned = false;
 		int distanceToMove;
@@ -332,7 +369,7 @@ class AdultGrasshopper: public Grasshopper {
 		struct Coord{
 			int x;
 			int y;
-		}
+		};
 
 		vector<Coord> jumpOptions;
 
@@ -341,6 +378,38 @@ class AdultGrasshopper: public Grasshopper {
 };
 
 #endif // ADULTGRASSHOPPER_H_
+
+
+///////////////////////////////////////////////////////////////
+/////////////////////////////// ANT ///////////////////////////
+///////////////////////////////////////////////////////////////
+
+#ifndef ANT_H_
+#define ANT_H_
+
+class Ant: public AnimateActor {
+
+	public:
+		// Constructor
+		Ant(StudentWorld* game, int imageID, int startX, int startY): AnimateActor(game, imageID, startX, startY, randDir(), 1500)
+		{ m_game = game;}
+
+		// Destructor
+		virtual ~Ant() {}
+
+		virtual void getColony() {return;}
+		// Public Interface
+		//virtual void doSomething(); not differentiated functionality yet
+
+		void virtual doFunction();
+
+	private:
+
+		StudentWorld* m_game;
+
+};
+
+#endif // ANT_H_
 
 
 #endif // ACTOR_H_

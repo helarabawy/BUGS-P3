@@ -257,19 +257,18 @@ bool StudentWorld::loadField()
 			 virtualWorld[i].push_back(new Water(this, x, y));
 		 }
 
-		 /*// found food
+		 // found food
 		 if (item == Field::FieldItem::food)
 		 {
 			 virtualWorld[i].push_back(new Food(this, x, y));
-		 }*/
+		 }
 
-/*
+
 		 // found poison
 		 if (item == Field::FieldItem::poison)
 		 {
 			 virtualWorld[i].push_back(new Poison(this, x, y));
 		 }
-*/
 
 	  }
 	
