@@ -42,15 +42,13 @@ void Grasshopper::doSomething()
 	// DIFFERENTIATED FUNCTION
 	if (doFunction() == true)
 	{
-		ticksToSleep = 2;
-		return;
+		return; // go into sleep
 	}
 
 	// eat
 	if (eat() == true)
 	{
-		ticksToSleep = 2;
-		return;
+		return; // go into sleep
 	}
 
 	// current direction
@@ -91,6 +89,7 @@ bool Grasshopper::isSleeping()
 			if (ticksToSleep == 0)
 			{
 				unstun();
+				ticksToSleep = 2;
 				recoveringFromStun = false;
 				return false;
 			}

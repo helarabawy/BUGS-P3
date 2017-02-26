@@ -203,6 +203,36 @@ int StudentWorld::eatFood(int x, int y)
 	 }
 }
 
+// GROW GH TO ADULT
+void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
+{
+	int id = x*VIEW_WIDTH + y;
+
+	// iterating through old id's linked list to get rid of that actor
+	list<Actor*>::iterator it;
+	for (it = virtualWorld[id].begin();
+		it != virtualWorld[id].end(); it++)
+		{
+			// found that pointer and erase it
+			if ((*it) == bgh)
+			{
+				// new adult grasshopper
+				virtualWorld[id].push_back(new AdultGrasshopper(this, x, y));
+				// new food where baby died
+				virtualWorld[id].push_back(new Food(this, x, y, 100));
+
+				// deleting baby grasshopper.
+				delete bgh;
+				virtualWorld[id].erase(it);
+
+				return;
+			}
+
+		}
+
+
+}
+
 // REMOVE DEAD INSECTS
 list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor*>::const_iterator it, int i)
 {
@@ -341,27 +371,3 @@ void StudentWorld::updateDisplayText()
 	setGameStatText(oss.str());
 }
 
-
-void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
-{
-	int id = x*VIEW_WIDTH + y;
-
-	// iterating through old id's linked list to get rid of that actor
-	list<Actor*>::iterator it;
-	for (it = virtualWorld[id].begin();
-		it != virtualWorld[id].end(); it++)
-		{
-			// found that pointer and erase it
-			if ((*it) == bgh)
-			{
-				virtualWorld[id].erase(it);
-				break;
-			}
-
-		}
-
-	// new adult grasshopper
-	virtualWorld[id].push_back(new AdultGrasshopper(this, x, y));
-	// new food where baby died
-	virtualWorld[id].push_back(new Food(this, x, y, 100));
-}

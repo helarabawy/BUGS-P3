@@ -260,6 +260,9 @@ class AnimateActor : public Actor{
 		void unstun() {stunned = false;}
 		virtual bool checkStunStatus() {return stunned;}
 
+		// eating
+		virtual bool eat() = 0;
+
 		// biting
 		void getBitten() {setPoints(getPoints() - 50);}
 
@@ -310,7 +313,7 @@ class Grasshopper: public AnimateActor {
 		virtual bool isSleeping();
 
 		void moveStep(Direction dir, int oldX, int oldY);
-		bool eat();
+		virtual bool eat();
 		bool virtual doFunction() = 0;
 
 	private:
@@ -420,6 +423,7 @@ class Ant: public AnimateActor {
 		virtual bool isSleeping();
 
 		void virtual doFunction(){}
+		bool virtual eat() {return false;}
 
 	private:
 		int ticksToSleep = 0;
