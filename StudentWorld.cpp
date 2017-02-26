@@ -98,10 +98,14 @@ bool StudentWorld::isBlocked(int x, int y)
 	// calling all actors at (x, y) to do sth
 	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
 	{
-		// found a blocker!
-		if ((*it)->isBlocker())
+		if ((*it)->isAnimate() == false)
 		{
-			return true;
+			InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
+			// found a blocker!
+			if (iap->isBlocker())
+			{
+				return true;
+			}
 		}
 	}
 
@@ -184,22 +188,31 @@ int StudentWorld::eatFood(int x, int y)
 
 	 while(it != virtualWorld[id].end())
 	 {
-		if ((*it)->isEdible() == true)
-		{
-			Food* fp = dynamic_cast<Food*>(*it);
-			int foodPoints = fp->getFoodPts();
-			if (foodPoints > 200)
+		 if ((*it)->isAnimate() == false)
+		 {
+			InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
+			if (iap->canDecay() == true)
 			{
-				fp->setFoodPts(foodPoints - 200);
-				return 200;
-			} else
-			{
-				delete *it;
-				virtualWorld[id].erase(it);
-				return foodPoints;
+				DecayableActor* dp = dynamic_cast<DecayableActor*>(iap);
+				if (dp->isEdible() == true)
+				{
+					Food* fp = dynamic_cast<Food*>(dp);
+					int foodPoints = fp->getPoints();
+					if (foodPoints > 200)
+					{
+						fp->setPoints(foodPoints - 200);
+						return 200;
+					} else
+					{
+						delete *it;
+						virtualWorld[id].erase(it);
+						return foodPoints;
+					}
+
+			 } else
+				return 0;
 			}
-		} else
-			return 0;
+		 }
 	 }
 }
 
@@ -238,7 +251,8 @@ list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor
 {
 	if ((*it)->isAnimate())
 	{
-		 if ((*it)->isDead())
+		AnimateActor* aap = dynamic_cast<AnimateActor*>(*it);
+		 if (aap->isDead())
 		 {
 				cerr << "delete actor" << endl;
 

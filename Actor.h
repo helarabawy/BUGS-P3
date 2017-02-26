@@ -21,14 +21,9 @@ class Actor: public GraphObject {
 
 		// Public Interface
 		virtual void doSomething() = 0;
-		virtual bool isEdible() {return false;};
 		virtual bool isAnimate() = 0;
-		virtual bool isDead() = 0;
-		virtual bool isBlocker() = 0;
-		virtual void stun() = 0;
-		virtual bool checkStunStatus() = 0; // delete this
-		virtual bool canDecay() = 0;
-		bool canDie() {return (isAnimate() || canDecay());}
+
+		virtual bool canDie() = 0;
 
 	private:
 		StudentWorld* m_game;
@@ -56,18 +51,57 @@ class InanimateActor: public Actor{
 		virtual void doSomething() = 0;
 
 		// getters and setters - status
+
+		virtual bool canDie() {return canDecay();} // make sure overriden correctly
+
 		virtual bool isAnimate() {return false;}
-		virtual bool isDead() {return false;}
-		virtual void stun() {return;} // do nothing, can't be stunned
-		virtual bool checkStunStatus() {return false;} // delete this
-		virtual void poison(){};
+
 		virtual bool canDecay() {return false;}
+
+		virtual bool isBlocker() {return false;};
 
 	private:
 		StudentWorld* m_game;
 };
 
 #endif // INANIMATEACTOR_H_
+
+///////////////////////////////////////////////////////////////
+/////////////// ~ DECAYABLE INANIMATE ACTOR ~ /////////////////
+///////////////////////////////////////////////////////////////
+
+#ifndef DECAYABLEACTOR_H_
+#define DECAYABLEACTOR_H_
+
+class DecayableActor: public InanimateActor{
+
+	public:
+		// Constructor
+		DecayableActor(StudentWorld* game, int imageID, int startX, int startY, int points): InanimateActor(game, imageID, startX, startY)
+		{m_game = game; m_points = points;}
+
+
+		// Destructor
+		virtual ~DecayableActor() {}
+
+		// Public Interface
+		virtual void doSomething() {};
+
+		// getters and setters - status
+		virtual bool canDecay() {return true;}
+
+		virtual bool isEdible() {return false;}
+
+		int getPoints() {return m_points;}
+		int setPoints(int modifiedPoints) {m_points = modifiedPoints;}
+
+	private:
+		int m_points;
+		StudentWorld* m_game;
+};
+
+#endif // DECAYABLEACTOR_H_
+
 
 ///////////////////////////////////////////////////////////////
 ///////////////////////// PEBBLE //////////////////////////////
@@ -111,7 +145,6 @@ class Water: public InanimateActor{
 
 		// Public Interface
 		virtual void doSomething() {m_game->hurtInsects(getX(), getY(), 's');}
-		virtual bool isBlocker() {return false;}
 
 	private:
 		StudentWorld* m_game;
@@ -138,7 +171,6 @@ class Poison: public InanimateActor{
 
 		// Public Interface
 		virtual void doSomething() { m_game->hurtInsects(getX(), getY(),'p');} // Pebble should do nothing during tick
-		virtual bool isBlocker() {return false;}
 
 	private:
 		StudentWorld* m_game;
@@ -154,32 +186,23 @@ class Poison: public InanimateActor{
 #ifndef FOOD_H_
 #define FOOD_H_
 
-class Food: public InanimateActor{
+class Food: public DecayableActor{
 
 	public:
 		// Constructor
-		Food(StudentWorld* game, int startX, int startY, int foodPts = 6000): InanimateActor(game, IID_FOOD, startX, startY)
-		{m_game = game; m_foodPts = foodPts;}
+		Food(StudentWorld* game, int startX, int startY, int foodPts = 6000): DecayableActor(game, IID_FOOD, startX, startY, foodPts)
+		{m_game = game;}
 
 		// Destructor
 		virtual ~Food() {}
 
 		// Public Interface
 		virtual void doSomething() {return;}
-		virtual bool canDecay() {return true;}
-		virtual bool isBlocker() {return false;}
-		virtual bool isDead() {return m_foodPts == 0;}
+
 		virtual bool isEdible() {return true;}
-
-		void setFoodPts(int modifiedFoodPts) {m_foodPts = modifiedFoodPts;}
-		int getFoodPts() {return m_foodPts;}
-
-
-
 
 	private:
 		StudentWorld* m_game;
-		int m_foodPts;
 };
 
 #endif // FOOD_H_
@@ -193,25 +216,21 @@ class Food: public InanimateActor{
 #ifndef PHERONEME_H_
 #define PHERONEME_H_
 
-class Pheroneme: public InanimateActor{
+class Pheroneme: public DecayableActor{
 
 	public:
 		// Constructor
-		Pheroneme(StudentWorld* game, int imageID, int startX, int startY): InanimateActor(game, imageID, startX, startY)
-		{m_game = game; m_strength = 256;}
+		Pheroneme(StudentWorld* game, int imageID, int startX, int startY): DecayableActor(game, imageID, startX, startY, 256)
+		{m_game = game;}
 
 		// Destructor
 		virtual ~Pheroneme() {}
 
 		// Public Interface
-		virtual void doSomething() {m_strength--;}
-		virtual bool isBlocker() {return false;}
-		virtual bool canDecay() {return true;}
-		virtual bool isDead() {return m_strength == 0;}
+		virtual void doSomething() {setPoints(getPoints() - 1);}
 
 	private:
 		StudentWorld* m_game;
-		int m_strength;
 };
 
 #endif // PHERONEME_H_
@@ -238,10 +257,9 @@ class AnimateActor : public Actor{
 		// Public Interface
 		virtual void doSomething();
 
-
+		virtual bool canDie() {return true;}
 		virtual bool isAnimate() {return true;}
 		GraphObject::Direction randDir();
-		virtual bool canDecay() {return false;}
 
 		// dealing with points
 		int getPoints() {return m_points;} // return number of points
@@ -253,7 +271,6 @@ class AnimateActor : public Actor{
 
 		// blocking
 		bool isBlocked(int x, int y) {return m_game->isBlocked(x, y);}
-		virtual bool isBlocker() {return false;}
 
 		// stunning
 		virtual void stun() {stunned = true;}
