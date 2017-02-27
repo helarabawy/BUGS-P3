@@ -243,9 +243,18 @@ void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 			}
 
 		}
+}
 
+// GROW GH TO ADULT
+void StudentWorld::newAntBorn(int x, int y, int colony)
+{
+	int id = x*VIEW_WIDTH + y;
+
+	virtualWorld[id].push_back(new Ant(x, y, colony));
+	// TODO: increase number of ants this colony has produced
 
 }
+
 
 // REMOVE DEAD INSECTS
 list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor*>::const_iterator it, int i)

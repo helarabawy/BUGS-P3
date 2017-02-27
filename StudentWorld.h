@@ -39,6 +39,7 @@ public:
 	list<Actor*>::const_iterator removeDeadActorsAndGetNext(list<Actor*>::const_iterator it, int i);
 	void moveActor(Actor* actor, int oldX, int oldY, int newX, int newY);
 	void growGrasshopper(Actor* bgh, int x, int y);
+	void newAntBorn(int x, int y, int colony);
 	//void depleteFood(int x, int y, int pts);*/
 
 private:

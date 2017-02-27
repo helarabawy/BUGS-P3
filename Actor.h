@@ -163,7 +163,7 @@ class DecayableActor: public InanimateActor{
 		virtual ~DecayableActor() {}
 
 		// Public Interface
-		virtual void doSomething() {};
+		virtual void doSomething() {setPoints(getPoints() - 1);};
 
 		// getters and setters - status
 		virtual bool canDecay() {return true;}
@@ -201,7 +201,7 @@ class Food: public DecayableActor{
 		virtual ~Food() {}
 
 		// Public Interface
-		virtual void doSomething() {return;}
+		virtual void doSomething() {return;} // do nothing
 
 		virtual bool isEdible() {return true;}
 
@@ -231,7 +231,6 @@ class Pheroneme: public DecayableActor{
 		virtual ~Pheroneme() {}
 
 		// Public Interface
-		virtual void doSomething() {setPoints(getPoints() - 1);}
 
 	private:
 		StudentWorld* m_game;

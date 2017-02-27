@@ -169,7 +169,7 @@ void Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
 bool Grasshopper::eat()
 {
 	// is there food? if so, eat
-	int foodPts = m_game->eatFood(getX(), getY());
+	int foodPts = m_game->eatFood(getX(), getY(), 200);
 
 	if (foodPts == 0) // no food to eat
 		return false;
@@ -317,11 +317,18 @@ void Anthill::doSomething()
 void Anthill::doFunction() 
 {
 	// check to see if there is any food on square
-	// eat up to 10,000 units of food
+	// eat up to 10,000 units of food -----------------------not sure how to do this
 	// immediately return
+	
 	
 	// no food? check if there is enough energy (>= 2000 hit points to produce new ant
 	// add new ant on square
 	// lose 1500 points
 	// ask student world ot increase count of total number of ants that this colony has produced (to see who is winning)
+	if (getPoints() >= 2000)
+	{
+		m_game->newAntBorn(new Ant(getX(), getY(), getColony());
+		setPoints(getPoints() - 1500);
+	}
+	
 }
