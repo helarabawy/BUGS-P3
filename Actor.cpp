@@ -189,13 +189,12 @@ bool Grasshopper::eat()
 
 bool BabyGrasshopper::doFunction()
 {
-	grow();
-}
-
-void BabyGrasshopper::grow()
-{
 	if (getPoints() >= 1600)
+	{
 		m_game->growGrasshopper(this, getX(), getY());
+		return true;
+	}
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////

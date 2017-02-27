@@ -400,7 +400,6 @@ class BabyGrasshopper: public Grasshopper {
 		// Destructor
 		virtual ~BabyGrasshopper() {}
 
-		void grow();
 		bool virtual doFunction();
 
 	private:
