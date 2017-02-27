@@ -264,7 +264,7 @@ void AdultGrasshopper::jumpTo(int x, int y)
 ///////////////////////////////////////////////////////////////
 ////////////////////// ANT IMPLEMENTATION /////////////////////
 ///////////////////////////////////////////////////////////////
-/*
+
 void Ant::doSomething()
 {
 	AnimateActor::doSomething();
@@ -296,23 +296,32 @@ bool Ant::isSleeping()
 	else
 		return false;
 }
-*/
 
 
 ///////////////////////////////////////////////////////////////
 //////////////////// ANTHILL IMPLEMENTATION ///////////////////
 ///////////////////////////////////////////////////////////////
-/*
 
-void Ant::doSomething()
+void Anthill::doSomething()
 {
-	AnimateActor::doSomething();
+	DecayableActor::doSomething();
 	
 	// check if died
-	if (isDead() || isSleeping())
+	if (isGone())
 		return;
 	
 	doFunction();
 	
 }
-*/
+
+void Anthill::doFunction() 
+{
+	// check to see if there is any food on square
+	// eat up to 10,000 units of food
+	// immediately return
+	
+	// no food? check if there is enough energy (>= 2000 hit points to produce new ant
+	// add new ant on square
+	// lose 1500 points
+	// ask student world ot increase count of total number of ants that this colony has produced (to see who is winning)
+}

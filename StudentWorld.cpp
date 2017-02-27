@@ -218,7 +218,7 @@ int StudentWorld::eatFood(int x, int y)
 }
 
 // GROW GH TO ADULT
-void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
+void StudentWorld::growGrasshopper(BabyGrasshopper* bgh, int x, int y)
 {
 	int id = x*VIEW_WIDTH + y;
 
@@ -235,9 +235,8 @@ void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 				// new food where baby died
 				virtualWorld[id].push_back(new Food(this, x, y, 100));
 
-				// deleting baby grasshopper.
-				delete bgh;
-				virtualWorld[id].erase(it);
+				// killing baby grasshopper.
+				bgh->setPoints(0);
 
 				return;
 			}

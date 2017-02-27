@@ -172,6 +172,8 @@ class DecayableActor: public InanimateActor{
 
 		int getPoints() {return m_points;}
 		int setPoints(int modifiedPoints) {m_points = modifiedPoints;}
+		
+		bool isGone() {return getPoints() == 0;}
 
 	private:
 		int m_points;
@@ -242,7 +244,6 @@ class Pheroneme: public DecayableActor{
 /////////////////////////// ANTHILL ///////////////////////////
 ///////////////////////////////////////////////////////////////
 
-/*
 #ifndef ANTHILL_H_
 #define ANTHILL_H_
 
@@ -250,31 +251,26 @@ class Anthill: public DecayableActor {
 
 	public:
 		// Constructor
-		Anthill(StudentWorld* game, int imageID int startX, int startY, int colony pointer to colony obj): DecayableActor(game, IID_ANTHILL, startX, startY, 8999)
-		{ m_game = game; unstun(); m_colony = colony;}
+		Anthill(StudentWorld* game, int imageID, int startX, int startY, int colony /*pointer to colony obj*/): DecayableActor(game, IID_ANT_HILL, startX, startY, 8999)
+		{ m_game = game; m_colony = colony;}
 
 		// Destructor
-		virtual ~AntHill() {}
+		virtual ~Anthill() {}
 
 		virtual void doSomething(); // work on this
-		virtual void getColony() {return m_colony;}
+		 int getColony() {return m_colony;}
 		// Public Interface
-
-		virtual bool isSleeping() {return false;}
 
 		void virtual doFunction(){}// eats appropriately
 		bool virtual eat() {return false;} // fix
 
 	private:
 		int m_colony;
-		int ticksToSleep = 0;
 		StudentWorld* m_game;
 
 };
 
 #endif // ANT_H_
-
-*/
 
 ///////////////////////////////////////////////////////////////
 //////////////////// ~ ANIMATE ACTOR ~ ////////////////////////
@@ -457,7 +453,6 @@ class AdultGrasshopper: public Grasshopper {
 ///////////////////////////////////////////////////////////////
 /////////////////////////////// ANT ///////////////////////////
 ///////////////////////////////////////////////////////////////
-/*
 
 #ifndef ANT_H_
 #define ANT_H_
@@ -466,17 +461,18 @@ class Ant: public AnimateActor {
 
 	public:
 		// Constructor
-		Ant(StudentWorld* game, int imageID int startX, int startY, int colony pointer to colony obj): AnimateActor(game, imageID, startX, startY, randDir(), 1500, 2)
+		Ant(StudentWorld* game, int imageID, int startX, int startY, int colony /*pointer to colony obj*/): AnimateActor(game, imageID, startX, startY, randDir(), 1500, 2)
 		{ m_game = game; unstun(); m_colony = colony;}
 
 		// Destructor
 		virtual ~Ant() {}
 
-		virtual void getColony() {return m_colony;}
+		int getColony() {return m_colony;}
 		// Public Interface
 
 		virtual bool isSleeping();
 
+		virtual void doSomething();
 		void virtual doFunction(){}// command stuff}
 		bool virtual eat() {return false;} // fix
 
@@ -488,7 +484,7 @@ class Ant: public AnimateActor {
 };
 
 #endif // ANT_H_
-*/
+
 
 
 #endif // ACTOR_H_
