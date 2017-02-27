@@ -218,7 +218,7 @@ int StudentWorld::eatFood(int x, int y)
 }
 
 // GROW GH TO ADULT
-void StudentWorld::growGrasshopper(BabyGrasshopper* bgh, int x, int y)
+void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 {
 	int id = x*VIEW_WIDTH + y;
 
@@ -235,8 +235,9 @@ void StudentWorld::growGrasshopper(BabyGrasshopper* bgh, int x, int y)
 				// new food where baby died
 				virtualWorld[id].push_back(new Food(this, x, y, 100));
 
+				BabyGrasshopper* ptr = dynamic_cast<BabyGrasshopper*>(bgh);
 				// killing baby grasshopper.
-				bgh->setPoints(0);
+				ptr->setPoints(0);
 
 				return;
 			}

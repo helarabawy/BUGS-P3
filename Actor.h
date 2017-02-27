@@ -261,7 +261,7 @@ class Anthill: public DecayableActor {
 		 int getColony() {return m_colony;}
 		// Public Interface
 
-		void virtual doFunction(){}// eats appropriately
+		void virtual doFunction(); // eats appropriately
 		bool virtual eat() {return false;} // fix
 
 	private:
