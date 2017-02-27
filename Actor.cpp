@@ -266,6 +266,19 @@ void AdultGrasshopper::jumpTo(int x, int y)
 ////////////////////// ANT IMPLEMENTATION /////////////////////
 ///////////////////////////////////////////////////////////////
 /*
+void Ant::doSomething()
+{
+	AnimateActor::doSomething();
+	
+	// check if died
+	if (isDead() || isSleeping())
+		return;
+	
+	doFunction();
+	
+}
+
+
 bool Ant::isSleeping()
 {
 	if (checkStunStatus() == true)
@@ -283,5 +296,24 @@ bool Ant::isSleeping()
 	}
 	else
 		return false;
+}
+*/
+
+
+///////////////////////////////////////////////////////////////
+//////////////////// ANTHILL IMPLEMENTATION ///////////////////
+///////////////////////////////////////////////////////////////
+/*
+
+void Ant::doSomething()
+{
+	AnimateActor::doSomething();
+	
+	// check if died
+	if (isDead() || isSleeping())
+		return;
+	
+	doFunction();
+	
 }
 */

@@ -198,19 +198,19 @@ int StudentWorld::eatFood(int x, int y)
 				{
 					Food* fp = dynamic_cast<Food*>(dp);
 					int foodPoints = fp->getPoints();
+					
 					if (foodPoints > 200)
 					{
 						fp->setPoints(foodPoints - 200);
 						return 200;
 					} else
 					{
-						delete *it;
-						virtualWorld[id].erase(it);
+						fp->setPoints(0);
 						return foodPoints;
 					}
 
-			 } else
-				return 0;
+				} else
+					return 0;
 			}
 		 }
 		 it++;
@@ -255,14 +255,22 @@ list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor
 		AnimateActor* aap = dynamic_cast<AnimateActor*>(*it);
 		 if (aap->isDead())
 		 {
-				cerr << "delete actor" << endl;
-
 			 // body decomposes
 			virtualWorld[i].push_back(new Food(this, (*it)->getX(), (*it)->getY(), 100));
 			delete *it;
 			return virtualWorld[i].erase(it);
 		 }
+	} else
+	{
+		InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
+		 if (iap->canDecay())
+		 {
+			 // body decomposes
+			delete *it;
+			return virtualWorld[i].erase(it);
+		 }
 	}
+
 	it++;
 	return it;
 }

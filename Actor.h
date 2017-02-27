@@ -66,42 +66,6 @@ class InanimateActor: public Actor{
 
 #endif // INANIMATEACTOR_H_
 
-///////////////////////////////////////////////////////////////
-/////////////// ~ DECAYABLE INANIMATE ACTOR ~ /////////////////
-///////////////////////////////////////////////////////////////
-
-#ifndef DECAYABLEACTOR_H_
-#define DECAYABLEACTOR_H_
-
-class DecayableActor: public InanimateActor{
-
-	public:
-		// Constructor
-		DecayableActor(StudentWorld* game, int imageID, int startX, int startY, int points): InanimateActor(game, imageID, startX, startY)
-		{m_game = game; m_points = points;}
-
-
-		// Destructor
-		virtual ~DecayableActor() {}
-
-		// Public Interface
-		virtual void doSomething() {};
-
-		// getters and setters - status
-		virtual bool canDecay() {return true;}
-
-		virtual bool isEdible() {return false;}
-
-		int getPoints() {return m_points;}
-		int setPoints(int modifiedPoints) {m_points = modifiedPoints;}
-
-	private:
-		int m_points;
-		StudentWorld* m_game;
-};
-
-#endif // DECAYABLEACTOR_H_
-
 
 ///////////////////////////////////////////////////////////////
 ///////////////////////// PEBBLE //////////////////////////////
@@ -153,7 +117,7 @@ class Water: public InanimateActor{
 #endif // WATER_H_
 
 ///////////////////////////////////////////////////////////////
-///////////////////////// PEBBLE //////////////////////////////
+///////////////////////// POISON //////////////////////////////
 ///////////////////////////////////////////////////////////////
 
 #ifndef POISON_H_
@@ -177,6 +141,44 @@ class Poison: public InanimateActor{
 };
 
 #endif // PEBBLE_H_
+
+
+
+///////////////////////////////////////////////////////////////
+/////////////// ~ DECAYABLE INANIMATE ACTOR ~ /////////////////
+///////////////////////////////////////////////////////////////
+
+#ifndef DECAYABLEACTOR_H_
+#define DECAYABLEACTOR_H_
+
+class DecayableActor: public InanimateActor{
+
+	public:
+		// Constructor
+		DecayableActor(StudentWorld* game, int imageID, int startX, int startY, int points): InanimateActor(game, imageID, startX, startY)
+		{m_game = game; m_points = points;}
+
+
+		// Destructor
+		virtual ~DecayableActor() {}
+
+		// Public Interface
+		virtual void doSomething() {};
+
+		// getters and setters - status
+		virtual bool canDecay() {return true;}
+
+		virtual bool isEdible() {return false;}
+
+		int getPoints() {return m_points;}
+		int setPoints(int modifiedPoints) {m_points = modifiedPoints;}
+
+	private:
+		int m_points;
+		StudentWorld* m_game;
+};
+
+#endif // DECAYABLEACTOR_H_
 
 
 ///////////////////////////////////////////////////////////////
@@ -236,6 +238,43 @@ class Pheroneme: public DecayableActor{
 #endif // PHERONEME_H_
 
 
+///////////////////////////////////////////////////////////////
+/////////////////////////// ANTHILL ///////////////////////////
+///////////////////////////////////////////////////////////////
+
+/*
+#ifndef ANTHILL_H_
+#define ANTHILL_H_
+
+class Anthill: public DecayableActor {
+
+	public:
+		// Constructor
+		Anthill(StudentWorld* game, int imageID int startX, int startY, int colony pointer to colony obj): DecayableActor(game, IID_ANTHILL, startX, startY, 8999)
+		{ m_game = game; unstun(); m_colony = colony;}
+
+		// Destructor
+		virtual ~AntHill() {}
+
+		virtual void doSomething(); // work on this
+		virtual void getColony() {return m_colony;}
+		// Public Interface
+
+		virtual bool isSleeping() {return false;}
+
+		void virtual doFunction(){}// eats appropriately
+		bool virtual eat() {return false;} // fix
+
+	private:
+		int m_colony;
+		int ticksToSleep = 0;
+		StudentWorld* m_game;
+
+};
+
+#endif // ANT_H_
+
+*/
 
 ///////////////////////////////////////////////////////////////
 //////////////////// ~ ANIMATE ACTOR ~ ////////////////////////
@@ -248,7 +287,7 @@ class AnimateActor : public Actor{
 
 	public:
 		// Constructor
-		AnimateActor(StudentWorld* game, int imageID, int startX, int startY, Direction dir, int healthPts): Actor(game, imageID, startX, startY, dir)
+		AnimateActor(StudentWorld* game, int imageID, int startX, int startY, Direction dir, int healthPts, int depth = 0): Actor(game, imageID, startX, startY, dir, depth)
 		{m_game = game; m_points = healthPts; stunned = false; poisoned = false;}
 
 		// Destructor
@@ -428,13 +467,13 @@ class Ant: public AnimateActor {
 
 	public:
 		// Constructor
-		Ant(StudentWorld* game, int imageID int startX, int startY): AnimateActor(game, imageID, startX, startY, randDir(), 1500)
-		{ m_game = game; unstun();}
+		Ant(StudentWorld* game, int imageID int startX, int startY, int colony pointer to colony obj): AnimateActor(game, imageID, startX, startY, randDir(), 1500, 2)
+		{ m_game = game; unstun(); m_colony = colony;}
 
 		// Destructor
 		virtual ~Ant() {}
 
-		//virtual void getColony() {return;}
+		virtual void getColony() {return m_colony;}
 		// Public Interface
 
 		virtual bool isSleeping();
@@ -443,6 +482,7 @@ class Ant: public AnimateActor {
 		bool virtual eat() {return false;} // fix
 
 	private:
+		int m_colony;
 		int ticksToSleep = 0;
 		StudentWorld* m_game;
 
