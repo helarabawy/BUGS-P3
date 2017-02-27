@@ -327,7 +327,7 @@ void Anthill::doFunction()
 	// ask student world ot increase count of total number of ants that this colony has produced (to see who is winning)
 	if (getPoints() >= 2000)
 	{
-		m_game->newAntBorn(new Ant(getX(), getY(), getColony());
+		m_game->newAntBorn(getX(), getY(), getColony());
 		setPoints(getPoints() - 1500);
 	}
 	

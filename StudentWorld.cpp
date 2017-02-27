@@ -175,7 +175,7 @@ bool StudentWorld::biteRandomInsect(int x, int y)
 }
 
 // INSECT EATS AT (x, y)
-int StudentWorld::eatFood(int x, int y)
+int StudentWorld::eatFood(int x, int y, int amount)
 {
 	// convert x, y
 	int id = x*VIEW_WIDTH + y;
@@ -199,10 +199,10 @@ int StudentWorld::eatFood(int x, int y)
 					Food* fp = dynamic_cast<Food*>(dp);
 					int foodPoints = fp->getPoints();
 					
-					if (foodPoints > 200)
+					if (foodPoints > amount)
 					{
-						fp->setPoints(foodPoints - 200);
-						return 200;
+						fp->setPoints(foodPoints - amount);
+						return amount;
 					} else
 					{
 						fp->setPoints(0);
@@ -215,6 +215,7 @@ int StudentWorld::eatFood(int x, int y)
 		 }
 		 it++;
 	 }
+	 return 0;
 }
 
 // GROW GH TO ADULT
@@ -250,7 +251,7 @@ void StudentWorld::newAntBorn(int x, int y, int colony)
 {
 	int id = x*VIEW_WIDTH + y;
 
-	virtualWorld[id].push_back(new Ant(x, y, colony));
+	//virtualWorld[id].push_back(new Ant(this, x, y, colony)); // remember id changes with colony
 	// TODO: increase number of ants this colony has produced
 
 }

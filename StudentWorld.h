@@ -35,7 +35,7 @@ public:
 	// change status at (x, y)*/
 	void hurtInsects(int x, int y, char c);
 	bool biteRandomInsect(int x, int y);
-	int eatFood(int x, int y);
+	int eatFood(int x, int y, int amount);
 	list<Actor*>::const_iterator removeDeadActorsAndGetNext(list<Actor*>::const_iterator it, int i);
 	void moveActor(Actor* actor, int oldX, int oldY, int newX, int newY);
 	void growGrasshopper(Actor* bgh, int x, int y);
