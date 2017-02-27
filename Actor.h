@@ -419,6 +419,7 @@ class AdultGrasshopper: public Grasshopper {
 ///////////////////////////////////////////////////////////////
 /////////////////////////////// ANT ///////////////////////////
 ///////////////////////////////////////////////////////////////
+/*
 
 #ifndef ANT_H_
 #define ANT_H_
@@ -427,20 +428,19 @@ class Ant: public AnimateActor {
 
 	public:
 		// Constructor
-		Ant(StudentWorld* game, int imageID, int startX, int startY): AnimateActor(game, imageID, startX, startY, randDir(), 1500)
+		Ant(StudentWorld* game, int imageID int startX, int startY): AnimateActor(game, imageID, startX, startY, randDir(), 1500)
 		{ m_game = game; unstun();}
 
 		// Destructor
 		virtual ~Ant() {}
 
-		virtual void getColony() {return;}
+		//virtual void getColony() {return;}
 		// Public Interface
-		//virtual void doSomething(); not differentiated functionality yet
 
 		virtual bool isSleeping();
 
-		void virtual doFunction(){}
-		bool virtual eat() {return false;}
+		void virtual doFunction(){}// command stuff}
+		bool virtual eat() {return false;} // fix
 
 	private:
 		int ticksToSleep = 0;
@@ -449,6 +449,7 @@ class Ant: public AnimateActor {
 };
 
 #endif // ANT_H_
+*/
 
 
 #endif // ACTOR_H_

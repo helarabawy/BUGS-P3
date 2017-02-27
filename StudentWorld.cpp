@@ -213,6 +213,7 @@ int StudentWorld::eatFood(int x, int y)
 				return 0;
 			}
 		 }
+		 it++;
 	 }
 }
 
