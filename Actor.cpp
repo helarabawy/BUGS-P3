@@ -276,6 +276,17 @@ void AdultGrasshopper::jumpTo(int x, int y)
 ////////////////////// ANT IMPLEMENTATION /////////////////////
 ///////////////////////////////////////////////////////////////
 
+int Ant::getImageID()
+{
+	switch (getColony())
+	{
+		case 0: return IID_ANT_TYPE0;
+		case 1: return IID_ANT_TYPE1;
+		case 2: return IID_ANT_TYPE2;
+		case 3: return IID_ANT_TYPE3;
+	}
+}
+
 void Ant::doSomething()
 {
 	AnimateActor::doSomething();
@@ -580,7 +591,7 @@ void Anthill::doFunction()
 	// ask student world ot increase count of total number of ants that this colony has produced (to see who is winning)
 	if (getPoints() >= 2000)
 	{
-		m_game->newAntBorn(getX(), getY(), getColony());
+		m_game->newAntBorn(getX(), getY(), getColony(), m_c);
 		setPoints(getPoints() - 1500);
 	}
 	

@@ -250,7 +250,7 @@ class Anthill: public DecayableActor {
 
 	public:
 		// Constructor
-		Anthill(StudentWorld* game, int startX, int startY, int colony, Compiler& c): DecayableActor(game, IID_ANT_HILL, startX, startY, 8999)
+		Anthill(StudentWorld* game, int startX, int startY, int colony, Compiler* c): DecayableActor(game, IID_ANT_HILL, startX, startY, 8999)
 		{ m_game = game; m_colony = colony;}
 
 		// Destructor
@@ -266,6 +266,7 @@ class Anthill: public DecayableActor {
 	private:
 		int m_colony;
 		StudentWorld* m_game;
+		Compiler* m_c;
 
 };
 
@@ -456,14 +457,15 @@ class Ant: public AnimateActor {
 
 	public:
 		// Constructor
-		Ant(StudentWorld* game, int imageID, int startX, int startY, int colony, Compiler* compiler)
-		: AnimateActor(game, imageID, startX, startY, randDir(), 1500, 1)
+		Ant(StudentWorld* game, int startX, int startY, int colony, Compiler* compiler)
+		: AnimateActor(game, getImageID(), startX, startY, randDir(), 1500, 1)
 		{ m_game = game; unstun(); m_colony = colony; m_compiler = compiler;}
 
 		// Destructor
 		virtual ~Ant() {}
 
 		int getColony() {return m_colony;}
+		int getImageID();
 		
 		// Public Interface
 		virtual bool isSleeping();

@@ -286,7 +286,7 @@ int StudentWorld::eatFood(int x, int y, int amount)
 					}
 
 				} else
-					return 0;
+					return 0; // TODO: bug here, i need to account for anthills eating
 			}
 		 }
 		 it++;
@@ -318,11 +318,11 @@ void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 }
 
 // GROW GH TO ADULT
-void StudentWorld::newAntBorn(int x, int y, int colony)
+void StudentWorld::newAntBorn(int x, int y, int colony, Compiler* c)
 {
 	int id = x*VIEW_WIDTH + y;
 
-	//virtualWorld[id].push_back(new Ant(this, x, y, colony)); // remember id changes with colony
+	virtualWorld[id].push_back(new Ant(this, x, y, colony, c)); // remember id changes with colony
 	// TODO: increase number of ants this colony has produced
 
 }
