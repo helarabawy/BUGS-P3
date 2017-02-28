@@ -290,7 +290,15 @@ void Ant::doSomething()
 
 void Ant::storeFood(int amount)
 {
-	storedFood += m_game->eatFood(getX(), getY(), 400);
+	int toStore = m_game->eatFood(getX(), getY(), 400);
+
+	// max pts of 1800
+	if (storedFood + toStore > 1800)
+	{
+		storedFood = 1800;
+		m_game->dropFood(getX(), getY(), storedFood + toStore - 1800);
+	}
+
 }
 void Ant::doFunction() 
 {
@@ -329,28 +337,30 @@ void Ant::doFunction()
 			break;
 		}
 
-		case pickupFood:
+		case pickupFood: // DONE
 		{
 			storeFood(400);
 			++ic;
 			break;
 		}
-		case emitpheromone:
+
+		case emitPheromone: // TODO
 		{
 			//
 			++ic;
 			break;
 		}
-		case generateRandomNumber:
+
+		case faceRandomDirection: // DONE
 		{
-			generatorRandomNumberUpTo(cmd.operand1);
+			setDirection(randDir());
 			++ic;
 			break;
 		}
 		
-		case faceRandomDirection: // DONE
+		case generateRandomNumber:
 		{
-			setDirection(randDir());
+			generatorRandomNumberUpTo(cmd.operand1);
 			++ic;
 			break;
 		}
