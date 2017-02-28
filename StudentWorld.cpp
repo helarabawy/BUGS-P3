@@ -262,7 +262,7 @@ void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 				for (it = virtualWorld[id].begin();
 					it != virtualWorld[id].end(); it++)
 				{
-					if ((*it).isAnimate() == false)
+					if ((*it)->isAnimate() == false)
 					{
 						InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
 						
