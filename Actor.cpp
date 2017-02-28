@@ -38,6 +38,15 @@ bool AnimateActor::eat(int maxFood)
 	return true;
 }
 
+void AnimateActor::poison()
+{
+	if (poisoned == false)
+	{
+		m_points -= 150;
+		poisoned = true;
+	} else
+		return;
+}
 
 ///////////////////////////////////////////////////////////////
 ///////////////// GRASSHOPPER IMPLEMENTATION //////////////////

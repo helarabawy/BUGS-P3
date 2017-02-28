@@ -1,3 +1,5 @@
+// TODO: should i say virtual first or type first
+
 ///////////////////////////////////////////////////////////////
 //////////////////////// ~ ACTOR ~ ////////////////////////////
 ///////////////////////////////////////////////////////////////
@@ -14,7 +16,7 @@ class Actor: public GraphObject {
 	public:
 		// Constructor
 		Actor(StudentWorld* game, int imageID, int startX, int startY, Direction dir, int depth = 0)
-	    : GraphObject(imageID, startX, startY, dir, depth) { m_game = game;}
+	    : GraphObject(imageID, startX, startY, dir, depth) {}
 
 		// Destructor
 		virtual ~Actor() {}
@@ -22,13 +24,8 @@ class Actor: public GraphObject {
 		// Public Interface
 		virtual void doSomething() = 0;
 		virtual bool isAnimate() = 0;
-
 		virtual bool canDie() = 0;
-
-	private:
-		StudentWorld* m_game;
 };
-
 
 ///////////////////////////////////////////////////////////////
 ////////////////// ~ INANIMATE ACTOR ~ ////////////////////////
@@ -41,8 +38,8 @@ class InanimateActor: public Actor{
 
 	public:
 		// Constructor
-		InanimateActor(StudentWorld* game, int imageID, int startX, int startY, int depth = 2): Actor(game, imageID, startX, startY, right, depth)
-		{m_game = game;}
+		InanimateActor(StudentWorld* game, int imageID, int startX, int startY, int depth = 2)
+		: Actor(game, imageID, startX, startY, right, depth)
 
 		// Destructor
 		virtual ~InanimateActor() {}
@@ -50,22 +47,14 @@ class InanimateActor: public Actor{
 		// Public Interface
 		virtual void doSomething() = 0;
 
-		// getters and setters - status
-
-		virtual bool canDie() {return canDecay();} // make sure overriden correctly
-
+		// Getting inanimate actor status
+		virtual bool canDie() {return canDecay();} //TODO: make sure overriden correctly
 		virtual bool isAnimate() {return false;}
-
 		virtual bool canDecay() {return false;}
-
 		virtual bool isBlocker() {return false;};
-
-	private:
-		StudentWorld* m_game;
 };
 
 #endif // INANIMATEACTOR_H_
-
 
 ///////////////////////////////////////////////////////////////
 ///////////////////////// PEBBLE //////////////////////////////
@@ -78,14 +67,15 @@ class Pebble: public InanimateActor{
 
 	public:
 		// Constructor
-		Pebble(StudentWorld* game, int startX, int startY): InanimateActor(game, IID_ROCK, startX, startY, 1) {}
+		Pebble(StudentWorld* game, int startX, int startY)
+		: InanimateActor(game, IID_ROCK, startX, startY, 1) {}
 	
 		// Destructor
 		virtual ~Pebble() {}
 
 		// Public Interface
 		virtual void doSomething() {return;} // Pebble should do nothing during tick
-		virtual bool isBlocker() {return true;}
+		virtual bool isBlocker() {return true;} 
 };
 
 #endif // PEBBLE_H_
@@ -101,7 +91,8 @@ class Water: public InanimateActor{
 
 	public:
 		// Constructor
-		Water(StudentWorld* game, int startX, int startY): InanimateActor(game, IID_WATER_POOL, startX, startY)
+		Water(StudentWorld* game, int startX, int startY)
+		: InanimateActor(game, IID_WATER_POOL, startX, startY)
 		{m_game = game;}
 
 		// Destructor
@@ -127,22 +118,21 @@ class Poison: public InanimateActor{
 
 	public:
 		// Constructor
-		Poison(StudentWorld* game, int startX, int startY): InanimateActor(game, IID_POISON, startX, startY, 2)
+		Poison(StudentWorld* game, int startX, int startY)
+		: InanimateActor(game, IID_POISON, startX, startY, 2)
 		{m_game = game;}
 
 		// Destructor
 		virtual ~Poison() {}
 
 		// Public Interface
-		virtual void doSomething() { m_game->hurtInsects(getX(), getY(),'p');} // Pebble should do nothing during tick
+		virtual void doSomething() {m_game->hurtInsects(getX(), getY(),'p');} 
 
 	private:
 		StudentWorld* m_game;
 };
 
 #endif // PEBBLE_H_
-
-
 
 ///////////////////////////////////////////////////////////////
 /////////////// ~ DECAYABLE INANIMATE ACTOR ~ /////////////////
@@ -155,9 +145,9 @@ class DecayableActor: public InanimateActor{
 
 	public:
 		// Constructor
-		DecayableActor(StudentWorld* game, int imageID, int startX, int startY, int points): InanimateActor(game, imageID, startX, startY)
+		DecayableActor(StudentWorld* game, int imageID, int startX, int startY, int points)
+		: InanimateActor(game, imageID, startX, startY)
 		{m_game = game; m_points = points;}
-
 
 		// Destructor
 		virtual ~DecayableActor() {}
@@ -167,12 +157,9 @@ class DecayableActor: public InanimateActor{
 
 		// getters and setters - status
 		virtual bool canDecay() {return true;}
-
 		virtual bool isEdible() {return false;}
-
-		int getPoints() {return m_points;}
+		int getPoints() {return m_points;} // change from points to energy to differentiate it from alive actors
 		int setPoints(int modifiedPoints) {m_points = modifiedPoints;}
-		
 		bool isGone() {return getPoints() == 0;}
 
 	private:
@@ -181,7 +168,6 @@ class DecayableActor: public InanimateActor{
 };
 
 #endif // DECAYABLEACTOR_H_
-
 
 ///////////////////////////////////////////////////////////////
 /////////////////////////// FOOD //////////////////////////////
@@ -194,28 +180,22 @@ class Food: public DecayableActor{
 
 	public:
 		// Constructor
-		Food(StudentWorld* game, int startX, int startY, int foodPts = 6000): DecayableActor(game, IID_FOOD, startX, startY, foodPts)
-		{m_game = game;}
+		Food(StudentWorld* game, int startX, int startY, int foodPts = 6000)
+		: DecayableActor(game, IID_FOOD, startX, startY, foodPts) {}
 
 		// Destructor
 		virtual ~Food() {}
 
 		// Public Interface
 		virtual void doSomething() {return;} // do nothing
-
 		virtual bool isEdible() {return true;}
-
-	private:
-		StudentWorld* m_game;
 };
 
 #endif // FOOD_H_
 
-
 ///////////////////////////////////////////////////////////////
 /////////////////////// PHERONEME /////////////////////////////
 ///////////////////////////////////////////////////////////////
-
 
 #ifndef PHERONEME_H_
 #define PHERONEME_H_
@@ -224,20 +204,18 @@ class Pheroneme: public DecayableActor{
 
 	public:
 		// Constructor
-		Pheroneme(StudentWorld* game, int imageID, int startX, int startY): DecayableActor(game, imageID, startX, startY, 256)
+		Pheroneme(StudentWorld* game, int imageID, int startX, int startY)
+		: DecayableActor(game, imageID, startX, startY, 256)
 		{m_game = game;}
 
 		// Destructor
 		virtual ~Pheroneme() {}
-
-		// Public Interface
 
 	private:
 		StudentWorld* m_game;
 };
 
 #endif // PHERONEME_H_
-
 
 ///////////////////////////////////////////////////////////////
 /////////////////////////// ANTHILL ///////////////////////////
@@ -250,19 +228,21 @@ class Anthill: public DecayableActor {
 
 	public:
 		// Constructor
-		Anthill(StudentWorld* game, int startX, int startY, int colony, Compiler* c): DecayableActor(game, IID_ANT_HILL, startX, startY, 8999)
+		Anthill(StudentWorld* game, int startX, int startY, int colony, Compiler* c)
+		: DecayableActor(game, IID_ANT_HILL, startX, startY, 8999)
 		{ m_game = game; m_colony = colony;}
 
 		// Destructor
 		virtual ~Anthill() {}
 
-		virtual void doSomething(); // work on this
-		 int getColony() {return m_colony;}
 		// Public Interface
+		virtual void doSomething();
+		int getColony() {return m_colony;} 
+		// TODO: since pheroneme, ant and anthill are all associated w their respective colony
+		// TODO: should I create an abstract class that they extend called colonized to store colony?
 
 		void virtual doFunction(); // eats appropriately
-		bool virtual eat() {return false;} // fix
-
+		
 	private:
 		int m_colony;
 		StudentWorld* m_game;
@@ -292,50 +272,45 @@ class AnimateActor : public Actor{
 		// Public Interface
 		virtual void doSomething();
 
-		virtual bool canDie() {return true;}
-		virtual bool isAnimate() {return true;}
-		GraphObject::Direction randDir();
+			// Direction
+			GraphObject::Direction randDir();
 
-		// dealing with points
-		int getPoints() {return m_points;} // return number of points
-		void setPoints(int modifiedPoints) { m_points = modifiedPoints;} // set points to new value
+			// dealing with points
+			int getPoints() {return m_points;} // return number of points
+			void setPoints(int modifiedPoints) { m_points = modifiedPoints;} // set points to new value
 
-		// status
-		virtual bool isDead() {return m_points <= 0;}
-		virtual bool isSleeping() = 0;
+			// status
+			virtual bool canDie() {return true;}
+			virtual bool isAnimate() {return true;}
+			virtual bool isDead() {return m_points <= 0;}
+			virtual bool isSleeping() = 0;
 
-		// blocking
-		bool isBlocked(int x, int y) {return m_game->isBlocked(x, y);}
+			// moving
+			bool moveStep(Direction dir, int oldX, int oldY);
 
-		// stunning
-		virtual void stun() {stunned = true;}
-		void unstun() {stunned = false;}
-		virtual bool checkStunStatus() {return stunned;}
+			// blocking
+			bool isBlocked(int x, int y) {return m_game->isBlocked(x, y);}
 
-		// eating
-		bool eat(int maxFood);
+			// stunning
+			virtual void stun() {stunned = true;}
+			void unstun() {stunned = false;}
+			virtual bool checkStunStatus() {return stunned;}
 
-		// poisoning
-		virtual void poison()
-		{
-			if (poisoned == false)
-			{
-				m_points -= 150;
-				poisoned = true;
-			} else
-				return;
-		}
+			// eating
+			bool eat(int maxFood);
+
+			// poisoning
+			virtual void poison()
 
 	private:
+			
 		bool poisoned = false;
 		bool stunned;
 		StudentWorld* m_game;
 		int m_points;
-
 };
 
 #endif // ANIMATEACTOR_H_
-
 
 ///////////////////////////////////////////////////////////////
 //////////////////////// GRASSHOPPER //////////////////////////
@@ -350,7 +325,8 @@ class Grasshopper: public AnimateActor {
 		// Constructor
 		Grasshopper(StudentWorld* game, int ImageID, int startX, int startY, int points)
 		: distanceToMove(randInt(2, 10)), // member variables
-		AnimateActor(game, ImageID, startX, startY, /*random direction*/ randDir(), points) {m_game = game;}
+		AnimateActor(game, ImageID, startX, startY, /*random direction*/ randDir(), points) 
+		{m_game = game;}
 
 		// Destructor
 		virtual ~Grasshopper() {}
@@ -358,14 +334,11 @@ class Grasshopper: public AnimateActor {
 		// Public Interface
 		virtual void doSomething();
 
-		// stunning
-		virtual bool isSleeping();
-
-		bool moveStep(Direction dir, int oldX, int oldY);
-		bool virtual doFunction() = 0;
+			// stunning
+			virtual bool isSleeping();
+			bool virtual doFunction() = 0;
 
 	private:
-		// generate random direction
 		int ticksToSleep = 0;
 		bool recoveringFromStun = false;
 		int distanceToMove;
@@ -373,7 +346,6 @@ class Grasshopper: public AnimateActor {
 };
 
 #endif // GRASSHOPPER_H_
-
 
 ///////////////////////////////////////////////////////////////
 ////////////////////// BABY GRASSHOPPER ///////////////////////
@@ -386,7 +358,8 @@ class BabyGrasshopper: public Grasshopper {
 
 	public:
 		// Constructor
-		BabyGrasshopper(StudentWorld* game, int startX, int startY): Grasshopper(game, IID_BABY_GRASSHOPPER, startX, startY, 500)
+		BabyGrasshopper(StudentWorld* game, int startX, int startY)
+		: Grasshopper(game, IID_BABY_GRASSHOPPER, startX, startY, 500)
 		{ m_game = game;}
 
 		// Destructor
@@ -396,11 +369,9 @@ class BabyGrasshopper: public Grasshopper {
 
 	private:
 		StudentWorld* m_game;
-		
 };
 
 #endif // BABYGRASSHOPPER_H_
-
 
 ///////////////////////////////////////////////////////////////
 ///////////////////// ADULT GRASSHOPPER ///////////////////////
@@ -419,18 +390,18 @@ class AdultGrasshopper: public Grasshopper {
 		// Destructor
 		virtual ~AdultGrasshopper() {}
 
-		virtual void poison() {return;} // never gets poisoned
-
-		bool virtual checkStunStatus() {return false;} // never gets stunned
-
 		// Public Interface
-
+		virtual void poison() {return;} // never gets poisoned
+		bool virtual checkStunStatus() {return false;} // never gets stunned
 		bool virtual doFunction();
 
 	private:
+		// jumping
 		void jump();
 		void jumpTo(int x, int y);
+		bool jumped = false;
 
+		// storing coordinates
 		struct Coord{
 			int x;
 			int y;
@@ -439,12 +410,9 @@ class AdultGrasshopper: public Grasshopper {
 		vector<Coord> jumpOptions;
 
 		StudentWorld* m_game;
-		bool jumped = false;
-
 };
 
 #endif // ADULTGRASSHOPPER_H_
-
 
 ///////////////////////////////////////////////////////////////
 /////////////////////////////// ANT ///////////////////////////
@@ -474,9 +442,12 @@ class Ant: public AnimateActor {
 		bool virtual doFunction();
 
 		void storeFood(int amount) ;
+
 	private:
+		// direction change
 		void rotateClockwise();
 		void rotateCounterClockwise();
+		
 		int m_colony;
 		int storedFood = 0;
 		int ticksToSleep = 0;
