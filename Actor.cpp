@@ -25,6 +25,19 @@ GraphObject::Direction AnimateActor::randDir()
 	}
 }
 
+bool AnimateActor::eat(int maxFood)
+{
+	// is there food? if so, eat
+	int foodPts = m_game->eatFood(getX(), getY(), maxFood);
+
+	if (foodPts == 0) // no food to eat
+		return false;
+	else
+		setPoints(getPoints() + foodPts);
+
+	return true;
+}
+
 
 ///////////////////////////////////////////////////////////////
 ///////////////// GRASSHOPPER IMPLEMENTATION //////////////////
@@ -59,6 +72,17 @@ void Grasshopper::doSomething()
 	int oldY = getY();
 
 	moveStep(dir, oldX, oldY);
+	
+
+	if (distanceToMove <= 0)
+	{
+		// new random direction
+		setDirection(randDir());
+
+		// new random distance
+		distanceToMove = randInt(2, 10);
+	}
+
 
 }
 
@@ -100,7 +124,7 @@ bool Grasshopper::isSleeping()
 
 
 
-void Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
+bool Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
 {
 	// make movement based on direction and roadblocks
 	switch (dir)
@@ -112,8 +136,9 @@ void Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
 				moveTo(oldX, oldY + 1); // move on grid
 				m_game->moveActor(this, oldX, oldY, oldX, oldY + 1); // move pointers
 				distanceToMove--;
+				return true;
 			}
-			else {distanceToMove = 0;}
+			else {distanceToMove = 0; return false;}
 
 			break;
 		}
@@ -125,8 +150,9 @@ void Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
 				moveTo(oldX + 1, oldY); // move on grid
 				m_game->moveActor(this, oldX, oldY, oldX + 1, oldY); // move pointers
 				distanceToMove--;
+				return true;
 			}
-			else {distanceToMove = 0;}
+			else {distanceToMove = 0; return false;}
 
 			break;
 		}
@@ -137,8 +163,9 @@ void Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
 				moveTo(oldX, oldY - 1);// move on grid
 				m_game->moveActor(this, oldX, oldY, oldX, oldY - 1); // move pointers
 				distanceToMove--;
+				return true;
 			}
-			else {distanceToMove = 0;}
+			else {distanceToMove = 0; return false;}
 
 			break;
 		}
@@ -149,38 +176,13 @@ void Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
 				moveTo(oldX - 1, oldY); // move on grid
 				m_game->moveActor(this, oldX, oldY, oldX - 1, oldY); // move pointers
 				distanceToMove--;
+				return true;
 			}
-			else {distanceToMove = 0;}
+			else {distanceToMove = 0; return false;}
 
 			break;
 		}
 	}
-
-	if (distanceToMove <= 0)
-	{
-		// new random direction
-		setDirection(randDir());
-
-		// new random distance
-		distanceToMove = randInt(2, 10);
-	}
-}
-
-bool Grasshopper::eat()
-{
-	// is there food? if so, eat
-	int foodPts = m_game->eatFood(getX(), getY(), 200);
-
-	if (foodPts == 0) // no food to eat
-		return false;
-	else
-		setPoints(getPoints() + foodPts);
-
-	// 50% chance to sleep if ate
-	if (randInt(1,2) == 1)
-		return true;
-	else
-		return false;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -203,6 +205,7 @@ bool BabyGrasshopper::doFunction()
 
 bool AdultGrasshopper::doFunction()
 {
+	// TODO: REVIEW LOGIC
 	// 1/3 chances to bite
 	if (randInt(1,3) == 1)
 		if (m_game->biteRandomInsect(getX(), getY()) == true)
@@ -211,6 +214,14 @@ bool AdultGrasshopper::doFunction()
 	// 1/10 chances to jump
 	if (randInt(1, 10) == 1)
 		jump();
+
+
+	// 50% chance to sleep if ate
+	if (randInt(1,2) == 1)
+		return true;
+	else
+		return false;
+
 
 	return jumped;
 }
@@ -275,6 +286,122 @@ void Ant::doSomething()
 	
 	doFunction();
 	
+}
+
+void Ant::storeFood(int amount)
+{
+	storedFood += m_game->eatFood(getX(), getY(), 400);
+}
+void Ant::doFunction() 
+{
+	int ic = 0; // instruction counter
+	
+	if (!c.getCommands(ic, cmd))
+		return false;
+	
+	switch (cmd.operator)
+	{
+		case moveForward: // DONE
+		{
+			bool gotBlocked = moveTo(getDirection, getX(), getY());
+			++ic;
+			break;
+		}
+		
+		case eatFood: // DONE
+		{
+			eat(100);
+			++ic;
+			break;
+		}
+		
+		case dropFood: // DONE
+		{
+			m_game->dropFood(getX(), getY(), storedFood); // TODO: make sure to define getFoodPts
+			++ic;
+			break;
+		}
+
+		case bite: // DONE
+		{
+			m_game->biteRandomInsect(getX(), getY(), 15);
+			++ic;
+			break;
+		}
+
+		case pickupFood:
+		{
+			storeFood(400);
+			++ic;
+			break;
+		}
+		case emitpheromone:
+		{
+			//
+			++ic;
+			break;
+		}
+		case generateRandomNumber:
+		{
+			generatorRandomNumberUpTo(cmd.operand1);
+			++ic;
+			break;
+		}
+		
+		case faceRandomDirection: // DONE
+		{
+			setDirection(randDir());
+			++ic;
+			break;
+		}
+		
+		case rotateClockwise:
+		{
+			//
+			++ic;
+			break;
+		}
+		
+		case rotateCounterClockwise:
+		{
+			//
+			++ic;
+			break;
+		}
+		
+		case if_command:
+		{
+			//
+			++ic;
+			break;
+		}
+		case goto_command:
+		{
+			//
+			++ic;
+			break;
+		}
+		
+		case generateRandomNumber:
+		{
+			//
+			++ic;
+			break;
+		}
+		
+		case label:
+		{
+			//
+			++ic;
+			break;
+		}
+	
+		default:
+		{
+			setPoints(0);
+			break;
+		}
+	}
 }
 
 

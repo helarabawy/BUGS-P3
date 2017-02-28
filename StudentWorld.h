@@ -36,14 +36,14 @@ public:
 	// change status at (x, y)*/
 	bool compileAntPrograms();
 	void hurtInsects(int x, int y, char c);
-	bool biteRandomInsect(int x, int y);
+	bool biteRandomInsect(int x, int y, int damage);
 	int eatFood(int x, int y, int amount);
 	list<Actor*>::const_iterator removeDeadActorsAndGetNext(list<Actor*>::const_iterator it, int i);
 	void moveActor(Actor* actor, int oldX, int oldY, int newX, int newY);
 	void growGrasshopper(Actor* bgh, int x, int y);
 	void newAntBorn(int x, int y, int colony);
 	int getNumAntsInColony(int colony);
-	//void depleteFood(int x, int y, int pts);*/
+	void dropFood(int x, int y, int foodPts);
 
 private:
 
@@ -67,7 +67,7 @@ private:
 
 	int currTicks;
 	
-	vector<Compiler> compiled;
+	vector<Compiler*> compiledEntrants;
 	vector<int> antCount;
 };
 

@@ -312,10 +312,7 @@ class AnimateActor : public Actor{
 		virtual bool checkStunStatus() {return stunned;}
 
 		// eating
-		virtual bool eat() = 0;
-
-		// biting
-		void getBitten() {setPoints(getPoints() - 50);}
+		bool eat(int maxFood);
 
 		// poisoning
 		virtual void poison()
@@ -363,8 +360,7 @@ class Grasshopper: public AnimateActor {
 		// stunning
 		virtual bool isSleeping();
 
-		void moveStep(Direction dir, int oldX, int oldY);
-		virtual bool eat();
+		bool moveStep(Direction dir, int oldX, int oldY);
 		bool virtual doFunction() = 0;
 
 	private:
@@ -460,24 +456,27 @@ class Ant: public AnimateActor {
 
 	public:
 		// Constructor
-		Ant(StudentWorld* game, int imageID, int startX, int startY, int colony /*pointer to colony obj*/): AnimateActor(game, imageID, startX, startY, randDir(), 1500, 2)
-		{ m_game = game; unstun(); m_colony = colony;}
+		Ant(StudentWorld* game, int imageID, int startX, int startY, int colony, Compiler* compiler)
+		: AnimateActor(game, imageID, startX, startY, randDir(), 1500, 1)
+		{ m_game = game; unstun(); m_colony = colony; m_compiler = compiler;}
 
 		// Destructor
 		virtual ~Ant() {}
 
 		int getColony() {return m_colony;}
+		
 		// Public Interface
-
 		virtual bool isSleeping();
 
 		virtual void doSomething();
-		void virtual doFunction(){}// command stuff}
-		bool virtual eat() {return false;} // fix
+		void virtual doFunction();
 
+		void storeFood(int amount) ;
 	private:
 		int m_colony;
+		int storedFood = 0;
 		int ticksToSleep = 0;
+		Compiler* m_compiler;
 		StudentWorld* m_game;
 
 };

@@ -19,12 +19,13 @@ int StudentWorld::init()
 {
 	currTicks = 0;
 
-	if (!loadField())
+	if (!loadField() || !compileAntPrograms())
 		{
 			return GWSTATUS_LEVEL_ERROR;
 		}
 	else
 		{
+		
 			return GWSTATUS_CONTINUE_GAME;
 		}
 }
@@ -90,19 +91,73 @@ void StudentWorld::cleanUp()
 #include "Compiler.h"
 bool StudentWorld::compileAntPrograms()
 {
-	vector<string> filenames = getFilenamesOfAntPrograms();
+	// Max num of entrants
+	Compiler *compilerForEntrant0, *compilerForEntrant0, 
+			 *compilerForEntrant0, *compilerForEntrant0;
 	
-	for (int i = 0; i < filenames.size(); i++)
+	// anthills
+	Anthill *ah0, *ah1, *ah2, *ah3;
+	
+	vector<string> filenames = getFilenamesOfAntPrograms();
+	string error;
+	
+	// ENTRANT 0 
+	if (filenames.size() >= 1)
 	{
-		Compiler c;
-		string error;
-		if (c.compile(filenames[i], error))
+		compilerForEntrant0 = new Compiler;
+		compiledEntrants.push_back(compilerForEntrant0);
+		if (!compilerForEntrant0->compiler(filenames[0], error))
 		{
-			cout << "Compiled ant named: " << c.getColonyName() << endl;
-			compiled.push_back(c); // TODO: right order of ants?
-		} else
-			cout <<  error << endl;
-	}
+			
+			setError(filenames[0] + " " + error);
+			return false;
+		}
+	} else
+		return true;
+	
+	
+	// ENTRANT 1
+	if (filenames.size() >= 2)
+	{
+		compilerForEntrant1 = new Compiler;
+		compiledEntrants.push_back(compilerForEntrant1);
+		
+		if (!compilerForEntrant1->compiler(filenames[1], error))
+		{
+			setError(filenames[1] + " " + error);
+			return false;
+		}
+	} else
+		return true;
+	
+		
+	// ENTRANT 2
+	if (filenames.size() >= 3)
+	{
+		compilerForEntrant2 = new Compiler;
+		compiledEntrants.push_back(compilerForEntrant2);
+		if (!compilerForEntrant2->compiler(filenames[2], error))
+		{
+			setError(filenames[2] + " " + error);
+			return false;
+		}
+	} else
+		return true;
+	
+		
+	// ENTRANT 0 
+	if (filenames.size() == 4)
+	{
+		compilerForEntrant3 = new Compiler;
+		compiledEntrants.push_back(compilerForEntrant3);
+		if (!compilerForEntrant3->compiler(filenames[3], error))
+		{
+			setError(filenames[3] + " " + error);
+			return false;
+		}
+	} else
+		return true;
+		
 }
 
 
@@ -156,7 +211,7 @@ void StudentWorld::hurtInsects(int x, int y, char c)
 }
 
 // BITE RANDOM INSECT AT (x, y)
-bool StudentWorld::biteRandomInsect(int x, int y)
+bool StudentWorld::biteRandomInsect(int x, int y, int damage)
 {
 	int id = x*VIEW_WIDTH + y;
 	int count = 0;
@@ -185,7 +240,8 @@ bool StudentWorld::biteRandomInsect(int x, int y)
 			AnimateActor* aap = dynamic_cast<AnimateActor*>(*it);
 			if (address == index)
 			{
-				aap->getBitten();
+				// TODO: make sure ants cant bite ants from same colony
+				aap->setPoints(aap->getPoints() - damage);
 			}
 			else
 				index++;
@@ -282,35 +338,7 @@ list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor
 		AnimateActor* aap = dynamic_cast<AnimateActor*>(*it);
 		 if (aap->isDead())
 		 {
-			//TODO: FIX THIS, SHOULD ADD TO EXISTING FOOD OBJECTS
-			// looking for existing food objects and if so adding
-			 list<Actor*>::iterator it2;
-			 
-			for (it2 = virtualWorld[i].begin();
-				it2 != virtualWorld[i].end(); it2++)
-			{
-				if ((*it2)->isAnimate() == false)
-				{
-					InanimateActor* iap = dynamic_cast<InanimateActor*>(*it2);
-					
-					if (iap->canDecay() == true)
-					{
-						DecayableActor* dap = dynamic_cast<DecayableActor*>(iap);
-						// found food
-						if (dap->isEdible() == true)
-						{
-							dap->setPoints(dap->getPoints() + 100);
-							foundFood = true;
-						}
-					}
-				}
-			}
-							
-			 // did not find food
-			if (foundFood == false)
-			{
-				virtualWorld[i].push_back(new Food(this, (*it)->getX(), (*it)->getY(), 100));
-			}
+			dropFood((*it)->getX(), (*it)->getY(), 100);
 			
 			// delete dead actor
 			delete *it;
@@ -378,6 +406,42 @@ void StudentWorld::redirectActorPtrs()
 	}
 }
 
+// DROP FOOD AT X, Y
+void dropFood(int x, int y, int foodPts)
+{
+	int id = x*VIEW_WIDTH + y;
+	bool foundFood = false;
+	
+	// looking for existing food objects and if so adding
+	list<Actor*>::iterator it;
+	 
+	for (it = virtualWorld[i].begin();
+		it != virtualWorld[i].end(); i2++)
+	{
+		if ((*it)->isAnimate() == false)
+		{
+			InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
+			
+			if (iap->canDecay() == true)
+			{
+				DecayableActor* dap = dynamic_cast<DecayableActor*>(iap);
+				// found food
+				if (dap->isEdible() == true)
+				{
+					dap->setPoints(dap->getPoints() + foodPts);
+					foundFood = true;
+				}
+			}
+		}
+	}
+					
+	 // did not find existing food
+	if (foundFood == false)
+	{
+		virtualWorld[i].push_back(new Food(this, (*it)->getX(), (*it)->getY(), 100));
+	}
+}
+
 
 // LOAD FIELD INTO CONTAINER
 bool StudentWorld::loadField()
@@ -392,10 +456,6 @@ bool StudentWorld::loadField()
 		setError(fieldFile + " " + error);
 		return false; // something bad happened!
 	 }
-	 
-	 // compile available ant programs
-	 if (compileAntPrograms() == false)
-		 return false;
 	 
 	 // filling container
 	 for (int i = 0; i < VIEW_HEIGHT * VIEW_WIDTH; i++)
@@ -447,28 +507,27 @@ bool StudentWorld::loadField()
 		 // TODO: what if there aren't 4 anthills?
 		 
 		 // found anthill 0
-		 if (item == Field::FieldItem::anthill0 && compiled.size() >= 1)
+		 if (item == Field::FieldItem::anthill0 && compiledEntrants.size() >= 1)
 		 {
-			 virtualWorld[i].push_back(new Anthill(this, x, y, 0, compiled[0]));
+			 virtualWorld[i].push_back(new Anthill(this, x, y, 0, compiledEntrants[0]));
 		 }
 
 		 // found anthill 1
-		 if (item == Field::FieldItem::anthill1 && compiled.size() >= 2)
+		 if (item == Field::FieldItem::anthill1 && compiledEntrants.size() >= 2)
 		 {
-			 virtualWorld[i].push_back(new Anthill(this, x, y, 1, compiled[1]));
+			 virtualWorld[i].push_back(new Anthill(this, x, y, 1, compiledEntrants[1]));
 		 }
 
 		 // found anthill 2
-		 if (item == Field::FieldItem::anthill2 && compiled.size() >= 3)
+		 if (item == Field::FieldItem::anthill2 && compiledEntrants.size() >= 3)
 		 {
-			 virtualWorld[i].push_back(new Anthill(this, x, y, 2, compiled[2]));
+			 virtualWorld[i].push_back(new Anthill(this, x, y, 2, compiledEntrants[2]));
 		 }
 		 // found anthill 3
-		 if (item == Field::FieldItem::anthill3 && compiled.size() == 4)
+		 if (item == Field::FieldItem::anthill3 && compiledEntrants.size() == 4)
 		 {
-			 virtualWorld[i].push_back(new Anthill(this, x, y, 3, compiled[3]));
+			 virtualWorld[i].push_back(new Anthill(this, x, y, 3, compiledEntrants[3]));
 		 }
-
 		 
 	  }
 	
