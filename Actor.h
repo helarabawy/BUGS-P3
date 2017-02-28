@@ -469,7 +469,7 @@ class Ant: public AnimateActor {
 		virtual bool isSleeping();
 
 		virtual void doSomething();
-		void virtual doFunction();
+		bool virtual doFunction();
 
 		void storeFood(int amount) ;
 	private:

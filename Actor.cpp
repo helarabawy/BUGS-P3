@@ -300,13 +300,13 @@ void Ant::storeFood(int amount)
 	}
 
 }
-void Ant::doFunction() 
+bool Ant::doFunction()
 {
 	int ic = 0; // instruction counter
 	int commandCount = 0;
-	Compiler::COMMAND cmd;
+	Compiler::Command cmd;
 	
-	if (!c.getCommand(ic, cmd))
+	if (!m_compiler->getCommand(ic, cmd))
 		return false;
 
 	while (commandCount <= 10)
@@ -349,7 +349,7 @@ void Ant::doFunction()
 				break;
 			}
 
-			case emitPheromone: // TODO
+			case Compiler::Opcode::emitPheromone: // TODO
 			{
 				//
 				++ic;
@@ -376,7 +376,7 @@ void Ant::doFunction()
 
 			case Compiler::Opcode::rotateClockwise:
 			{
-				setDirection(getDirection() + 1);
+				setDirection(getDirection() + Direction::up);
 				++ic;
 				break;
 			}
@@ -388,12 +388,12 @@ void Ant::doFunction()
 				{
 					case Direction::up:
 					{
-						setDirection(dir + 3);
+						setDirection(dir + Direction::left);
 						break;
 					}
 					default:
 					{
-						setDirection(dir - 1);
+						setDirection(dir - Direction::up);
 					}
 				}
 				++ic;
@@ -402,13 +402,13 @@ void Ant::doFunction()
 
 			case Compiler::Opcode::goto_command: // DONE
 			{
-				ic = Compiler::Command::cmd.operand1;
+				ic = cmd.operand1;
 				break;
 			}
 
 			case Compiler::Opcode::if_command:
 			{
-				switch (Compiler::Command::cmd.operand1)
+				switch ( cmd.operand1)
 				{
 					case Compiler::Condition::last_random_number_was_zero:
 					{
@@ -473,7 +473,7 @@ void Ant::doFunction()
 				break;
 			}
 
-			case label:
+			case Compiler::Opcode::label:
 			{
 				//
 				++ic;
