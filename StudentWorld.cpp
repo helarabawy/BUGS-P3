@@ -257,33 +257,7 @@ void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 				// killing baby grasshopper.
 				BabyGrasshopper* ptr = dynamic_cast<BabyGrasshopper*>(bgh);
 				ptr->setPoints(0);
-				
-				// looking for existing food objects
-				for (it = virtualWorld[id].begin();
-					it != virtualWorld[id].end(); it++)
-				{
-					if ((*it)->isAnimate() == false)
-					{
-						InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
-						
-						if (iap->canDecay() == true)
-						{
-							DecayableActor* dap = dynamic_cast<DecayableActor*>(iap);
-							// found food
-							if (dap->isEdible() == true)
-							{
-								dap->setPoints(dap->getPoints() + 100);
-								return;
-							}
-						}
-					}
-				}
-				
-				// new food object if none at this x, y
-				virtualWorld[id].push_back(new Food(this, x, y, 100));
-				return;
 			}
-
 		}
 }
 
@@ -301,13 +275,44 @@ void StudentWorld::newAntBorn(int x, int y, int colony)
 // REMOVE DEAD INSECTS
 list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor*>::const_iterator it, int i)
 {
+	bool foundFood = false;
+	
 	if ((*it)->isAnimate())
 	{
 		AnimateActor* aap = dynamic_cast<AnimateActor*>(*it);
 		 if (aap->isDead())
 		 {
-			 // body decomposes
-			virtualWorld[i].push_back(new Food(this, (*it)->getX(), (*it)->getY(), 100));
+			//TODO: FIX THIS, SHOULD ADD TO EXISTING FOOD OBJECTS
+			// looking for existing food objects and if so adding
+			 list<Actor*>::iterator it2;
+			 
+			for (it2 = virtualWorld[i].begin();
+				it2 != virtualWorld[i].end(); it2++)
+			{
+				if ((*it2)->isAnimate() == false)
+				{
+					InanimateActor* iap = dynamic_cast<InanimateActor*>(*it2);
+					
+					if (iap->canDecay() == true)
+					{
+						DecayableActor* dap = dynamic_cast<DecayableActor*>(iap);
+						// found food
+						if (dap->isEdible() == true)
+						{
+							dap->setPoints(dap->getPoints() + 100);
+							foundFood = true;
+						}
+					}
+				}
+			}
+							
+			 // did not find food
+			if (foundFood == false)
+			{
+				virtualWorld[i].push_back(new Food(this, (*it)->getX(), (*it)->getY(), 100));
+			}
+			
+			// delete dead actor
 			delete *it;
 			return virtualWorld[i].erase(it);
 		 }
@@ -387,8 +392,10 @@ bool StudentWorld::loadField()
 		setError(fieldFile + " " + error);
 		return false; // something bad happened!
 	 }
-
+	 
 	 // compile available ant programs
+	 if (compileAntPrograms() == false)
+		 return false;
 	 
 	 // filling container
 	 for (int i = 0; i < VIEW_HEIGHT * VIEW_WIDTH; i++)
