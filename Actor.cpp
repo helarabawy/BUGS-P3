@@ -358,9 +358,13 @@ void Ant::doFunction()
 			break;
 		}
 		
-		case generateRandomNumber:
+		case generateRandomNumber: // DONE
 		{
-			generatorRandomNumberUpTo(cmd.operand1);
+			int rand;
+			if (cmd.operand1 != 0)
+				rand = randInt(0, cmd.operand1 - 1);
+			else
+				rand = 0;
 			++ic;
 			break;
 		}
