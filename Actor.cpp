@@ -317,98 +317,86 @@ bool Ant::doFunction()
 			case Compiler::Opcode::moveForward: // DONE
 			{
 				bool gotBlocked = moveTo(getDirection, getX(), getY());
-				++ic;
+				ic++;
 				break;
 			}
 
 			case Compiler::Opcode::eatFood: // DONE
 			{
 				eat(100);
-				++ic;
+				ic++;
 				break;
 			}
 
 			case Compiler::Opcode::dropFood: // DONE
 			{
 				m_game->dropFood(getX(), getY(), storedFood); // TODO: make sure to define getFoodPts
-				++ic;
+				ic++;
 				break;
 			}
 
 			case Compiler::Opcode::bite: // DONE
 			{
 				m_game->biteRandomInsect(getX(), getY(), 15);
-				++ic;
+				ic++;
 				break;
 			}
 
 			case Compiler::Opcode::pickupFood: // DONE
 			{
 				storeFood(400);
-				++ic;
+				ic++;
 				break;
 			}
 
 			case Compiler::Opcode::emitPheromone: // TODO
 			{
 				//
-				++ic;
+				ic++;
 				break;
 			}
 
 			case Compiler::Opcode::faceRandomDirection: // DONE
 			{
 				setDirection(randDir());
-				++ic;
+				ic++;
 				break;
 			}
 
 			case Compiler::Opcode::generateRandomNumber: // DONE
 			{
 				int rand;
-				if (cmd.operand1 != 0)
+				if (cmd.operand1.at(0) - '0' != 0)
 					rand = randInt(0, cmd.operand1 - 1);
 				else
 					rand = 0;
-				++ic;
+				ic++;
 				break;
 			}
 
 			case Compiler::Opcode::rotateClockwise:
 			{
-				setDirection(getDirection() + Direction::up);
-				++ic;
+				rotateClockwise();
+				ic++;
 				break;
 			}
 
 			case Compiler::Opcode::rotateCounterClockwise:
 			{
-				Direction dir = getDirection();
-				switch(dir)
-				{
-					case Direction::up:
-					{
-						setDirection(dir + Direction::left);
-						break;
-					}
-					default:
-					{
-						setDirection(dir - Direction::up);
-					}
-				}
-				++ic;
+				rotateCounterClockwise();
+				ic++;
 				break;
 			}
 
 			case Compiler::Opcode::goto_command: // DONE
 			{
-				ic = cmd.operand1;
+				ic = cmd.operand1.at(0) - '0';
 				break;
 			}
 
 			case Compiler::Opcode::if_command:
 			{
-				switch ( cmd.operand1)
+				switch (cmd.operand1.at(0) - '0')
 				{
 					case Compiler::Condition::last_random_number_was_zero:
 					{
@@ -463,20 +451,15 @@ bool Ant::doFunction()
 						break;
 					}
 
-					case Compiler::Condition::last_random_number_was_zero:
-					{
-						//
-						break;
-					}
 				}
-				++ic;
+				ic++;
 				break;
 			}
 
 			case Compiler::Opcode::label:
 			{
 				//
-				++ic;
+				ic++;
 				break;
 			}
 			default:
@@ -488,7 +471,7 @@ bool Ant::doFunction()
 	}
 }
 
-
+// CHECKING IF ANT IS SLEEPING
 bool Ant::isSleeping()
 {
 	if (checkStunStatus() == true)
@@ -507,7 +490,66 @@ bool Ant::isSleeping()
 	else
 		return false;
 }
+// ROTATE CLOCKWISE
+void rotateClockwise()
+{
+	GraphObject::Direction dir = getDirection();
 
+	switch(dir)
+	{
+		case GraphObject::up:
+		{
+			setDirection(GraphObject::right);
+			break;
+		}
+		case GraphObject::right:
+		{
+			setDirection(GraphObject::down);
+			break;
+		}
+		case GraphObject::down:
+		{
+			setDirection(GraphObject::left);
+			break;
+		}
+		case GraphObject::left:
+		{
+			setDirection(GraphObject::up);
+			break;
+		}
+		default: break;
+	}
+}
+// ROTATE COUNTERCLOCKWISE
+void rotateCounterClockwise()
+{
+	GraphObject::Direction dir = getDirection();
+
+	switch(dir)
+	{
+		case GraphObject::up:
+		{
+			setDirection(GraphObject::left);
+			break;
+		}
+		case GraphObject::right:
+		{
+			setDirection(GraphObject::up);
+			break;
+		}
+		case GraphObject::down:
+		{
+			setDirection(GraphObject::right);
+			break;
+		}
+		case GraphObject::left:
+		{
+			setDirection(GraphObject::down);
+			break;
+		}
+		default: break;
+	}
+}
 
 ///////////////////////////////////////////////////////////////
 //////////////////// ANTHILL IMPLEMENTATION ///////////////////
@@ -528,9 +570,9 @@ void Anthill::doSomething()
 void Anthill::doFunction() 
 {
 	// check to see if there is any food on square
-	// eat up to 10,000 units of food -----------------------not sure how to do this
-	// immediately return
-	
+	// eat up to 10,000 units of food
+	if (m_game->eatFood(getX(), getY(), 10000) > 0)
+		return;
 	
 	// no food? check if there is enough energy (>= 2000 hit points to produce new ant
 	// add new ant on square

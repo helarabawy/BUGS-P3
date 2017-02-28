@@ -473,6 +473,8 @@ class Ant: public AnimateActor {
 
 		void storeFood(int amount) ;
 	private:
+		void rotateClockwise();
+		void rotateCounterClockwise();
 		int m_colony;
 		int storedFood = 0;
 		int ticksToSleep = 0;
