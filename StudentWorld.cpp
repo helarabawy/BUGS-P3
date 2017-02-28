@@ -248,18 +248,39 @@ void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 	for (it = virtualWorld[id].begin();
 		it != virtualWorld[id].end(); it++)
 		{
-			// found that pointer and erase it
+			// found that baby grasshopper and erase it
 			if ((*it) == bgh)
 			{
 				// new adult grasshopper
 				virtualWorld[id].push_back(new AdultGrasshopper(this, x, y));
-				// new food where baby died
-				virtualWorld[id].push_back(new Food(this, x, y, 100));
-
-				BabyGrasshopper* ptr = dynamic_cast<BabyGrasshopper*>(bgh);
+				
 				// killing baby grasshopper.
+				BabyGrasshopper* ptr = dynamic_cast<BabyGrasshopper*>(bgh);
 				ptr->setPoints(0);
-
+				
+				// looking for existing food objects
+				for (it = virtualWorld[id].begin();
+					it != virtualWorld[id].end(); it++)
+				{
+					if ((*it).isAnimate() == false)
+					{
+						InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
+						
+						if (iap->canDecay() == true)
+						{
+							DecayableActor* dap = dynamic_cast<DecayableActor*>(iap);
+							// found food
+							if (dap->isEdible() == true)
+							{
+								dap->setPoints(dap->getPoints() + 100);
+								return;
+							}
+						}
+					}
+				}
+				
+				// new food object if none at this x, y
+				virtualWorld[id].push_back(new Food(this, x, y, 100));
 				return;
 			}
 
@@ -296,7 +317,7 @@ list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor
 		 if (iap->canDecay())
 		 {
 			 DecayableActor* dap = dynamic_cast<DecayableActor*>(iap);
-			if (dap -> isGone())
+			if (dap->isGone())
 			{
 				delete dap;
 				return virtualWorld[i].erase(it);
