@@ -303,117 +303,187 @@ void Ant::storeFood(int amount)
 void Ant::doFunction() 
 {
 	int ic = 0; // instruction counter
+	int commandCount = 0;
+	Compiler::COMMAND cmd;
 	
-	if (!c.getCommands(ic, cmd))
+	if (!c.getCommand(ic, cmd))
 		return false;
-	
-	switch (cmd.operator)
+
+	while (commandCount <= 10)
 	{
-		case moveForward: // DONE
+		commandCount++;
+		switch (cmd.operator)
 		{
-			bool gotBlocked = moveTo(getDirection, getX(), getY());
-			++ic;
-			break;
-		}
-		
-		case eatFood: // DONE
-		{
-			eat(100);
-			++ic;
-			break;
-		}
-		
-		case dropFood: // DONE
-		{
-			m_game->dropFood(getX(), getY(), storedFood); // TODO: make sure to define getFoodPts
-			++ic;
-			break;
-		}
+			case Compiler::Opcode::moveForward: // DONE
+			{
+				bool gotBlocked = moveTo(getDirection, getX(), getY());
+				++ic;
+				break;
+			}
 
-		case bite: // DONE
-		{
-			m_game->biteRandomInsect(getX(), getY(), 15);
-			++ic;
-			break;
-		}
+			case Compiler::Opcode::eatFood: // DONE
+			{
+				eat(100);
+				++ic;
+				break;
+			}
 
-		case pickupFood: // DONE
-		{
-			storeFood(400);
-			++ic;
-			break;
-		}
+			case Compiler::Opcode::dropFood: // DONE
+			{
+				m_game->dropFood(getX(), getY(), storedFood); // TODO: make sure to define getFoodPts
+				++ic;
+				break;
+			}
 
-		case emitPheromone: // TODO
-		{
-			//
-			++ic;
-			break;
-		}
+			case Compiler::Opcode::bite: // DONE
+			{
+				m_game->biteRandomInsect(getX(), getY(), 15);
+				++ic;
+				break;
+			}
 
-		case faceRandomDirection: // DONE
-		{
-			setDirection(randDir());
-			++ic;
-			break;
-		}
-		
-		case generateRandomNumber: // DONE
-		{
-			int rand;
-			if (cmd.operand1 != 0)
-				rand = randInt(0, cmd.operand1 - 1);
-			else
-				rand = 0;
-			++ic;
-			break;
-		}
-		
-		case rotateClockwise:
-		{
-			//
-			++ic;
-			break;
-		}
-		
-		case rotateCounterClockwise:
-		{
-			//
-			++ic;
-			break;
-		}
-		
-		case if_command:
-		{
-			//
-			++ic;
-			break;
-		}
-		case goto_command:
-		{
-			//
-			++ic;
-			break;
-		}
-		
-		case generateRandomNumber:
-		{
-			//
-			++ic;
-			break;
-		}
-		
-		case label:
-		{
-			//
-			++ic;
-			break;
-		}
-	
-		default:
-		{
-			setPoints(0);
-			break;
+			case Compiler::Opcode::pickupFood: // DONE
+			{
+				storeFood(400);
+				++ic;
+				break;
+			}
+
+			case emitPheromone: // TODO
+			{
+				//
+				++ic;
+				break;
+			}
+
+			case Compiler::Opcode::faceRandomDirection: // DONE
+			{
+				setDirection(randDir());
+				++ic;
+				break;
+			}
+
+			case Compiler::Opcode::generateRandomNumber: // DONE
+			{
+				int rand;
+				if (cmd.operand1 != 0)
+					rand = randInt(0, cmd.operand1 - 1);
+				else
+					rand = 0;
+				++ic;
+				break;
+			}
+
+			case Compiler::Opcode::rotateClockwise:
+			{
+				setDirection(getDirection() + 1);
+				++ic;
+				break;
+			}
+
+			case Compiler::Opcode::rotateCounterClockwise:
+			{
+				Direction dir = getDirection();
+				switch(dir)
+				{
+					case Direction::up:
+					{
+						setDirection(dir + 3);
+						break;
+					}
+					default:
+					{
+						setDirection(dir - 1);
+					}
+				}
+				++ic;
+				break;
+			}
+
+			case Compiler::Opcode::goto_command: // DONE
+			{
+				ic = Compiler::Command::cmd.operand1;
+				break;
+			}
+
+			case Compiler::Opcode::if_command:
+			{
+				switch (Compiler::Command::cmd.operand1)
+				{
+					case Compiler::Condition::last_random_number_was_zero:
+					{
+						//
+						break;
+					}
+
+					case Compiler::Condition::i_am_carrying_food:
+					{
+						//
+						break;
+					}
+
+					case Compiler::Condition::i_am_hungry:
+					{
+						//
+						break;
+					}
+
+					case Compiler::Condition::i_am_standing_with_an_enemy:
+					{
+						//
+						break;
+					}
+
+					case Compiler::Condition::i_am_standing_on_food:
+					{
+						//
+						break;
+					}
+					case Compiler::Condition::i_am_standing_on_my_anthill:
+					{
+						//
+						break;
+					}
+
+					case Compiler::Condition::i_smell_pheromone_in_front_of_me:
+					{
+						//
+						break;
+					}
+
+					case Compiler::Condition::i_was_bit:
+					{
+						//
+						break;
+					}
+
+					case Compiler::Condition::i_was_blocked_from_moving:
+					{
+						//
+						break;
+					}
+
+					case Compiler::Condition::last_random_number_was_zero:
+					{
+						//
+						break;
+					}
+				}
+				++ic;
+				break;
+			}
+
+			case label:
+			{
+				//
+				++ic;
+				break;
+			}
+			default:
+			{
+				setPoints(0);
+				break;
+			}
 		}
 	}
 }
