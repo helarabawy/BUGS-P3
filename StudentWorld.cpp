@@ -3,6 +3,7 @@
 #include "GameConstants.h"
 #include "Field.h"
 #include <string>
+#include <vector>
 #include <list>
 #include <iostream>
 
@@ -82,6 +83,25 @@ void StudentWorld::cleanUp()
 
 			 it = virtualWorld[i].begin();
 		}
+	}
+}
+
+// COMPILE ANT PROGRAMS
+#include "Compiler.h"
+bool StudentWorld::compileAntPrograms()
+{
+	vector<string> filenames = getFilenamesOfAntPrograms();
+	
+	for (int i = 0; i < filenames.size(); i++)
+	{
+		Compiler c;
+		string error;
+		if (c.compile(filenames[i], error))
+		{
+			cout << "Compiled ant named: " << c.getColonyName() << endl;
+			compiled.push_back(c); // TODO: right order of ants?
+		} else
+			cout <<  error << endl;
 	}
 }
 
@@ -344,6 +364,8 @@ bool StudentWorld::loadField()
 		return false; // something bad happened!
 	 }
 
+	 // compile available ant programs
+	 
 	 // filling container
 	 for (int i = 0; i < VIEW_HEIGHT * VIEW_WIDTH; i++)
 	 {
@@ -354,16 +376,20 @@ bool StudentWorld::loadField()
 		 // storing item at (x, y)
 		 Field::FieldItem item = f.getContentsOf(y, x);
 
-		 // found a rock
-		 if (item == Field::FieldItem::rock)
-		 {
-			 virtualWorld[i].push_back(new Pebble(this, x, y));
-		 }
-
+		 ///////////////////////// ANIMATE //////////////////////////////
+		 
 		 // found a grasshopper
 		 if (item == Field::FieldItem::grasshopper)
 		 {
 			 virtualWorld[i].push_back(new BabyGrasshopper(this, x, y));
+		 }
+
+		 //////////////////////// INANIMATE /////////////////////////////
+		 
+		 // found a rock
+		 if (item == Field::FieldItem::rock)
+		 {
+			 virtualWorld[i].push_back(new Pebble(this, x, y));
 		 }
 
 		 // found water
@@ -371,25 +397,56 @@ bool StudentWorld::loadField()
 		 {
 			 virtualWorld[i].push_back(new Water(this, x, y));
 		 }
-
-
+		 
+		 // found poison
+		 if (item == Field::FieldItem::poison)
+		 {
+			 virtualWorld[i].push_back(new Poison(this, x, y));
+		 }
+		 
+		 
+		 	 	 	 	    // ** DECAYABLE ** //
+		
 		 // found food
 		 if (item == Field::FieldItem::food)
 		 {
 			 virtualWorld[i].push_back(new Food(this, x, y));
 		 }
 
-
-		 // found poison
-		 if (item == Field::FieldItem::poison)
+		 // TODO: what if there aren't 4 anthills?
+		 
+		 // found anthill 0
+		 if (item == Field::FieldItem::anthill0 && compiled.size() >= 1)
 		 {
-			 virtualWorld[i].push_back(new Poison(this, x, y));
+			 virtualWorld[i].push_back(new Anthill(this, x, y, 0, compiled[0]));
 		 }
 
+		 // found anthill 1
+		 if (item == Field::FieldItem::anthill1 && compiled.size() >= 2)
+		 {
+			 virtualWorld[i].push_back(new Anthill(this, x, y, 1, compiled[1]));
+		 }
 
+		 // found anthill 2
+		 if (item == Field::FieldItem::anthill2 && compiled.size() >= 3)
+		 {
+			 virtualWorld[i].push_back(new Anthill(this, x, y, 2, compiled[2]));
+		 }
+		 // found anthill 3
+		 if (item == Field::FieldItem::anthill3 && compiled.size() == 4)
+		 {
+			 virtualWorld[i].push_back(new Anthill(this, x, y, 3, compiled[3]));
+		 }
+
+		 
 	  }
 	
 	  return true;
+}
+
+int StudentWorld::getNumAntsInColony(int colony)
+{
+	return antCount[colony];
 }
 
 
@@ -397,9 +454,26 @@ bool StudentWorld::loadField()
 #include <sstream>
 void StudentWorld::updateDisplayText()
 {
+	// TODO: finish this, page 23 in spec
 	string text = "Ticks: ";
+	
+/*
+	int size = getFilenamesOfAntPrograms().size();
+	
+	int ants0, ants1, ants2, ants3;
+	int winningAntNumber;
+	
+	ants0 = getNumAntsInColony(0);
+	ants1 = getNumAntsInColony(1);
+	ants2 = getNumAntsInColony(2);
+	ants3 = getNumAntsInColony(3);
+	
+	winningAntNumber = getWinningAntNumber();
+*/	
 	ostringstream oss;
-	oss << text << currTicks;
+
+	oss << text << currTicks << " - ";
+		//	getFilenamesOfAntPrograms()[0];
 
 	setGameStatText(oss.str());
 }

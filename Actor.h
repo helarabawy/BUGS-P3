@@ -250,7 +250,7 @@ class Anthill: public DecayableActor {
 
 	public:
 		// Constructor
-		Anthill(StudentWorld* game, int imageID, int startX, int startY, int colony /*pointer to colony obj*/): DecayableActor(game, IID_ANT_HILL, startX, startY, 8999)
+		Anthill(StudentWorld* game, int startX, int startY, int colony, Compiler& c): DecayableActor(game, IID_ANT_HILL, startX, startY, 8999)
 		{ m_game = game; m_colony = colony;}
 
 		// Destructor

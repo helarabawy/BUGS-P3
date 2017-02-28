@@ -3,6 +3,7 @@
 
 #include "GameWorld.h"
 #include "GameConstants.h"
+#include "Compiler.h"
 #include <string>
 #include <list>
 
@@ -33,6 +34,7 @@ public:
 	//bool hasFood(int x, int y);
 
 	// change status at (x, y)*/
+	bool compileAntPrograms();
 	void hurtInsects(int x, int y, char c);
 	bool biteRandomInsect(int x, int y);
 	int eatFood(int x, int y, int amount);
@@ -40,6 +42,7 @@ public:
 	void moveActor(Actor* actor, int oldX, int oldY, int newX, int newY);
 	void growGrasshopper(Actor* bgh, int x, int y);
 	void newAntBorn(int x, int y, int colony);
+	int getNumAntsInColony(int colony);
 	//void depleteFood(int x, int y, int pts);*/
 
 private:
@@ -63,6 +66,9 @@ private:
 
 
 	int currTicks;
+	
+	vector<Compiler> compiled;
+	vector<int> antCount;
 };
 
 
