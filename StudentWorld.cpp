@@ -1,3 +1,4 @@
+// Packages/Header Files to include
 #include "Actor.h"
 #include "StudentWorld.h"
 #include "GameConstants.h"
@@ -9,6 +10,7 @@
 
 using namespace std;
 
+// CONSTRUCTOR
 GameWorld* createStudentWorld(string assetDir)
 {
 	return new StudentWorld(assetDir);
@@ -17,8 +19,10 @@ GameWorld* createStudentWorld(string assetDir)
 // STARTING SIMULATION
 int StudentWorld::init()
 {
+	// Initialize ticks to 0
 	currTicks = 0;
 
+	// Making sure field/entrant entries load/compile correctly
 	if (!loadField() || !compileAntPrograms())
 		{
 			return GWSTATUS_LEVEL_ERROR;
@@ -33,18 +37,16 @@ int StudentWorld::init()
 // DOING EACH MOVE
 int StudentWorld::move()
 {
+	// New round, increment ticks
 	currTicks++;
-	//cerr << endl << "TICKS: " <<  currTicks << endl;
 
 	// Give each actor a chance to do something
 	for(int i = 0; i < VIEW_WIDTH*VIEW_HEIGHT; i++)
 	{
 		 // defining iterator at (x, y)'s list of Actor*
-		 list<Actor*>::const_iterator it;
+		 list<Actor*>::const_iterator it = virtualWorld[i].begin();
 
 		 // calling all actors at (x, y) to do sth
-		 it = virtualWorld[i].begin();
-
 		 while(it != virtualWorld[i].end())
 		 {
 			 (*it)->doSomething();
@@ -53,19 +55,25 @@ int StudentWorld::move()
 			 it = removeDeadActorsAndGetNext(it, i);
 		 }
 	}
+	
 	// perform all pointer redirecting
 	redirectActorPtrs();
+	
+	// clear movables after everything moved
 	toMove.clear();
 
 	updateDisplayText();
-	
+
+	// game ended
 	if (currTicks == 2000)
 	{
 		return GWSTATUS_NO_WINNER;
 	}
 	
-	// the simulation is not yet over, continue!
+	// continue simulation
 	return GWSTATUS_CONTINUE_GAME;
+	
+	// TODO: KEEP TRACK OF SCORE AND RETURN WINNER!
 }
 
 // CLEAN UP SIMULATION
@@ -79,9 +87,11 @@ void StudentWorld::cleanUp()
 		// calling all actors at (x, y) to do sth
 		for (it = virtualWorld[i].begin(); it != virtualWorld[i].end(); it++)
 		{
+			 // clear actor
 			 delete *it;
 			 virtualWorld[i].erase(it);
 
+			 // redirect iterator to look for other actors to clear
 			 it = virtualWorld[i].begin();
 		}
 	}
@@ -106,9 +116,10 @@ bool StudentWorld::compileAntPrograms()
 	{
 		compilerForEntrant0 = new Compiler;
 		compiledEntrants.push_back(compilerForEntrant0);
+	
+		// spot and set error
 		if (!compilerForEntrant0->compiler(filenames[0], error))
-		{
-			
+		{	
 			setError(filenames[0] + " " + error);
 			return false;
 		}
@@ -122,6 +133,7 @@ bool StudentWorld::compileAntPrograms()
 		compilerForEntrant1 = new Compiler;
 		compiledEntrants.push_back(compilerForEntrant1);
 		
+		// spot and set error
 		if (!compilerForEntrant1->compiler(filenames[1], error))
 		{
 			setError(filenames[1] + " " + error);
@@ -136,6 +148,8 @@ bool StudentWorld::compileAntPrograms()
 	{
 		compilerForEntrant2 = new Compiler;
 		compiledEntrants.push_back(compilerForEntrant2);
+		
+		// spot and set error
 		if (!compilerForEntrant2->compiler(filenames[2], error))
 		{
 			setError(filenames[2] + " " + error);
@@ -145,11 +159,13 @@ bool StudentWorld::compileAntPrograms()
 		return true;
 	
 		
-	// ENTRANT 0 
+	// ENTRANT 3 
 	if (filenames.size() == 4)
 	{
 		compilerForEntrant3 = new Compiler;
 		compiledEntrants.push_back(compilerForEntrant3);
+		
+		// spot and set error
 		if (!compilerForEntrant3->compiler(filenames[3], error))
 		{
 			setError(filenames[3] + " " + error);
@@ -165,17 +181,18 @@ bool StudentWorld::compileAntPrograms()
 bool StudentWorld::isBlocked(int x, int y)
 {
 	// convert x, y
-	int id = x*VIEW_WIDTH + y; // TODO: verify this
+	int id = findID(x, y); 
 
 	// defining iterator at id
 	list<Actor*>::const_iterator it;
 
-	// calling all actors at (x, y) to do sth
+	// looking for pebble at id
 	for (it = virtualWorld[id].begin(); it != virtualWorld[id].end(); it++)
 	{
 		if ((*it)->isAnimate() == false)
 		{
 			InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
+			
 			// found a blocker!
 			if (iap->isBlocker())
 			{
@@ -192,7 +209,7 @@ bool StudentWorld::isBlocked(int x, int y)
 void StudentWorld::hurtInsects(int x, int y, char c)
 {
 	// convert x, y
-	int id = x*VIEW_WIDTH + y; // TODO: verify this
+	int id = findID(x, y); // TODO: verify this
 
 	// defining iterator at id
 	list<Actor*>::const_iterator it;
@@ -213,7 +230,8 @@ void StudentWorld::hurtInsects(int x, int y, char c)
 // BITE RANDOM INSECT AT (x, y)
 bool StudentWorld::biteRandomInsect(int x, int y, int damage)
 {
-	int id = x*VIEW_WIDTH + y;
+	// convert x, y into ID
+	int id = findID(x, y);
 	int count = 0;
 
 	list<Actor*>::const_iterator it;
@@ -240,7 +258,7 @@ bool StudentWorld::biteRandomInsect(int x, int y, int damage)
 			AnimateActor* aap = dynamic_cast<AnimateActor*>(*it);
 			if (address == index)
 			{
-				// TODO: make sure ants cant bite ants from same colony
+				// TODO: ANTS CANT BITE ANTS FROM SAME COLONY
 				aap->setPoints(aap->getPoints() - damage);
 			}
 			else
@@ -254,7 +272,7 @@ bool StudentWorld::biteRandomInsect(int x, int y, int damage)
 int StudentWorld::eatFood(int x, int y, int amount)
 {
 	// convert x, y
-	int id = x*VIEW_WIDTH + y;
+	int id = findID(x, y);
 
 	// defining iterator at (x, y)'s list of Actor*
 	list<Actor*>::const_iterator it;
@@ -264,29 +282,33 @@ int StudentWorld::eatFood(int x, int y, int amount)
 
 	 while(it != virtualWorld[id].end())
 	 {
+		 // food is inanimate
 		 if ((*it)->isAnimate() == false)
 		 {
 			InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
+			// food is decayable
 			if (iap->canDecay() == true)
 			{
 				DecayableActor* dp = dynamic_cast<DecayableActor*>(iap);
+				// food is edible - found food!
 				if (dp->isEdible() == true)
 				{
 					Food* fp = dynamic_cast<Food*>(dp);
 					int foodPoints = fp->getPoints();
 					
+					// if there is more than will be eaten
 					if (foodPoints > amount)
 					{
 						fp->setPoints(foodPoints - amount);
 						return amount;
-					} else
+					} else // if there is less than will be eaten
 					{
 						fp->setPoints(0);
 						return foodPoints;
 					}
 
 				} else
-					return 0; // TODO: bug here, i need to account for anthills eating
+					return 0; // TODO: bug here, i need to account for anthills (inanimate) eating
 			}
 		 }
 		 it++;
@@ -297,9 +319,9 @@ int StudentWorld::eatFood(int x, int y, int amount)
 // GROW GH TO ADULT
 void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 {
-	int id = x*VIEW_WIDTH + y;
+	int id = findID(x, y);
 
-	// iterating through old id's linked list to get rid of that actor
+	// iterating through old id's linked list to get rid of that baby grasshopper
 	list<Actor*>::iterator it;
 	for (it = virtualWorld[id].begin();
 		it != virtualWorld[id].end(); it++)
@@ -320,7 +342,7 @@ void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 // GROW GH TO ADULT
 void StudentWorld::newAntBorn(int x, int y, int colony, Compiler* c)
 {
-	int id = x*VIEW_WIDTH + y;
+	int id = findID(x, y);
 
 	virtualWorld[id].push_back(new Ant(this, x, y, colony, c)); // remember id changes with colony
 	// TODO: increase number of ants this colony has produced
@@ -333,10 +355,10 @@ list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor
 {
 	bool foundFood = false;
 	
-	if ((*it)->isAnimate())
+	if ((*it)->isAnimate()) // animate insects to kill
 	{
 		AnimateActor* aap = dynamic_cast<AnimateActor*>(*it);
-		 if (aap->isDead())
+		 if (aap->isDead()) // Dead?
 		 {
 			dropFood((*it)->getX(), (*it)->getY(), 100);
 			
@@ -344,13 +366,13 @@ list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor
 			delete *it;
 			return virtualWorld[i].erase(it);
 		 }
-	} else
+	} else // inanimate actors to decay
 	{
 		InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
-		 if (iap->canDecay())
+		 if (iap->canDecay()) 
 		 {
 			 DecayableActor* dap = dynamic_cast<DecayableActor*>(iap);
-			if (dap->isGone())
+			if (dap->isGone()) // Gone?
 			{
 				delete dap;
 				return virtualWorld[i].erase(it);
@@ -358,6 +380,7 @@ list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor
 		 }
 	}
 
+	// hasn't removed anything, just return next
 	it++;
 	return it;
 }
@@ -365,14 +388,17 @@ list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor
 // MOVE ACTOR POINTERS
 void StudentWorld::moveActor(Actor* actor, int oldX, int oldY, int newX, int newY)
 {
-	int old_id = oldX*VIEW_WIDTH + oldY;
-	int new_id = newX*VIEW_WIDTH + newY;
+	// storing coordinates as ID's
+	int old_id = findID(oldX, oldY);
+	int new_id = findID(newX, newY);
 
+	// defining new movable
 	Movable x;
 	x.oldID = old_id;
 	x.newID = new_id;
 	x.ptr = actor;
 
+	// adding movable to toMove vector
 	toMove.push_back(x);
 }
 
@@ -380,9 +406,10 @@ void StudentWorld::moveActor(Actor* actor, int oldX, int oldY, int newX, int new
 // REDIRECTING ACTOR PTS
 void StudentWorld::redirectActorPtrs()
 {
-	// do this with iterator
+	// traversing movables
 	for (int i = 0; i < toMove.size(); i++)
 	{
+		// storing current movable info
 		int old_id = toMove[i].oldID;
 		int new_id = toMove[i].newID;
 		Actor* actor = toMove[i].ptr;
@@ -398,7 +425,7 @@ void StudentWorld::redirectActorPtrs()
 				// found that pointer and erase it
 				if ((*it) == actor)
 				{
-					virtualWorld[old_id].erase(it); // TODO
+					virtualWorld[old_id].erase(it);
 					break;
 				}
 
@@ -409,19 +436,20 @@ void StudentWorld::redirectActorPtrs()
 // DROP FOOD AT X, Y
 void dropFood(int x, int y, int foodPts)
 {
-	int id = x*VIEW_WIDTH + y;
+	// finding ID and setting a check of whether food was found
+	int id = findID(x, y);
 	bool foundFood = false;
 	
 	// looking for existing food objects and if so adding
 	list<Actor*>::iterator it;
-	 
 	for (it = virtualWorld[i].begin();
 		it != virtualWorld[i].end(); i2++)
 	{
+		// food is inanimate
 		if ((*it)->isAnimate() == false)
 		{
 			InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
-			
+			// food is decayable
 			if (iap->canDecay() == true)
 			{
 				DecayableActor* dap = dynamic_cast<DecayableActor*>(iap);
@@ -503,8 +531,6 @@ bool StudentWorld::loadField()
 		 {
 			 virtualWorld[i].push_back(new Food(this, x, y));
 		 }
-
-		 // TODO: what if there aren't 4 anthills?
 		 
 		 // found anthill 0
 		 if (item == Field::FieldItem::anthill0 && compiledEntrants.size() >= 1)
@@ -523,6 +549,7 @@ bool StudentWorld::loadField()
 		 {
 			 virtualWorld[i].push_back(new Anthill(this, x, y, 2, compiledEntrants[2]));
 		 }
+		 
 		 // found anthill 3
 		 if (item == Field::FieldItem::anthill3 && compiledEntrants.size() == 4)
 		 {
@@ -536,6 +563,7 @@ bool StudentWorld::loadField()
 
 int StudentWorld::getNumAntsInColony(int colony)
 {
+	// TODO: where am i changing the value of this? 
 	return antCount[colony];
 }
 
