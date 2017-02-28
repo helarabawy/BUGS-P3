@@ -295,9 +295,12 @@ list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor
 		InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
 		 if (iap->canDecay())
 		 {
-			 // body decomposes
-			delete *it;
-			return virtualWorld[i].erase(it);
+			 DecayableActor* dap = dynamic_cast<DecayableActor*>(iap);
+			if (dap -> isGone())
+			{
+				delete dap;
+				return virtualWorld[i].erase(it);
+			}
 		 }
 	}
 
