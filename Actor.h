@@ -156,6 +156,7 @@ class DecayableActor: public InanimateActor{
 		// getters and setters - status
 		virtual bool canDecay() {return true;}
 		virtual bool isEdible() {return false;}
+		virtual bool isPheromone() {return false;}
 		
 		virtual int getPoints() {return m_points;} // change from points to energy to differentiate it from alive actors
 		virtual int setPoints(int modifiedPoints) {m_points = modifiedPoints;}
@@ -193,28 +194,34 @@ class Food: public DecayableActor{
 #endif // FOOD_H_
 
 ///////////////////////////////////////////////////////////////
-/////////////////////// PHERONEME /////////////////////////////
+/////////////////////// PHEROMONE /////////////////////////////
 ///////////////////////////////////////////////////////////////
 
-#ifndef PHERONEME_H_
-#define PHERONEME_H_
+#ifndef PHEROMONE_H_
+#define PHEROMONE_H_
 
-class Pheroneme: public DecayableActor{
+class Pheromone: public DecayableActor{
 
 	public:
 		// Constructor
-		Pheroneme(StudentWorld* game, int imageID, int startX, int startY)
-		: DecayableActor(game, imageID, startX, startY, 256)
-		{m_game = game;}
-
+		Pheromone(StudentWorld* game, int startX, int startY, int colony)
+		: DecayableActor(game, getImageID(), startX, startY, 256)
+		{m_game = game; m_colony = colony;}
+		
 		// Destructor
-		virtual ~Pheroneme() {}
+		virtual ~Pheromone() {}
 
+		// Public Interface
+		virtual bool isPheromone() {return true;}
+		int getImageID();
+		int getColony() {return m_colony;}
+				
 	private:
 		StudentWorld* m_game;
+		int m_colony;
 };
 
-#endif // PHERONEME_H_
+#endif // PHEROMONE_H_
 
 ///////////////////////////////////////////////////////////////
 /////////////////////////// ANTHILL ///////////////////////////
@@ -272,6 +279,7 @@ class AnimateActor : public Actor{
 		// Public Interface
 		virtual void doSomething();
 
+		virtual bool isColonized() = 0;
 			// Direction
 			GraphObject::Direction randDir();
 
@@ -335,6 +343,8 @@ class Grasshopper: public AnimateActor {
 
 		// Public Interface
 		virtual void doSomething();
+		
+		virtual bool isColonized() {return false;}
 
 			// stunning
 			virtual bool isSleeping();
@@ -398,9 +408,8 @@ class AdultGrasshopper: public Grasshopper {
 
 	private:
 		// jumping
-		void jump();
+		bool jump();
 		void jumpTo(int x, int y);
-		bool jumped = false;
 
 		// storing coordinates
 		struct Coord{
@@ -433,6 +442,7 @@ class Ant: public AnimateActor {
 		// Destructor
 		virtual ~Ant() {}
 
+		virtual bool isColonized() {return true;}
 		int getColony() {return m_colony;}
 		int getImageID();
 		
@@ -442,12 +452,17 @@ class Ant: public AnimateActor {
 		virtual void doSomething();
 		virtual bool doFunction();
 
-		void storeFood(int amount) ;
+		void storeFood(int amount);
+		
+		// change bitten status
+		void gotBitten() {bitten = true;} // TODO: WHEN DOES THIS REVERT BACK
 
 	private:
 		// direction change
 		void rotateClockwise();
 		void rotateCounterClockwise();
+		
+		bool bitten = false;
 		
 		int m_colony;
 		int storedFood = 0;

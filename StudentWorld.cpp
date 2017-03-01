@@ -10,6 +10,10 @@
 
 using namespace std;
 
+///////////////////////////////////////////////////////////////
+////////////////////// SIMULATION CONTROL /////////////////////
+///////////////////////////////////////////////////////////////
+
 // CONSTRUCTOR
 GameWorld* createStudentWorld(string assetDir)
 {
@@ -23,7 +27,7 @@ int StudentWorld::init()
 	currTicks = 0;
 
 	// Making sure field/entrant entries load/compile correctly
-	if (!loadField() || !compileAntPrograms())
+	if (!compileAntPrograms() || !loadField())
 		{
 			return GWSTATUS_LEVEL_ERROR;
 		}
@@ -67,7 +71,10 @@ int StudentWorld::move()
 	// game ended
 	if (currTicks == 2000)
 	{
-		return GWSTATUS_NO_WINNER;
+		if (getWinner() == -1)
+			return GWSTATUS_NO_WINNER;
+		else
+			return GWSTATUS_PLAYER_WON;
 	}
 	
 	// continue simulation
@@ -172,10 +179,181 @@ bool StudentWorld::compileAntPrograms()
 			return false;
 		}
 	} else
-		return true;		
+		return true;
+	
+	// all compiled successfully
+	return true;
 
 }
 
+// LOAD FIELD INTO CONTAINER
+bool StudentWorld::loadField()
+{
+	  Field f;
+	  string fieldFile = getFieldFilename();
+	  string error;
+
+	 // error in loading file
+	 if (f.loadField(fieldFile, error) != Field::LoadResult::load_success)
+	 {
+		setError(fieldFile + " " + error);
+		return false; // something bad happened!
+	 }
+	 
+	 // filling container
+	 for (int i = 0; i < VIEW_HEIGHT * VIEW_WIDTH; i++)
+	 {
+		 // translating int to x and y values
+		 int x = i/VIEW_WIDTH;
+		 int y = i%VIEW_WIDTH;
+
+		 // storing item at (x, y)
+		 Field::FieldItem item = f.getContentsOf(y, x);
+
+		 ///////////////////////// ANIMATE //////////////////////////////
+		 
+		 // found a grasshopper
+		 if (item == Field::FieldItem::grasshopper)
+		 {
+			 virtualWorld[i].push_back(new BabyGrasshopper(this, x, y));
+		 }
+
+		 //////////////////////// INANIMATE /////////////////////////////
+		 
+		 // found a rock
+		 if (item == Field::FieldItem::rock)
+		 {
+			 virtualWorld[i].push_back(new Pebble(this, x, y));
+		 }
+
+		 // found water
+		 if (item == Field::FieldItem::water)
+		 {
+			 virtualWorld[i].push_back(new Water(this, x, y));
+		 }
+		 
+		 // found poison
+		 if (item == Field::FieldItem::poison)
+		 {
+			 virtualWorld[i].push_back(new Poison(this, x, y));
+		 }
+		 
+		 
+		 	 	 	 	    // ** DECAYABLE ** //
+		
+		 // found food
+		 if (item == Field::FieldItem::food)
+		 {
+			 virtualWorld[i].push_back(new Food(this, x, y));
+		 }
+		 
+		 // found anthill 0
+		 if (item == Field::FieldItem::anthill0 && compiledEntrants.size() >= 1)
+		 {
+			 virtualWorld[i].push_back(new Anthill(this, x, y, 0, compiledEntrants[0]));
+			 Coord c;
+			 c.x = x;
+			 c.y = y;
+			 colonyLocations.push_back(c); 
+		 }
+
+		 // found anthill 1
+		 if (item == Field::FieldItem::anthill1 && compiledEntrants.size() >= 2)
+		 {
+			 virtualWorld[i].push_back(new Anthill(this, x, y, 1, compiledEntrants[1]));
+			 Coord c;
+			 c.x = x;
+			 c.y = y;
+			 colonyLocations.push_back(c);
+		 }
+
+		 // found anthill 2
+		 if (item == Field::FieldItem::anthill2 && compiledEntrants.size() >= 3)
+		 {
+			 virtualWorld[i].push_back(new Anthill(this, x, y, 2, compiledEntrants[2]));
+			 Coord c;
+			 c.x = x;
+			 c.y = y;
+			 colonyLocations.push_back(c);
+		 }
+		 
+		 // found anthill 3
+		 if (item == Field::FieldItem::anthill3 && compiledEntrants.size() == 4)
+		 {
+			 virtualWorld[i].push_back(new Anthill(this, x, y, 3, compiledEntrants[3]));
+			 Coord c;
+			 c.x = x;
+			 c.y = y;
+			 colonyLocations.push_back(c);
+		 }
+		 
+	  }
+	
+	  return true;
+}
+
+int StudentWorld::getNumAntsInColony(int colony)
+{
+	return antCount[colony];
+}
+
+
+// UPDATE DISPLAY TEXT
+#include <sstream>
+void StudentWorld::updateDisplayText()
+{
+	// TODO: finish this, page 23 in spec
+	string text = "Ticks: ";
+	
+	int size = getFilenamesOfAntPrograms().size();
+	
+	ostringstream oss;
+	oss << text << currTicks << " - " ;
+	
+	int ants0, ants1, ants2, ants3;
+	//int winningAntNumber;
+	
+	if (size >= 1)
+	{
+		ants0 = getNumAntsInColony(0);
+		oss << getFilenamesOfAntPrograms()[0] << ": " << ants0 << "  ";
+	}
+	if (size >= 2)
+	{
+		ants1 = getNumAntsInColony(1);
+		oss << getFilenamesOfAntPrograms()[1] << ": " << ants1 << "  ";
+	}
+	if (size >= 3)
+	{
+		ants2 = getNumAntsInColony(2);
+		oss << getFilenamesOfAntPrograms()[2] << ": " << ants2 << "  ";
+	}
+	if (size >= 4)
+	{
+		ants3 = getNumAntsInColony(3);
+		oss << getFilenamesOfAntPrograms()[0] << ": " << ants3 << "  ";
+	}
+	
+	setGameStatText(oss.str());
+}
+
+int StudentWorld::getWinner() 
+{
+	int max = -1;
+	int winner = -1;
+	for (int i = 0; i < antCount.size(); i++)
+	{
+		if (antCount[i] > max)
+		{
+			winner = i;
+			max = antCount[i];
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////
+////////////////////// STATUS AT (X, Y) ///////////////////////
+///////////////////////////////////////////////////////////////
 
 // CHECK IF ACTOR IS BLOCKED AT (x, y)
 bool StudentWorld::isBlocked(int x, int y)
@@ -205,7 +383,121 @@ bool StudentWorld::isBlocked(int x, int y)
 	return false;
 }
 
-// STUN INSECTS AT (x, y)
+// CHECK IF ACTOR HAS ENEMY AT (x, y)
+bool StudentWorld::hasEnemy(int x, int y, int colony)
+{
+	// convert x, y
+	int id = findID(x, y);
+
+	// defining iterator at (x, y)'s list of Actor*
+	list<Actor*>::const_iterator it;
+
+	 // searching for food
+	 it = virtualWorld[id].begin();
+	 while(it != virtualWorld[id].end())
+	 {		 
+		 // enemies are animate
+		 if ((*it)->isAnimate() == true)
+		 {
+			AnimateActor* aap = dynamic_cast<AnimateActor*>(*it);
+			// grasshoppers do not have colonies
+			if (aap->isColonized() == false)
+			{
+				return true; //found an enemy 
+			} else
+			{
+				Ant* ap = dynamic_cast<Ant*>(aap);
+				if (ap->getColony() != colony) // ant from another colony
+				{
+					return true; // found an enemy
+				} // otherwise keep searching
+			}
+		 } 
+		 it++;
+	 }
+	 // no enemy found
+	 return false;
+}
+
+// RETURNS FOOD PTR IF THERE IS ONE
+Actor* StudentWorld::hasFood(int x, int y)
+{
+	// convert x, y
+	int id = findID(x, y);
+
+	// defining iterator at (x, y)'s list of Actor*
+	list<Actor*>::const_iterator it;
+
+	 // searching for food
+	 it = virtualWorld[id].begin();
+	 while(it != virtualWorld[id].end())
+	 {		 
+		 // food is inanimate
+		 if ((*it)->isAnimate() == false)
+		 {
+			InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
+			// food is decayable
+			if (iap->canDecay() == true)
+			{
+				DecayableActor* dp = dynamic_cast<DecayableActor*>(iap);
+				// food is edible - found food!
+				if (dp->isEdible() == true)
+				{
+					Food* fp = dynamic_cast<Food*>(dp);
+					// return food points found
+					return fp;	
+				} 
+			}
+		 } 
+		 it++;
+	 }
+	 // no food object found
+	 return nullptr;
+}
+
+// CHECKS IF THERE IS A ... TODO TODO TODO TODO
+Actor* StudentWorld::hasPheromone(int x, int y, int colony)
+{
+	// convert x, y
+	int id = findID(x, y);
+
+	// defining iterator at (x, y)'s list of Actor*
+	list<Actor*>::const_iterator it;
+
+	 // searching for food
+	 it = virtualWorld[id].begin();
+	 while(it != virtualWorld[id].end())
+	 {		 
+		 // pheromones are inanimate
+		 if ((*it)->isAnimate() == false)
+		 {
+			InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
+			// pheromones are decayable
+			if (iap->canDecay() == true)
+			{
+				DecayableActor* dp = dynamic_cast<DecayableActor*>(iap);
+				// is a pheromone!
+				if (dp->isPheromone() == true)
+				{
+					Pheromone* pp = dynamic_cast<Pheromone*>(dp);
+					if (pp->getColony() == colony)
+					{
+						return pp; // the ant can smell this pheromone
+					}
+				}
+			}
+		 } 
+		 it++;
+	 }
+	 // no pheromone found
+	 return nullptr;
+}
+
+///////////////////////////////////////////////////////////////
+//////////////// CHANGE SOME ACTOR STATUS /////////////////////
+///////////////////////////////////////////////////////////////
+
+// STUN/POISON INSECTS AT (x, y)
 void StudentWorld::hurtInsects(int x, int y, char c)
 {
 	// convert x, y
@@ -228,8 +520,11 @@ void StudentWorld::hurtInsects(int x, int y, char c)
 }
 
 // BITE RANDOM INSECT AT (x, y)
-bool StudentWorld::biteRandomInsect(int x, int y, int damage)
+bool StudentWorld::biteRandomInsect(Actor* willBite, int x, int y, int damage)
 {
+	// biter is always alive
+	AnimateActor* biter = dynamic_cast<AnimateActor*>(willBite);
+	
 	// convert x, y into ID
 	int id = findID(x, y);
 	int count = 0;
@@ -258,8 +553,28 @@ bool StudentWorld::biteRandomInsect(int x, int y, int damage)
 			AnimateActor* aap = dynamic_cast<AnimateActor*>(*it);
 			if (address == index)
 			{
-				// TODO: ANTS CANT BITE ANTS FROM SAME COLONY
-				aap->setPoints(aap->getPoints() - damage);
+				if (aap != biter) // cannot bite itself
+				{
+					if (biter->isColonized() == false) //not colonized, everyone is an enemy
+					{
+						aap->setPoints(aap->getPoints() - damage);
+					} else // biter is colonized
+					{
+						Ant* ant_biter = dynamic_cast<Ant*>(biter); // only ants are colonized
+						if (aap->isColonized() == false) // victim not colonized, for sure an enemy
+						{
+							aap->setPoints(aap->getPoints() - damage);
+						} else // victim colonized
+						{
+							Ant* ant_bitten = dynamic_cast<Ant*>(aap);
+							if (ant_biter->getColony() != ant_bitten->getColony()) // not same colony
+							{
+								ant_bitten->setPoints(ant_bitten->getPoints() - damage);
+								ant_bitten->gotBitten();
+							}
+						}
+					}
+				}
 			}
 			else
 				index++;
@@ -271,49 +586,33 @@ bool StudentWorld::biteRandomInsect(int x, int y, int damage)
 // INSECT EATS AT (x, y)
 int StudentWorld::eatFood(int x, int y, int amount)
 {
-	// convert x, y
-	int id = findID(x, y);
-
-	// defining iterator at (x, y)'s list of Actor*
-	list<Actor*>::const_iterator it;
-
-	 // searching for food
-	 it = virtualWorld[id].begin();
-
-	 while(it != virtualWorld[id].end())
-	 {
-		 // food is inanimate
-		 if ((*it)->isAnimate() == false)
-		 {
-			InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
-			// food is decayable
-			if (iap->canDecay() == true)
-			{
-				DecayableActor* dp = dynamic_cast<DecayableActor*>(iap);
-				// food is edible - found food!
-				if (dp->isEdible() == true)
-				{
-					Food* fp = dynamic_cast<Food*>(dp);
-					int foodPoints = fp->getPoints();
-					
-					// if there is more than will be eaten
-					if (foodPoints > amount)
-					{
-						fp->setPoints(foodPoints - amount);
-						return amount;
-					} else // if there is less than will be eaten
-					{
-						fp->setPoints(0);
-						return foodPoints;
-					}
-
-				} else
-					return 0; // TODO: bug here, i need to account for anthills (inanimate) eating
-			}
-		 }
-		 it++;
-	 }
-	 return 0;
+	Actor* aptr = hasFood(x, y);
+	Food* fptr = dynamic_cast<Food*>(aptr);
+	// there is no food to eat
+	if (fptr == nullptr)
+	{
+		return 0;
+	}
+	
+	// food points at that food object
+	int foodPoints = fptr->getPoints();
+	
+	// square has food!
+	if (foodPoints > 0)
+	{
+		// if there is more than will be eaten
+		if (foodPoints > amount)
+		{
+			fptr->setPoints(foodPoints - amount);
+			return amount;
+		} else // if there is less than will be eaten
+		{
+			fptr->setPoints(0);
+			// ate all what was there
+			return foodPoints;
+		}
+	} else
+		return 0;
 }
 
 // GROW GH TO ADULT
@@ -345,8 +644,7 @@ void StudentWorld::newAntBorn(int x, int y, int colony, Compiler* c)
 	int id = findID(x, y);
 
 	virtualWorld[id].push_back(new Ant(this, x, y, colony, c)); // remember id changes with colony
-	// TODO: increase number of ants this colony has produced
-
+	antCount[colony]++;
 }
 
 
@@ -469,128 +767,46 @@ void StudentWorld::dropFood(int x, int y, int foodPts)
 	}
 }
 
-
-// LOAD FIELD INTO CONTAINER
-bool StudentWorld::loadField()
+// EMIT PHEROMONE AT X, Y
+void StudentWorld::emitPheromone(int x, int y, int colony)
 {
-	  Field f;
-	  string fieldFile = getFieldFilename();
-	  string error;
-
-	 // error in loading file
-	 if (f.loadField(fieldFile, error) != Field::LoadResult::load_success)
-	 {
-		setError(fieldFile + " " + error);
-		return false; // something bad happened!
-	 }
-	 
-	 // filling container
-	 for (int i = 0; i < VIEW_HEIGHT * VIEW_WIDTH; i++)
-	 {
-		 // translating int to x and y values
-		 int x = i/VIEW_WIDTH;
-		 int y = i%VIEW_WIDTH;
-
-		 // storing item at (x, y)
-		 Field::FieldItem item = f.getContentsOf(y, x);
-
-		 ///////////////////////// ANIMATE //////////////////////////////
-		 
-		 // found a grasshopper
-		 if (item == Field::FieldItem::grasshopper)
-		 {
-			 virtualWorld[i].push_back(new BabyGrasshopper(this, x, y));
-		 }
-
-		 //////////////////////// INANIMATE /////////////////////////////
-		 
-		 // found a rock
-		 if (item == Field::FieldItem::rock)
-		 {
-			 virtualWorld[i].push_back(new Pebble(this, x, y));
-		 }
-
-		 // found water
-		 if (item == Field::FieldItem::water)
-		 {
-			 virtualWorld[i].push_back(new Water(this, x, y));
-		 }
-		 
-		 // found poison
-		 if (item == Field::FieldItem::poison)
-		 {
-			 virtualWorld[i].push_back(new Poison(this, x, y));
-		 }
-		 
-		 
-		 	 	 	 	    // ** DECAYABLE ** //
-		
-		 // found food
-		 if (item == Field::FieldItem::food)
-		 {
-			 virtualWorld[i].push_back(new Food(this, x, y));
-		 }
-		 
-		 // found anthill 0
-		 if (item == Field::FieldItem::anthill0 && compiledEntrants.size() >= 1)
-		 {
-			 virtualWorld[i].push_back(new Anthill(this, x, y, 0, compiledEntrants[0]));
-		 }
-
-		 // found anthill 1
-		 if (item == Field::FieldItem::anthill1 && compiledEntrants.size() >= 2)
-		 {
-			 virtualWorld[i].push_back(new Anthill(this, x, y, 1, compiledEntrants[1]));
-		 }
-
-		 // found anthill 2
-		 if (item == Field::FieldItem::anthill2 && compiledEntrants.size() >= 3)
-		 {
-			 virtualWorld[i].push_back(new Anthill(this, x, y, 2, compiledEntrants[2]));
-		 }
-		 
-		 // found anthill 3
-		 if (item == Field::FieldItem::anthill3 && compiledEntrants.size() == 4)
-		 {
-			 virtualWorld[i].push_back(new Anthill(this, x, y, 3, compiledEntrants[3]));
-		 }
-		 
-	  }
+	int id = findID(x, y);
 	
-	  return true;
+	// looking for existing pheromone of this colony
+	Actor* ptr = hasPheromone(x, y, colony);
+	Pheromone* pp = dynamic_cast<Pheromone*>(ptr);
+	
+	if (pp == nullptr) // no existing pheromone
+	{
+		virtualWorld[id].push_back(new Pheromone(this, x, y, colony));
+	} else // existing pheromone
+	{
+		// can only go up to a strength of 768
+		if ((pp->getPoints() + 256) <= 768)
+		{
+			pp->setPoints(pp->getPoints() + 256);
+		} else
+		{
+			pp->setPoints(768);
+		}
+	}
 }
 
-int StudentWorld::getNumAntsInColony(int colony)
+///////////////////////////////////////////////////////////////
+////////////////////// SIMULATION CONTROL /////////////////////
+///////////////////////////////////////////////////////////////
+
+int StudentWorld::getColonyX(int colony)
 {
-	// TODO: where am i changing the value of this? 
-	return antCount[colony];
+	if (colony >= 0 && colony < colonyLocations.size())
+	{
+		return colonyLocations[colony].x;
+	}
 }
-
-
-// UPDATE DISPLAY TEXT
-#include <sstream>
-void StudentWorld::updateDisplayText()
+int StudentWorld::getColonyY(int colony)
 {
-	// TODO: finish this, page 23 in spec
-	string text = "Ticks: ";
-	
-	int size = getFilenamesOfAntPrograms().size();
-	
-	int ants0, ants1, ants2, ants3;
-	//int winningAntNumber;
-	
-	ants0 = getNumAntsInColony(0);
-	ants1 = getNumAntsInColony(1);
-	ants2 = getNumAntsInColony(2);
-	ants3 = getNumAntsInColony(3);
-	
-	//winningAntNumber = getWinningAntNumber();
-	
-	ostringstream oss;
-
-	oss << text << currTicks << " - ";
-		//	getFilenamesOfAntPrograms()[0];
-
-	setGameStatText(oss.str());
+	if (colony >= 0 && colony < colonyLocations.size())
+	{
+		return colonyLocations[colony].y;
+	}
 }
-

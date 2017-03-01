@@ -222,7 +222,7 @@ bool AdultGrasshopper::doFunction()
 
 	// 1/3 chances to bite
 	if (randInt(1,3) == 1)
-		if (m_game->biteRandomInsect(getX(), getY(), 50) == true)
+		if (m_game->biteRandomInsect(this, getX(), getY(), 50) == true)
 			return true;
 
 	// 1/10 chances to jump
@@ -234,54 +234,42 @@ bool AdultGrasshopper::doFunction()
 
 	// did not do anything
 	return false;
-
-
-	return jumped;
 }
 
 
 const int TOTAL_POSSIBLE_SLOTS = 100; // WRONG, FIGURE OUT THIS NUMBER
 #include <cmath>
 const double PI = 3.1415926535897;
-void AdultGrasshopper::jump()
+bool AdultGrasshopper::jump()
 {
-	// no more options left
-	if (jumpOptions.size() == TOTAL_POSSIBLE_SLOTS)
-		return;
+	bool jumped = false;
+	int trialCount = 0;
 
-	int radius = randInt(1, 10);
-	int angle = randInt(0, 364);
-
-	// defining x & y
-	int x = ceil(radius*cos(angle*PI/180));
-	int y = ceil(radius*sin(angle*PI/180));
-
-	// checking if slot is open
-	if (m_game->isBlocked(x, y))
+	while (!jumped && trialCount <= 1000)
 	{
-		Coord c;
-		c.x = x;
-		c.y = y;
+		int radius = randInt(1, 10);
+		int angle = randInt(0, 364);
 
-		for (int i = 0; i < jumpOptions.size(); i++)
+		// defining x & y
+		int x = ceil(radius*cos(angle*PI/180));
+		int y = ceil(radius*sin(angle*PI/180));
+
+		// checking if slot is open
+		if (!m_game->isBlocked(x, y))
 		{
-			// found an already checked coordinate
-			if (jumpOptions[i].x == c.x && jumpOptions[i].y == c.y)
-				jump();
-		}
-		// no repeated coordinates, store this one
-		jumpOptions.push_back(c);
-		jump();
-	} else
-		jumpTo(x, y); // found a place to jump to
+			jumped = true;
+			jumpTo(x, y); // found a place to jump to
+		} else
+			trialCount++;
+	}
+	return jumped;
+
 }
 
 void AdultGrasshopper::jumpTo(int x, int y)
 {
-	jumped = true;
 	m_game->moveActor(this, getX(), getY(), x, y);
 	moveTo(x, y);
-
 }
 
 
@@ -329,20 +317,24 @@ bool Ant::doFunction()
 {
 	int ic = 0; // instruction counter
 	int commandCount = 0;
+	int rand;
+	bool isDone = false, gotBlocked;
 	Compiler::Command cmd;
 	
 	if (!m_compiler->getCommand(ic, cmd))
-		return false;
+	{
+		setPoints(0);
+		return false; // there was an error
+	}
 
-/*
-	while (commandCount <= 10)
+	while (commandCount <= 10  && !isDone)
 	{
 		commandCount++;
-		switch (cmd.operator)
+		switch (cmd.opcode)
 		{
 			case Compiler::Opcode::moveForward: // DONE
 			{
-				bool gotBlocked = moveTo(getDirection, getX(), getY());
+				gotBlocked = moveStep(getDirection(), getX(), getY());
 				ic++;
 				break;
 			}
@@ -363,7 +355,7 @@ bool Ant::doFunction()
 
 			case Compiler::Opcode::bite: // DONE
 			{
-				m_game->biteRandomInsect(getX(), getY(), 15);
+				m_game->biteRandomInsect(this, getX(), getY(), 15);
 				ic++;
 				break;
 			}
@@ -375,9 +367,9 @@ bool Ant::doFunction()
 				break;
 			}
 
-			case Compiler::Opcode::emitPheromone: // TODO
+			case Compiler::Opcode::emitPheromone: // DONE
 			{
-				//
+				m_game->emitPheromone(getX(), getY(), getColony());
 				ic++;
 				break;
 			}
@@ -391,23 +383,22 @@ bool Ant::doFunction()
 
 			case Compiler::Opcode::generateRandomNumber: // DONE
 			{
-				int rand;
 				if (cmd.operand1.at(0) - '0' != 0)
-					rand = randInt(0, cmd.operand1 - 1);
+					rand = randInt(0, cmd.operand1.at(0) - '0' - 1);
 				else
 					rand = 0;
 				ic++;
 				break;
 			}
 
-			case Compiler::Opcode::rotateClockwise:
+			case Compiler::Opcode::rotateClockwise: // DONE
 			{
 				rotateClockwise();
 				ic++;
 				break;
 			}
 
-			case Compiler::Opcode::rotateCounterClockwise:
+			case Compiler::Opcode::rotateCounterClockwise: // DONE
 			{
 				rotateCounterClockwise();
 				ic++;
@@ -424,67 +415,94 @@ bool Ant::doFunction()
 			{
 				switch (cmd.operand1.at(0) - '0')
 				{
-					case Compiler::Condition::last_random_number_was_zero:
+					case Compiler::Condition::last_random_number_was_zero: // DONE
 					{
-						//
+						if (rand == 0)
+							ic = cmd.operand2.at(0) - '0';
+						break;
+					}
+					case Compiler::Condition::i_am_carrying_food: // DONE
+					{
+						if (storedFood > 0)
+							ic = cmd.operand2.at(0) - '0';
+						break;
+					}
+					case Compiler::Condition::i_am_hungry: // DONE
+					{
+						if (getPoints() <= 25)
+							ic = cmd.operand2.at(0) - '0';
 						break;
 					}
 
-					case Compiler::Condition::i_am_carrying_food:
+					case Compiler::Condition::i_am_standing_with_an_enemy: // DONE
 					{
-						//
+						if (m_game->hasEnemy(getX(), getY(), getColony()))
+							ic = cmd.operand2.at(0) - '0';
 						break;
 					}
 
-					case Compiler::Condition::i_am_hungry:
+					case Compiler::Condition::i_am_standing_on_food: // DONE
 					{
-						//
+						if (m_game->hasFood(getX(), getY()) != nullptr)
+							ic = cmd.operand2.at(0) - '0';
 						break;
 					}
 
-					case Compiler::Condition::i_am_standing_with_an_enemy:
+					case Compiler::Condition::i_am_standing_on_my_anthill: // DONE
 					{
-						//
+						if (getX() == m_game->getColonyX(m_colony) &&
+							getY() == m_game->getColonyY(m_colony))
+							ic = cmd.operand2.at(0) - '0';
 						break;
 					}
 
-					case Compiler::Condition::i_am_standing_on_food:
+					case Compiler::Condition::i_smell_pheromone_in_front_of_me: // DONE
 					{
-						//
-						break;
-					}
-					case Compiler::Condition::i_am_standing_on_my_anthill:
-					{
-						//
+						switch (getDirection())
+						{
+							case GraphObject::up:
+							{
+								if (m_game->hasPheromone(getX(), getY() + 1, getColony()))
+									ic = cmd.operand2.at(0) - '0';
+								break;
+							}
+							case GraphObject::down:
+							{
+								if (m_game->hasPheromone(getX(), getY() - 1, getColony()))
+									ic = cmd.operand2.at(0) - '0';
+								break;
+							}
+							case GraphObject::right:
+							{
+								if (m_game->hasPheromone(getX() + 1, getY(), getColony()))
+									ic = cmd.operand2.at(0) - '0';
+								break;
+							}
+							case GraphObject::left:
+							{
+								if (m_game->hasPheromone(getX() - 1, getY() + 1, getColony()))
+									ic = cmd.operand2.at(0) - '0';
+								break;
+							}
+						}
 						break;
 					}
 
-					case Compiler::Condition::i_smell_pheromone_in_front_of_me:
+					case Compiler::Condition::i_was_bit: // DONE
 					{
-						//
+						if (bitten == true)
+							ic = cmd.operand2.at(0) - '0';
 						break;
 					}
 
-					case Compiler::Condition::i_was_bit:
+					case Compiler::Condition::i_was_blocked_from_moving: // DONE
 					{
-						//
-						break;
-					}
-
-					case Compiler::Condition::i_was_blocked_from_moving:
-					{
-						//
+						if (gotBlocked)
+							ic = cmd.operand2.at(0) - '0';
 						break;
 					}
 
 				}
-				ic++;
-				break;
-			}
-
-			case Compiler::Opcode::label:
-			{
-				//
 				ic++;
 				break;
 			}
@@ -495,7 +513,7 @@ bool Ant::doFunction()
 			}
 		}
 	}
-*/
+
 }
 
 // CHECKING IF ANT IS SLEEPING
@@ -576,6 +594,20 @@ void Ant::rotateCounterClockwise()
 			break;
 		}
 		default: break;
+	}
+}
+
+///////////////////////////////////////////////////////////////
+////////////////// PHEROMONE IMPLEMENTATION ///////////////////
+///////////////////////////////////////////////////////////////
+int Pheromone::getImageID()
+{
+	switch (getColony())
+	{
+		case 0: return IID_PHEROMONE_TYPE0;
+		case 1: return IID_PHEROMONE_TYPE1;
+		case 2: return IID_PHEROMONE_TYPE2;
+		case 3: return IID_PHEROMONE_TYPE3;
 	}
 }
 
