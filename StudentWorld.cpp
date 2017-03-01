@@ -455,7 +455,7 @@ Actor* StudentWorld::hasFood(int x, int y)
 	 return nullptr;
 }
 
-// CHECKS IF THERE IS A ... TODO TODO TODO TODO
+// CHECKS IF THERE IS A PHEROMONE
 Actor* StudentWorld::hasPheromone(int x, int y, int colony)
 {
 	// convert x, y
@@ -595,7 +595,7 @@ int StudentWorld::eatFood(int x, int y, int amount)
 	}
 	
 	// food points at that food object
-	int foodPoints = fptr->getPoints();
+	int foodPoints = fptr->getEnergy();
 	
 	// square has food!
 	if (foodPoints > 0)
@@ -603,11 +603,11 @@ int StudentWorld::eatFood(int x, int y, int amount)
 		// if there is more than will be eaten
 		if (foodPoints > amount)
 		{
-			fptr->setPoints(foodPoints - amount);
+			fptr->setEnergy(foodPoints - amount);
 			return amount;
 		} else // if there is less than will be eaten
 		{
-			fptr->setPoints(0);
+			fptr->setEnergy(0);
 			// ate all what was there
 			return foodPoints;
 		}
@@ -754,7 +754,7 @@ void StudentWorld::dropFood(int x, int y, int foodPts)
 				// found food
 				if (dap->isEdible() == true)
 				{
-					dap->setPoints(dap->getPoints() + foodPts);
+					dap->setEnergy(dap->getEnergy() + foodPts);
 				}
 			}
 		}
@@ -782,12 +782,12 @@ void StudentWorld::emitPheromone(int x, int y, int colony)
 	} else // existing pheromone
 	{
 		// can only go up to a strength of 768
-		if ((pp->getPoints() + 256) <= 768)
+		if ((pp->getEnergy() + 256) <= 768)
 		{
-			pp->setPoints(pp->getPoints() + 256);
+			pp->setEnergy(pp->getEnergy() + 256);
 		} else
 		{
-			pp->setPoints(768);
+			pp->setEnergy(768);
 		}
 	}
 }

@@ -525,9 +525,11 @@ bool Ant::isSleeping()
 		{
 			ticksToSleep = 2;
 			unstun();
+			bitten = false; // ???
 			return false;
 		} else
 		{
+			bitten = false; // ???
 			ticksToSleep--;
 			return true;
 		}
@@ -639,10 +641,10 @@ void Anthill::doFunction()
 	// add new ant on square
 	// lose 1500 points
 	// ask student world ot increase count of total number of ants that this colony has produced (to see who is winning)
-	if (getPoints() >= 2000)
+	if (getEnergy() >= 2000)
 	{
 		m_game->newAntBorn(getX(), getY(), getColony(), m_c);
-		setPoints(getPoints() - 1500);
+		setEnergy(getEnergy() - 1500);
 	}
 	
 }

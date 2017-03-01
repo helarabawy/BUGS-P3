@@ -23,6 +23,7 @@ class Actor: public GraphObject {
 		virtual void doSomething() = 0;
 		virtual bool isAnimate() = 0;
 		virtual bool canDie() = 0;
+		virtual bool isColonized() {return false;}
 };
 
 ///////////////////////////////////////////////////////////////
@@ -143,27 +144,27 @@ class DecayableActor: public InanimateActor{
 
 	public:
 		// Constructor
-		DecayableActor(StudentWorld* game, int imageID, int startX, int startY, int points)
+		DecayableActor(StudentWorld* game, int imageID, int startX, int startY, int energy)
 		: InanimateActor(game, imageID, startX, startY)
-		{m_game = game; m_points = points;}
+		{m_game = game; m_energy = energy;}
 
 		// Destructor
 		virtual ~DecayableActor() {}
 
 		// Public Interface
-		virtual void doSomething() {setPoints(getPoints() - 1);};
+		virtual void doSomething() {setEnergy(getEnergy() - 1);};
 
 		// getters and setters - status
 		virtual bool canDecay() {return true;}
 		virtual bool isEdible() {return false;}
 		virtual bool isPheromone() {return false;}
 		
-		virtual int getPoints() {return m_points;} // change from points to energy to differentiate it from alive actors
-		virtual int setPoints(int modifiedPoints) {m_points = modifiedPoints;}
-		virtual bool isGone() {return getPoints() == 0;}
+		virtual int getEnergy() {return m_energy;} // change from points to energy to differentiate it from alive actors
+		virtual int setEnergy(int modifiedEnergy) {m_energy = modifiedEnergy;}
+		virtual bool isGone() {return getEnergy() == 0;}
 
 	private:
-		int m_points;
+		int m_energy;
 		StudentWorld* m_game;
 };
 
@@ -213,8 +214,8 @@ class Pheromone: public DecayableActor{
 
 		// Public Interface
 		virtual bool isPheromone() {return true;}
-		int getImageID();
 		int getColony() {return m_colony;}
+		int getImageID();
 				
 	private:
 		StudentWorld* m_game;
@@ -243,17 +244,13 @@ class Anthill: public DecayableActor {
 
 		// Public Interface
 		virtual void doSomething();
-		int getColony() {return m_colony;} 
-		// TODO: since pheroneme, ant and anthill are all associated w their respective colony
-		// TODO: should I create an abstract class that they extend called colonized to store colony?
-
-		void virtual doFunction(); // eats appropriately
+		void virtual doFunction(); 
+		int getColony() {return m_colony;}
 		
 	private:
-		int m_colony;
 		StudentWorld* m_game;
 		Compiler* m_c;
-
+		int m_colony;
 };
 
 #endif // ANT_H_
@@ -279,7 +276,6 @@ class AnimateActor : public Actor{
 		// Public Interface
 		virtual void doSomething();
 
-		virtual bool isColonized() = 0;
 			// Direction
 			GraphObject::Direction randDir();
 
@@ -343,12 +339,10 @@ class Grasshopper: public AnimateActor {
 
 		// Public Interface
 		virtual void doSomething();
-		
-		virtual bool isColonized() {return false;}
-
-			// stunning
-			virtual bool isSleeping();
-			virtual bool doFunction() = 0;
+	
+		// stunning
+		virtual bool isSleeping();
+		virtual bool doFunction() = 0;
 			
 	private:
 		int ticksToSleep = 0;
@@ -442,12 +436,12 @@ class Ant: public AnimateActor {
 		// Destructor
 		virtual ~Ant() {}
 
-		virtual bool isColonized() {return true;}
-		int getColony() {return m_colony;}
-		int getImageID();
+		virtual int getImageID();
 		
 		// Public Interface
 		virtual bool isSleeping();
+		int getColony() {return m_colony;}
+		virtual bool isColonized() {return true;}
 
 		virtual void doSomething();
 		virtual bool doFunction();
