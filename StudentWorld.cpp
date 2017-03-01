@@ -101,10 +101,9 @@ void StudentWorld::cleanUp()
 #include "Compiler.h"
 bool StudentWorld::compileAntPrograms()
 {
-/*
 	// Max num of entrants
-	Compiler *compilerForEntrant0, *compilerForEntrant0, 
-			 *compilerForEntrant0, *compilerForEntrant0;
+	Compiler *compilerForEntrant0, *compilerForEntrant1, 
+			 *compilerForEntrant2, *compilerForEntrant3;
 	
 	// anthills
 	Anthill *ah0, *ah1, *ah2, *ah3;
@@ -119,7 +118,7 @@ bool StudentWorld::compileAntPrograms()
 		compiledEntrants.push_back(compilerForEntrant0);
 	
 		// spot and set error
-		if (!compilerForEntrant0->compiler(filenames[0], error))
+		if (!compilerForEntrant0->compile(filenames[0], error))
 		{	
 			setError(filenames[0] + " " + error);
 			return false;
@@ -135,7 +134,7 @@ bool StudentWorld::compileAntPrograms()
 		compiledEntrants.push_back(compilerForEntrant1);
 		
 		// spot and set error
-		if (!compilerForEntrant1->compiler(filenames[1], error))
+		if (!compilerForEntrant1->compile(filenames[1], error))
 		{
 			setError(filenames[1] + " " + error);
 			return false;
@@ -151,7 +150,7 @@ bool StudentWorld::compileAntPrograms()
 		compiledEntrants.push_back(compilerForEntrant2);
 		
 		// spot and set error
-		if (!compilerForEntrant2->compiler(filenames[2], error))
+		if (!compilerForEntrant2->compile(filenames[2], error))
 		{
 			setError(filenames[2] + " " + error);
 			return false;
@@ -167,12 +166,12 @@ bool StudentWorld::compileAntPrograms()
 		compiledEntrants.push_back(compilerForEntrant3);
 		
 		// spot and set error
-		if (!compilerForEntrant3->compiler(filenames[3], error))
+		if (!compilerForEntrant3->compile(filenames[3], error))
 		{
 			setError(filenames[3] + " " + error);
 			return false;
 		}
-	} else*/
+	} else
 		return true;		
 
 }
@@ -231,7 +230,6 @@ void StudentWorld::hurtInsects(int x, int y, char c)
 // BITE RANDOM INSECT AT (x, y)
 bool StudentWorld::biteRandomInsect(int x, int y, int damage)
 {
-/*
 	// convert x, y into ID
 	int id = findID(x, y);
 	int count = 0;
@@ -267,7 +265,6 @@ bool StudentWorld::biteRandomInsect(int x, int y, int damage)
 				index++;
 		}
 	}
-*/
 	return true;
 }
 
@@ -343,16 +340,15 @@ void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 }
 
 // GROW GH TO ADULT
-/*
 void StudentWorld::newAntBorn(int x, int y, int colony, Compiler* c)
 {
 	int id = findID(x, y);
 
-	//virtualWorld[id].push_back(new Ant(this, x, y, colony, c)); // remember id changes with colony
+	virtualWorld[id].push_back(new Ant(this, x, y, colony, c)); // remember id changes with colony
 	// TODO: increase number of ants this colony has produced
 
 }
-*/
+
 
 
 // REMOVE DEAD INSECTS
@@ -443,7 +439,6 @@ void StudentWorld::dropFood(int x, int y, int foodPts)
 {
 	// finding ID and setting a check of whether food was found
 	int id = findID(x, y);
-	bool foundFood = false;
 	
 	// looking for existing food objects and if so adding
 	list<Actor*>::iterator it;
@@ -462,16 +457,15 @@ void StudentWorld::dropFood(int x, int y, int foodPts)
 				if (dap->isEdible() == true)
 				{
 					dap->setPoints(dap->getPoints() + foodPts);
-					foundFood = true;
 				}
 			}
 		}
 	}
 					
 	 // did not find existing food
-	if (foundFood == false)
+	if (it == virtualWorld[id].end())
 	{
-		virtualWorld[id].push_back(new Food(this, (*it)->getX(), (*it)->getY(), 100));
+		virtualWorld[id].push_back(new Food(this, x, y, 100));
 	}
 }
 
@@ -580,19 +574,18 @@ void StudentWorld::updateDisplayText()
 	// TODO: finish this, page 23 in spec
 	string text = "Ticks: ";
 	
-/*
 	int size = getFilenamesOfAntPrograms().size();
 	
 	int ants0, ants1, ants2, ants3;
-	int winningAntNumber;
+	//int winningAntNumber;
 	
 	ants0 = getNumAntsInColony(0);
 	ants1 = getNumAntsInColony(1);
 	ants2 = getNumAntsInColony(2);
 	ants3 = getNumAntsInColony(3);
 	
-	winningAntNumber = getWinningAntNumber();
-*/	
+	//winningAntNumber = getWinningAntNumber();
+	
 	ostringstream oss;
 
 	oss << text << currTicks << " - ";

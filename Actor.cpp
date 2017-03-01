@@ -50,7 +50,7 @@ void AnimateActor::poison()
 
 
 // put this here to move to animate actor eventually
-bool Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
+bool AnimateActor::moveStep(GraphObject::Direction dir, int oldX, int oldY)
 {
 	// make movement based on direction and roadblocks
 	switch (dir)
@@ -61,10 +61,10 @@ bool Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
 			{
 				moveTo(oldX, oldY + 1); // move on grid
 				m_game->moveActor(this, oldX, oldY, oldX, oldY + 1); // move pointers
-				distanceToMove--;
+				setDistanceToMove(getDistanceToMove() - 1);
 				return true;
 			}
-			else {distanceToMove = 0; return false;}
+			else {setDistanceToMove(0); return false;}
 
 			break;
 		}
@@ -75,10 +75,10 @@ bool Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
 			{
 				moveTo(oldX + 1, oldY); // move on grid
 				m_game->moveActor(this, oldX, oldY, oldX + 1, oldY); // move pointers
-				distanceToMove--;
+				setDistanceToMove(getDistanceToMove() - 1);
 				return true;
 			}
-			else {distanceToMove = 0; return false;}
+			else {setDistanceToMove(0); return false;}
 
 			break;
 		}
@@ -88,10 +88,10 @@ bool Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
 			{
 				moveTo(oldX, oldY - 1);// move on grid
 				m_game->moveActor(this, oldX, oldY, oldX, oldY - 1); // move pointers
-				distanceToMove--;
+				setDistanceToMove(getDistanceToMove() - 1);
 				return true;
 			}
-			else {distanceToMove = 0; return false;}
+			else {setDistanceToMove(0); return false;}
 
 			break;
 		}
@@ -101,10 +101,10 @@ bool Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
 			{
 				moveTo(oldX - 1, oldY); // move on grid
 				m_game->moveActor(this, oldX, oldY, oldX - 1, oldY); // move pointers
-				distanceToMove--;
+				setDistanceToMove(getDistanceToMove() - 1);
 				return true;
 			}
-			else {distanceToMove = 0; return false;}
+			else {setDistanceToMove(0); return false;}
 
 			break;
 		}
@@ -133,7 +133,9 @@ void Grasshopper::doSomething()
 	// eat
 	if (eat(200) == true)
 	{
-		return; // go into sleep
+		// 50% chance of going to sleep
+		if (randInt(0, 1) == 1)
+			return; // go into sleep
 	}
 
 	// current direction
@@ -146,13 +148,13 @@ void Grasshopper::doSomething()
 	moveStep(dir, oldX, oldY);
 	
 
-	if (distanceToMove <= 0)
+	if (getDistanceToMove() <= 0)
 	{
 		// new random direction
 		setDirection(randDir());
 
 		// new random distance
-		distanceToMove = randInt(2, 10);
+		setDistanceToMove(randInt(2, 10));
 	}
 
 
@@ -216,7 +218,8 @@ bool BabyGrasshopper::doFunction()
 
 bool AdultGrasshopper::doFunction()
 {
-	// TODO: REVIEW LOGIC
+	// return true if it did a thing and should sleep right away
+
 	// 1/3 chances to bite
 	if (randInt(1,3) == 1)
 		if (m_game->biteRandomInsect(getX(), getY(), 50) == true)
@@ -224,14 +227,13 @@ bool AdultGrasshopper::doFunction()
 
 	// 1/10 chances to jump
 	if (randInt(1, 10) == 1)
+	{
 		jump();
-
-
-	// 50% chance to sleep if ate
-	if (randInt(1,2) == 1)
 		return true;
-	else
-		return false;
+	}
+
+	// did not do anything
+	return false;
 
 
 	return jumped;
@@ -286,7 +288,7 @@ void AdultGrasshopper::jumpTo(int x, int y)
 ///////////////////////////////////////////////////////////////
 ////////////////////// ANT IMPLEMENTATION /////////////////////
 ///////////////////////////////////////////////////////////////
-/*
+
 
 int Ant::getImageID()
 {
@@ -332,6 +334,7 @@ bool Ant::doFunction()
 	if (!m_compiler->getCommand(ic, cmd))
 		return false;
 
+/*
 	while (commandCount <= 10)
 	{
 		commandCount++;
@@ -492,6 +495,7 @@ bool Ant::doFunction()
 			}
 		}
 	}
+*/
 }
 
 // CHECKING IF ANT IS SLEEPING
@@ -514,9 +518,10 @@ bool Ant::isSleeping()
 		return false;
 }
 // ROTATE CLOCKWISE
-void rotateClockwise()
+void Ant::rotateClockwise()
 {
 	GraphObject::Direction dir = getDirection();
+
 
 	switch(dir)
 	{
@@ -544,7 +549,7 @@ void rotateClockwise()
 	}
 }
 // ROTATE COUNTERCLOCKWISE
-void rotateCounterClockwise()
+void Ant::rotateCounterClockwise()
 {
 	GraphObject::Direction dir = getDirection();
 
@@ -573,7 +578,7 @@ void rotateCounterClockwise()
 		default: break;
 	}
 }
-*/
+
 
 ///////////////////////////////////////////////////////////////
 //////////////////// ANTHILL IMPLEMENTATION ///////////////////
@@ -604,8 +609,8 @@ void Anthill::doFunction()
 	// ask student world ot increase count of total number of ants that this colony has produced (to see who is winning)
 	if (getPoints() >= 2000)
 	{
-	/*	m_game->newAntBorn(getX(), getY(), getColony(), m_c);
-	*/	setPoints(getPoints() - 1500);
+		m_game->newAntBorn(getX(), getY(), getColony(), m_c);
+		setPoints(getPoints() - 1500);
 	}
 	
 }

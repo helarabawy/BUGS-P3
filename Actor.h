@@ -1,5 +1,3 @@
-// TODO: should i say virtual first or type first
-
 ///////////////////////////////////////////////////////////////
 //////////////////////// ~ ACTOR ~ ////////////////////////////
 ///////////////////////////////////////////////////////////////
@@ -158,9 +156,10 @@ class DecayableActor: public InanimateActor{
 		// getters and setters - status
 		virtual bool canDecay() {return true;}
 		virtual bool isEdible() {return false;}
-		int getPoints() {return m_points;} // change from points to energy to differentiate it from alive actors
-		int setPoints(int modifiedPoints) {m_points = modifiedPoints;}
-		bool isGone() {return getPoints() == 0;}
+		
+		virtual int getPoints() {return m_points;} // change from points to energy to differentiate it from alive actors
+		virtual int setPoints(int modifiedPoints) {m_points = modifiedPoints;}
+		virtual bool isGone() {return getPoints() == 0;}
 
 	private:
 		int m_points;
@@ -263,7 +262,8 @@ class AnimateActor : public Actor{
 
 	public:
 		// Constructor
-		AnimateActor(StudentWorld* game, int imageID, int startX, int startY, Direction dir, int healthPts, int depth = 0): Actor(game, imageID, startX, startY, dir, depth)
+		AnimateActor(StudentWorld* game, int imageID, int startX, int startY, Direction dir, int healthPts, int depth = 0)
+		:Actor(game, imageID, startX, startY, dir, depth)
 		{m_game = game; m_points = healthPts; stunned = false; poisoned = false;}
 
 		// Destructor
@@ -290,16 +290,23 @@ class AnimateActor : public Actor{
 
 			// stunning
 			virtual void stun() {stunned = true;}
-			void unstun() {stunned = false;}
 			virtual bool checkStunStatus() {return stunned;}
+			void unstun() {stunned = false;}
 
 			// eating
 			bool eat(int maxFood);
 
 			// poisoning
 			virtual void poison();
+			
+			// moving
+			virtual bool moveStep(Direction dir, int oldX, int oldY);
+			virtual int getDistanceToMove() {return distanceToMove;}
+			virtual void setDistanceToMove(int modifiedDistance) {distanceToMove = modifiedDistance;}
+			
 
 	private:
+		int distanceToMove = randInt(2, 10);
 		bool poisoned = false;
 		bool stunned;
 		StudentWorld* m_game;
@@ -320,9 +327,8 @@ class Grasshopper: public AnimateActor {
 	public:
 		// Constructor
 		Grasshopper(StudentWorld* game, int ImageID, int startX, int startY, int points)
-		: distanceToMove(randInt(2, 10)), // member variables
-		AnimateActor(game, ImageID, startX, startY, /*random direction*/ randDir(), points) 
-		{m_game = game;}
+		:AnimateActor(game, ImageID, startX, startY, /*random direction*/ randDir(), points) 
+		{m_game = game; setDistanceToMove(randInt(2, 10));}
 
 		// Destructor
 		virtual ~Grasshopper() {}
@@ -332,13 +338,9 @@ class Grasshopper: public AnimateActor {
 
 			// stunning
 			virtual bool isSleeping();
-			bool virtual doFunction() = 0;
-
-			// moving
-			bool moveStep(Direction dir, int oldX, int oldY);
-
+			virtual bool doFunction() = 0;
+			
 	private:
-		int distanceToMove;
 		int ticksToSleep = 0;
 		bool recoveringFromStun = false;
 		StudentWorld* m_game;
@@ -364,7 +366,7 @@ class BabyGrasshopper: public Grasshopper {
 		// Destructor
 		virtual ~BabyGrasshopper() {}
 
-		bool virtual doFunction();
+		virtual bool doFunction();
 
 	private:
 		StudentWorld* m_game;
@@ -391,8 +393,8 @@ class AdultGrasshopper: public Grasshopper {
 
 		// Public Interface
 		virtual void poison() {return;} // never gets poisoned
-		bool virtual checkStunStatus() {return false;} // never gets stunned
-		bool virtual doFunction();
+		virtual bool checkStunStatus() {return false;} // never gets stunned
+		virtual bool doFunction();
 
 	private:
 		// jumping
@@ -416,7 +418,6 @@ class AdultGrasshopper: public Grasshopper {
 ///////////////////////////////////////////////////////////////
 /////////////////////////////// ANT ///////////////////////////
 ///////////////////////////////////////////////////////////////
-/*
 
 #ifndef ANT_H_
 #define ANT_H_
@@ -439,7 +440,7 @@ class Ant: public AnimateActor {
 		virtual bool isSleeping();
 
 		virtual void doSomething();
-		bool virtual doFunction();
+		virtual bool doFunction();
 
 		void storeFood(int amount) ;
 
@@ -457,8 +458,5 @@ class Ant: public AnimateActor {
 };
 
 #endif // ANT_H_
-
-*/
-
 
 #endif // ACTOR_H_
