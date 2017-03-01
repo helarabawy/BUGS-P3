@@ -48,6 +48,69 @@ void AnimateActor::poison()
 		return;
 }
 
+
+// put this here to move to animate actor eventually
+bool Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
+{
+	// make movement based on direction and roadblocks
+	switch (dir)
+	{
+		case up:
+		{
+			if (!isBlocked(oldX, oldY + 1))
+			{
+				moveTo(oldX, oldY + 1); // move on grid
+				m_game->moveActor(this, oldX, oldY, oldX, oldY + 1); // move pointers
+				distanceToMove--;
+				return true;
+			}
+			else {distanceToMove = 0; return false;}
+
+			break;
+		}
+
+		case right:
+		{
+			if (!isBlocked(oldX + 1, oldY))
+			{
+				moveTo(oldX + 1, oldY); // move on grid
+				m_game->moveActor(this, oldX, oldY, oldX + 1, oldY); // move pointers
+				distanceToMove--;
+				return true;
+			}
+			else {distanceToMove = 0; return false;}
+
+			break;
+		}
+		case down:
+		{
+			if (!isBlocked(oldX, oldY - 1))
+			{
+				moveTo(oldX, oldY - 1);// move on grid
+				m_game->moveActor(this, oldX, oldY, oldX, oldY - 1); // move pointers
+				distanceToMove--;
+				return true;
+			}
+			else {distanceToMove = 0; return false;}
+
+			break;
+		}
+		case left:
+		{
+			if (!isBlocked(oldX - 1, oldY))
+			{
+				moveTo(oldX - 1, oldY); // move on grid
+				m_game->moveActor(this, oldX, oldY, oldX - 1, oldY); // move pointers
+				distanceToMove--;
+				return true;
+			}
+			else {distanceToMove = 0; return false;}
+
+			break;
+		}
+	}
+}
+
 ///////////////////////////////////////////////////////////////
 ///////////////// GRASSHOPPER IMPLEMENTATION //////////////////
 ///////////////////////////////////////////////////////////////
@@ -68,7 +131,7 @@ void Grasshopper::doSomething()
 	}
 
 	// eat
-	if (eat() == true)
+	if (eat(200) == true)
 	{
 		return; // go into sleep
 	}
@@ -133,67 +196,6 @@ bool Grasshopper::isSleeping()
 
 
 
-bool Grasshopper::moveStep(GraphObject::Direction dir, int oldX, int oldY)
-{
-	// make movement based on direction and roadblocks
-	switch (dir)
-	{
-		case up:
-		{
-			if (!isBlocked(oldX, oldY + 1))
-			{
-				moveTo(oldX, oldY + 1); // move on grid
-				m_game->moveActor(this, oldX, oldY, oldX, oldY + 1); // move pointers
-				distanceToMove--;
-				return true;
-			}
-			else {distanceToMove = 0; return false;}
-
-			break;
-		}
-
-		case right:
-		{
-			if (!isBlocked(oldX + 1, oldY))
-			{
-				moveTo(oldX + 1, oldY); // move on grid
-				m_game->moveActor(this, oldX, oldY, oldX + 1, oldY); // move pointers
-				distanceToMove--;
-				return true;
-			}
-			else {distanceToMove = 0; return false;}
-
-			break;
-		}
-		case down:
-		{
-			if (!isBlocked(oldX, oldY - 1))
-			{
-				moveTo(oldX, oldY - 1);// move on grid
-				m_game->moveActor(this, oldX, oldY, oldX, oldY - 1); // move pointers
-				distanceToMove--;
-				return true;
-			}
-			else {distanceToMove = 0; return false;}
-
-			break;
-		}
-		case left:
-		{
-			if (!isBlocked(oldX - 1, oldY))
-			{
-				moveTo(oldX - 1, oldY); // move on grid
-				m_game->moveActor(this, oldX, oldY, oldX - 1, oldY); // move pointers
-				distanceToMove--;
-				return true;
-			}
-			else {distanceToMove = 0; return false;}
-
-			break;
-		}
-	}
-}
-
 ///////////////////////////////////////////////////////////////
 ////////////// BABY GRASSHOPPER IMPLEMENTATION ////////////////
 ///////////////////////////////////////////////////////////////
@@ -217,7 +219,7 @@ bool AdultGrasshopper::doFunction()
 	// TODO: REVIEW LOGIC
 	// 1/3 chances to bite
 	if (randInt(1,3) == 1)
-		if (m_game->biteRandomInsect(getX(), getY()) == true)
+		if (m_game->biteRandomInsect(getX(), getY(), 50) == true)
 			return true;
 
 	// 1/10 chances to jump
@@ -284,6 +286,7 @@ void AdultGrasshopper::jumpTo(int x, int y)
 ///////////////////////////////////////////////////////////////
 ////////////////////// ANT IMPLEMENTATION /////////////////////
 ///////////////////////////////////////////////////////////////
+/*
 
 int Ant::getImageID()
 {
@@ -570,6 +573,7 @@ void rotateCounterClockwise()
 		default: break;
 	}
 }
+*/
 
 ///////////////////////////////////////////////////////////////
 //////////////////// ANTHILL IMPLEMENTATION ///////////////////
@@ -600,8 +604,8 @@ void Anthill::doFunction()
 	// ask student world ot increase count of total number of ants that this colony has produced (to see who is winning)
 	if (getPoints() >= 2000)
 	{
-		m_game->newAntBorn(getX(), getY(), getColony(), m_c);
-		setPoints(getPoints() - 1500);
+	/*	m_game->newAntBorn(getX(), getY(), getColony(), m_c);
+	*/	setPoints(getPoints() - 1500);
 	}
 	
 }

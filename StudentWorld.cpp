@@ -101,6 +101,7 @@ void StudentWorld::cleanUp()
 #include "Compiler.h"
 bool StudentWorld::compileAntPrograms()
 {
+/*
 	// Max num of entrants
 	Compiler *compilerForEntrant0, *compilerForEntrant0, 
 			 *compilerForEntrant0, *compilerForEntrant0;
@@ -171,9 +172,9 @@ bool StudentWorld::compileAntPrograms()
 			setError(filenames[3] + " " + error);
 			return false;
 		}
-	} else
-		return true;
-		
+	} else*/
+		return true;		
+
 }
 
 
@@ -230,6 +231,7 @@ void StudentWorld::hurtInsects(int x, int y, char c)
 // BITE RANDOM INSECT AT (x, y)
 bool StudentWorld::biteRandomInsect(int x, int y, int damage)
 {
+/*
 	// convert x, y into ID
 	int id = findID(x, y);
 	int count = 0;
@@ -265,6 +267,7 @@ bool StudentWorld::biteRandomInsect(int x, int y, int damage)
 				index++;
 		}
 	}
+*/
 	return true;
 }
 
@@ -340,14 +343,16 @@ void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 }
 
 // GROW GH TO ADULT
+/*
 void StudentWorld::newAntBorn(int x, int y, int colony, Compiler* c)
 {
 	int id = findID(x, y);
 
-	virtualWorld[id].push_back(new Ant(this, x, y, colony, c)); // remember id changes with colony
+	//virtualWorld[id].push_back(new Ant(this, x, y, colony, c)); // remember id changes with colony
 	// TODO: increase number of ants this colony has produced
 
 }
+*/
 
 
 // REMOVE DEAD INSECTS
@@ -434,7 +439,7 @@ void StudentWorld::redirectActorPtrs()
 }
 
 // DROP FOOD AT X, Y
-void dropFood(int x, int y, int foodPts)
+void StudentWorld::dropFood(int x, int y, int foodPts)
 {
 	// finding ID and setting a check of whether food was found
 	int id = findID(x, y);
@@ -442,8 +447,8 @@ void dropFood(int x, int y, int foodPts)
 	
 	// looking for existing food objects and if so adding
 	list<Actor*>::iterator it;
-	for (it = virtualWorld[i].begin();
-		it != virtualWorld[i].end(); i2++)
+	for (it = virtualWorld[id].begin();
+		it != virtualWorld[id].end(); it++)
 	{
 		// food is inanimate
 		if ((*it)->isAnimate() == false)
@@ -466,7 +471,7 @@ void dropFood(int x, int y, int foodPts)
 	 // did not find existing food
 	if (foundFood == false)
 	{
-		virtualWorld[i].push_back(new Food(this, (*it)->getX(), (*it)->getY(), 100));
+		virtualWorld[id].push_back(new Food(this, (*it)->getX(), (*it)->getY(), 100));
 	}
 }
 

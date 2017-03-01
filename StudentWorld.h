@@ -34,7 +34,7 @@ public:
 	bool biteRandomInsect(int x, int y, int damage);
 	int eatFood(int x, int y, int amount);
 	void growGrasshopper(Actor* bgh, int x, int y);
-	void newAntBorn(int x, int y, int colony);
+	//void newAntBorn(int x, int y, int colony);
 	int getNumAntsInColony(int colony);
 	void dropFood(int x, int y, int foodPts);
 

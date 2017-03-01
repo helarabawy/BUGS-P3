@@ -39,7 +39,7 @@ class InanimateActor: public Actor{
 	public:
 		// Constructor
 		InanimateActor(StudentWorld* game, int imageID, int startX, int startY, int depth = 2)
-		: Actor(game, imageID, startX, startY, right, depth)
+		: Actor(game, imageID, startX, startY, right, depth) {}
 
 		// Destructor
 		virtual ~InanimateActor() {}
@@ -285,9 +285,6 @@ class AnimateActor : public Actor{
 			virtual bool isDead() {return m_points <= 0;}
 			virtual bool isSleeping() = 0;
 
-			// moving
-			bool moveStep(Direction dir, int oldX, int oldY);
-
 			// blocking
 			bool isBlocked(int x, int y) {return m_game->isBlocked(x, y);}
 
@@ -300,10 +297,9 @@ class AnimateActor : public Actor{
 			bool eat(int maxFood);
 
 			// poisoning
-			virtual void poison()
+			virtual void poison();
 
 	private:
-			
 		bool poisoned = false;
 		bool stunned;
 		StudentWorld* m_game;
@@ -338,10 +334,13 @@ class Grasshopper: public AnimateActor {
 			virtual bool isSleeping();
 			bool virtual doFunction() = 0;
 
+			// moving
+			bool moveStep(Direction dir, int oldX, int oldY);
+
 	private:
+		int distanceToMove;
 		int ticksToSleep = 0;
 		bool recoveringFromStun = false;
-		int distanceToMove;
 		StudentWorld* m_game;
 };
 
@@ -417,6 +416,7 @@ class AdultGrasshopper: public Grasshopper {
 ///////////////////////////////////////////////////////////////
 /////////////////////////////// ANT ///////////////////////////
 ///////////////////////////////////////////////////////////////
+/*
 
 #ifndef ANT_H_
 #define ANT_H_
@@ -458,6 +458,7 @@ class Ant: public AnimateActor {
 
 #endif // ANT_H_
 
+*/
 
 
 #endif // ACTOR_H_
