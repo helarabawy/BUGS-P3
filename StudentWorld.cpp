@@ -664,8 +664,6 @@ void StudentWorld::newAntBorn(int x, int y, int colony, Compiler* c)
 	antCount[colony]++;
 }
 
-
-
 // REMOVE DEAD INSECTS
 list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor*>::const_iterator it, int i)
 {
@@ -796,7 +794,16 @@ void StudentWorld::emitPheromone(int x, int y, int colony)
 	
 	if (pp == nullptr) // no existing pheromone
 	{
-		virtualWorld[id].push_back(new Pheromone(this, x, y, colony));
+		// getting imageID
+		int imageID;
+		switch (colony)
+			{
+				case 0: {imageID = IID_PHEROMONE_TYPE0; break;}
+				case 1: {imageID = IID_PHEROMONE_TYPE1; break;}
+				case 2: {imageID = IID_PHEROMONE_TYPE2; break;}
+				case 3: {imageID = IID_PHEROMONE_TYPE3; break;}
+			}
+		virtualWorld[id].push_back(new Pheromone(this, imageID, x, y, colony));
 	} else // existing pheromone
 	{
 		// can only go up to a strength of 768

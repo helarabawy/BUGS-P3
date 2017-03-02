@@ -205,8 +205,8 @@ class Pheromone: public DecayableActor{
 
 	public:
 		// Constructor
-		Pheromone(StudentWorld* game, int startX, int startY, int colony)
-		: DecayableActor(game, getImageID(), startX, startY, 256)
+		Pheromone(StudentWorld* game, int imageID, int startX, int startY, int colony)
+		: DecayableActor(game, imageID, startX, startY, 256)
 		{m_game = game; m_colony = colony;}
 		
 		// Destructor
@@ -215,7 +215,6 @@ class Pheromone: public DecayableActor{
 		// Public Interface
 		virtual bool isPheromone() {return true;}
 		int getColony() {return m_colony;}
-		int getImageID();
 				
 	private:
 		StudentWorld* m_game;
