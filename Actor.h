@@ -328,7 +328,7 @@ class Grasshopper: public AnimateActor {
 		// Constructor
 		Grasshopper(StudentWorld* game, int ImageID, int startX, int startY, int points)
 		:AnimateActor(game, ImageID, startX, startY, randDir(), points) 
-		{m_game = game; setDistanceToMove(randInt(2, 10)); setDirection(randDir);}
+		{m_game = game; setDistanceToMove(randInt(2, 10));}
 
 		// Destructor
 		virtual ~Grasshopper() {}

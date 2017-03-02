@@ -751,30 +751,14 @@ void StudentWorld::dropFood(int x, int y, int foodPts)
 	int id = findID(x, y);
 	
 	// looking for existing food objects and if so adding
-	list<Actor*>::iterator it;
-	for (it = virtualWorld[id].begin();
-		it != virtualWorld[id].end(); it++)
+	Actor* ap = hasFood(x, y);
+	Food* fp = dynamic_cast<Food*>(ap);
+
+	if (fp != nullptr) // found some food object
 	{
-		// food is inanimate
-		if ((*it)->isAnimate() == false)
-		{
-			InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
-			// food is decayable
-			if (iap->canDecay() == true)
-			{
-				DecayableActor* dap = dynamic_cast<DecayableActor*>(iap);
-				// found food
-				if (dap->isEdible() == true)
-				{
-					dap->setEnergy(dap->getEnergy() + foodPts);
-					return;
-				}
-			}
-		}
-	}
-					
-	 // did not find existing food
-	if (it == virtualWorld[id].end())
+		fp->setEnergy(fp->getEnergy() + foodPts);
+		return;
+	} else
 	{
 		virtualWorld[id].push_back(new Food(this, x, y, 100));
 	}
