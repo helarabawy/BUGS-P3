@@ -316,19 +316,20 @@ bool Ant::doFunction()
 	bool isDone = false, gotBlocked;
 	Compiler::Command cmd;
 	
-	if (!m_compiler->getCommand(ic, cmd))
-	{
-		setPoints(0);
-		return false; // there was an error
-	}
-
 	while (commandCount <= 10  && !isDone)
 	{
+		if (!m_compiler->getCommand(ic, cmd))
+		{
+			setPoints(0);
+			return false; // there was an error
+		}
+
 		commandCount++;
 		switch (cmd.opcode)
 		{
 			case Compiler::Opcode::moveForward: // DONE
 			{
+				cerr << "MOVING FORWARD" << endl;
 				gotBlocked = moveStep(getDirection(), getX(), getY());
 				ic++;
 				break;
@@ -336,6 +337,7 @@ bool Ant::doFunction()
 
 			case Compiler::Opcode::eatFood: // DONE
 			{
+				cerr << "EATING FOOD" << endl;
 				eat(100);
 				ic++;
 				break;
@@ -343,6 +345,7 @@ bool Ant::doFunction()
 
 			case Compiler::Opcode::dropFood: // DONE
 			{
+				cerr << "DROPPING FOOD" << endl;
 				m_game->dropFood(getX(), getY(), storedFood); // TODO: make sure to define getFoodPts
 				ic++;
 				break;
@@ -350,6 +353,7 @@ bool Ant::doFunction()
 
 			case Compiler::Opcode::bite: // DONE
 			{
+				cerr << "BITING" << endl;
 				m_game->biteRandomInsect(this, getX(), getY(), 15);
 				ic++;
 				break;
@@ -357,6 +361,7 @@ bool Ant::doFunction()
 
 			case Compiler::Opcode::pickupFood: // DONE
 			{
+				cerr << "PICKING UP FOOD" << endl;
 				storeFood(400);
 				ic++;
 				break;
@@ -364,6 +369,7 @@ bool Ant::doFunction()
 
 			case Compiler::Opcode::emitPheromone: // DONE
 			{
+				cerr << "EMITTING PHEROMONE" << endl;
 				m_game->emitPheromone(getX(), getY(), getColony());
 				ic++;
 				break;
@@ -371,6 +377,7 @@ bool Ant::doFunction()
 
 			case Compiler::Opcode::faceRandomDirection: // DONE
 			{
+				cerr << "FACING RANDOM DIRECTION" << endl;
 				setDirection(randDir());
 				ic++;
 				break;
@@ -378,6 +385,7 @@ bool Ant::doFunction()
 
 			case Compiler::Opcode::generateRandomNumber: // DONE
 			{
+				cerr << "GENERATING RANDOM NUM" << endl;
 				if (cmd.operand1.at(0) - '0' != 0)
 					rand = randInt(0, cmd.operand1.at(0) - '0' - 1);
 				else
@@ -388,6 +396,7 @@ bool Ant::doFunction()
 
 			case Compiler::Opcode::rotateClockwise: // DONE
 			{
+				cerr << "ROTATING CLOCKWISE" << endl;
 				rotateClockwise();
 				ic++;
 				break;
@@ -395,6 +404,7 @@ bool Ant::doFunction()
 
 			case Compiler::Opcode::rotateCounterClockwise: // DONE
 			{
+				cerr << "ROTATING COUNTERCLOCKWISE" << endl;
 				rotateCounterClockwise();
 				ic++;
 				break;
@@ -507,6 +517,7 @@ bool Ant::doFunction()
 				break;
 			}
 		}
+
 	}
 
 }
