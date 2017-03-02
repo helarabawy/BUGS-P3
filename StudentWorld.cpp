@@ -307,6 +307,7 @@ int StudentWorld::getNumAntsInColony(int colony)
 void StudentWorld::decrementAntCount(int colony)
 {
 	antCount[colony]--;
+	updateRunningWinner();
 }
 
 // UPDATE DISPLAY TEXT
@@ -348,28 +349,31 @@ void StudentWorld::updateDisplayText()
 	setGameStatText(oss.str());
 }
 
-int StudentWorld::getWinner() // TODO: This is not extremely accurate, what if there is a tie
+// FUNCTION TO RETURN WINNER
+int StudentWorld::getWinner()
 {
-	int max = -1;
-	int winner = -1;
+	// there must be at least 6 ants to win
+	if (antCount[winner] < 6)
+		return -1;
+	else
+		return winner;
+}
 
+// FUNCTION TO REGULARLY UPDATE THE WINNER
+void StudentWorld::updateRunningWinner()
+{
 	// traversing ant counts
 	for (int i = 0; i < antCount.size(); i++)
 	{
 		// checking who has most ants
-		if (antCount[i] > max)
+		if (antCount[i] > runningMax)
 		{
 			winner = i;
-			max = antCount[i];
+			runningMax = antCount[i];
 		}
-
-		// WHAT IF THERE IS A TIE <-----TODO: tackle this
 	}
-	// there must be at least 6 winners
-	if (antCount[winner] < 6)
-		return -1;
-
-	return winner;
+	// update running max value
+	runningMax = antCount[winner];
 }
 
 ///////////////////////////////////////////////////////////////
@@ -677,6 +681,7 @@ void StudentWorld::newAntBorn(int x, int y, int colony, Compiler* c)
 	//new ant
 	virtualWorld[id].push_back(new Ant(this, imageID, x, y, colony, c)); // remember id changes with colony
 	antCount[colony]++;
+	updateRunningWinner();
 }
 
 // REMOVE DEAD INSECTS

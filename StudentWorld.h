@@ -48,10 +48,13 @@ public:
 
 	// declare winner
 	int getWinner(); // todo: look at entrant requirments to win
+	void updateRunningWinner();
 
 private:
 	map<int, list<Actor*>> virtualWorld; // class container
 	int currTicks; // keeping track of current ticks
+	int runningMax = 0;
+	int winner;
 
 	struct Movable{
 		int oldID;
