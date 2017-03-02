@@ -650,8 +650,17 @@ void StudentWorld::growGrasshopper(Actor* bgh, int x, int y)
 void StudentWorld::newAntBorn(int x, int y, int colony, Compiler* c)
 {
 	int id = findID(x, y);
+	int imageID;
 
-	virtualWorld[id].push_back(new Ant(this, x, y, colony, c)); // remember id changes with colony
+	switch (colony)
+		{
+			case 0: {imageID = IID_ANT_TYPE0; break;}
+			case 1: {imageID = IID_ANT_TYPE1; break;}
+			case 2: {imageID = IID_ANT_TYPE2; break;}
+			case 3: {imageID = IID_ANT_TYPE3; break;}
+		}
+
+	virtualWorld[id].push_back(new Ant(this, imageID, x, y, colony, c)); // remember id changes with colony
 	antCount[colony]++;
 }
 

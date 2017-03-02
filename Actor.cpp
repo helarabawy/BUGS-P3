@@ -285,18 +285,6 @@ bool AdultGrasshopper::isInBounds(int x, int y)
 ////////////////////// ANT IMPLEMENTATION /////////////////////
 ///////////////////////////////////////////////////////////////
 
-
-int Ant::getImageID()
-{
-	switch (getColony())
-	{
-		case 0: return IID_ANT_TYPE0;
-		case 1: return IID_ANT_TYPE1;
-		case 2: return IID_ANT_TYPE2;
-		case 3: return IID_ANT_TYPE3;
-	}
-}
-
 void Ant::doSomething()
 {
 	AnimateActor::doSomething();

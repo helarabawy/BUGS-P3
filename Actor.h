@@ -430,14 +430,12 @@ class Ant: public AnimateActor {
 
 	public:
 		// Constructor
-		Ant(StudentWorld* game, int startX, int startY, int colony, Compiler* compiler)
-		: AnimateActor(game, getImageID(), startX, startY, randDir(), 1500, 1)
+		Ant(StudentWorld* game, int ImageID, int startX, int startY, int colony, Compiler* compiler)
+		: AnimateActor(game, ImageID, startX, startY, randDir(), 1500, 1)
 		{ m_game = game; unstun(); m_colony = colony; m_compiler = compiler;}
 
 		// Destructor
 		virtual ~Ant() {}
-
-		virtual int getImageID();
 		
 		// Public Interface
 		virtual bool isSleeping();
