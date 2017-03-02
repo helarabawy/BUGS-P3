@@ -14,7 +14,7 @@ HEADERS = $(wildcard *.h)
 all: Bugs
 
 %.o: %.cpp $(HEADERS)
-	$(CC) -c $(STD) $< -o $@
+	$(CC) -c  -g3 $(STD) $< -o $@
 
 Bugs: $(OBJECTS) 
 	$(CC) $(OBJECTS) $(LIBS) -o $@
