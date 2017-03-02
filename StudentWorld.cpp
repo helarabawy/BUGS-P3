@@ -82,8 +82,6 @@ int StudentWorld::move()
 	
 	// continue simulation
 	return GWSTATUS_CONTINUE_GAME;
-	
-	// TODO: KEEP TRACK OF SCORE AND RETURN WINNER!
 }
 
 // CLEAN UP SIMULATION
@@ -457,27 +455,16 @@ Actor* StudentWorld::hasFood(int x, int y)
 	 it = virtualWorld[id].begin();
 	 while(it != virtualWorld[id].end())
 	 {		 
-		 // food is inanimate
-		 if ((*it)->isAnimate() == false)
+		 // checking if there is food
+		 Food* fp = dynamic_cast<Food*>(*it);
+		 if (fp != nullptr) // found food!
 		 {
-			InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
-			// food is decayable
-			if (iap->canDecay() == true)
-			{
-				DecayableActor* dp = dynamic_cast<DecayableActor*>(iap);
-				// food is edible - found food!
-				if (dp->isEdible() == true)
-				{
-					Food* fp = dynamic_cast<Food*>(dp);
-					// return food points found
-					return fp;	
-				} 
-			}
+			return fp;
 		 } 
 		 it++;
 	 }
-	 // no food object found
-	 return nullptr;
+  // no food object found
+  return nullptr;
 }
 
 // CHECKS IF THERE IS A PHEROMONE
