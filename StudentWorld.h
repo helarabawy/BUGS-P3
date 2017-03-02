@@ -45,10 +45,6 @@ public:
 	int getColonyX(int colony);
 	int getColonyY(int colony);
 
-	// declare winner
-	int getWinner(); // todo: look at entrant requirments to win
-	void updateRunningWinner();
-
 private:
 	map<int, list<Actor*>> virtualWorld; // class container
 	int currTicks; // keeping track of current ticks
@@ -83,6 +79,12 @@ private:
 	vector<Compiler*> compiledEntrants; // entrants
 	vector<int> antCount; // TODO: should this keep track of score
 	vector<string> filenames;
+
+	// declare winner
+	int getWinner();
+	void updateRunningWinner();
+
+
 };
 
 #endif // STUDENTWORLD_H_
