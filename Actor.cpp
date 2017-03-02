@@ -12,6 +12,7 @@ void AnimateActor::doSomething()
 	setPoints(getPoints() - 1);
 }
 
+// Generating random direction
 GraphObject::Direction AnimateActor::randDir()
 {
 	int rand = randInt(1, 4);
@@ -25,6 +26,7 @@ GraphObject::Direction AnimateActor::randDir()
 	}
 }
 
+// eating
 bool AnimateActor::eat(int maxFood)
 {
 	// is there food? if so, eat
@@ -38,6 +40,7 @@ bool AnimateActor::eat(int maxFood)
 	return true;
 }
 
+// poisoning
 void AnimateActor::poison()
 {
 	if (poisoned == false)
@@ -160,15 +163,17 @@ void Grasshopper::doSomething()
 
 }
 
+// to check if grasshopper is sleeping
 bool Grasshopper::isSleeping()
 {
 	if (checkStunStatus() == false)
 	{
+		// awake
 		if (ticksToSleep == 0)
 		{
 			ticksToSleep = 2;
 			return false;
-		} else
+		} else // asleep
 		{
 			ticksToSleep--;
 			return true;
@@ -176,6 +181,7 @@ bool Grasshopper::isSleeping()
 	}
 	else
 	{
+		// stunned sleep
 		if (recoveringFromStun == false)
 		{
 			recoveringFromStun = true;
@@ -196,12 +202,11 @@ bool Grasshopper::isSleeping()
 	}
 }
 
-
-
 ///////////////////////////////////////////////////////////////
 ////////////// BABY GRASSHOPPER IMPLEMENTATION ////////////////
 ///////////////////////////////////////////////////////////////
 
+// baby grasshopper differentiated function
 bool BabyGrasshopper::doFunction()
 {
 	if (getPoints() >= 1600)
@@ -216,6 +221,7 @@ bool BabyGrasshopper::doFunction()
 ///////////// ADULT GRASSHOPPER IMPLEMENTATION ////////////////
 ///////////////////////////////////////////////////////////////
 
+// adult grasshopper differentiated function
 bool AdultGrasshopper::doFunction()
 {
 	// return true if it did a thing and should sleep right away
@@ -237,7 +243,6 @@ bool AdultGrasshopper::doFunction()
 }
 
 
-const int TOTAL_POSSIBLE_SLOTS = 100; // WRONG, FIGURE OUT THIS NUMBER
 #include <cmath>
 const double PI = 3.1415926535897;
 bool AdultGrasshopper::jump()
@@ -245,6 +250,7 @@ bool AdultGrasshopper::jump()
 	bool jumped = false;
 	int trialCount = 0;
 
+	// trying to jump
 	while (!jumped && trialCount <= 1000)
 	{
 		int radius = randInt(1, 10);
@@ -270,12 +276,14 @@ bool AdultGrasshopper::jump()
 
 }
 
+// function for adult grasshopper to jump
 void AdultGrasshopper::jumpTo(int x, int y)
 {
 	m_game->moveActor(this, getX(), getY(), x, y);
 	moveTo(x, y);
 }
 
+// checking if locaation is in bounds
 bool AdultGrasshopper::isInBounds(int x, int y)
 {
 	return (x < 64 && x > 0 && y < 64 && y > 0);
@@ -304,6 +312,7 @@ void Ant::doSomething()
 	
 }
 
+// for ant to sotre food
 void Ant::storeFood(int amount)
 {
 	int toStore = m_game->eatFood(getX(), getY(), 400);
@@ -316,14 +325,17 @@ void Ant::storeFood(int amount)
 	}
 
 }
+
+// ant's differentiated function
 void Ant::doFunction()
 {
+	// reset all variables
 	int commandCount = 0;
 	int rand;
-	bool isDone = false, gotBlocked;
+	bool gotBlocked = false;
 	Compiler::Command cmd;
 	
-	while (commandCount <= 10  && !isDone)
+	while (commandCount <= 10)
 	{
 		if (!m_compiler->getCommand(ic, cmd))
 		{
@@ -332,7 +344,7 @@ void Ant::doFunction()
 		}
 
 		commandCount++;
-		switch (cmd.opcode)
+		switch (cmd.opcode) // following commands
 		{
 			case Compiler::Opcode::moveForward:
 			{
@@ -407,7 +419,7 @@ void Ant::doFunction()
 				ic++;
 				return;
 			}
-
+			// GOTO COMMAND
 			case Compiler::Opcode::goto_command:
 			{
 				ic = cmd.operand1.at(0) - '0';
@@ -461,6 +473,7 @@ void Ant::doFunction()
 
 					case Compiler::Condition::i_smell_pheromone_in_front_of_me:
 					{
+						// looking for pheromone in front of ant
 						switch (getDirection())
 						{
 							case GraphObject::up:
@@ -511,6 +524,7 @@ void Ant::doFunction()
 			}
 			default:
 			{
+				// if none of these, then ant is dead
 				setPoints(0);
 				break;
 			}

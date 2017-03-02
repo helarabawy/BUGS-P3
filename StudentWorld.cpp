@@ -503,7 +503,7 @@ Actor* StudentWorld::hasPheromone(int x, int y, int colony)
 void StudentWorld::hurtInsects(int x, int y, char c)
 {
 	// convert x, y
-	int id = findID(x, y); // TODO: verify this
+	int id = findID(x, y);
 
 	// defining iterator at id
 	list<Actor*>::const_iterator it;
