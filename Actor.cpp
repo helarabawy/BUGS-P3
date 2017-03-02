@@ -322,6 +322,9 @@ void Ant::storeFood(int amount)
 	{
 		storedFood = 1800;
 		m_game->dropFood(this, getX(), getY(), storedFood + toStore - 1800);
+	} else
+	{
+		storedFood = storedFood + toStore;
 	}
 
 }
