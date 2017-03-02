@@ -755,6 +755,7 @@ void StudentWorld::dropFood(int x, int y, int foodPts)
 				if (dap->isEdible() == true)
 				{
 					dap->setEnergy(dap->getEnergy() + foodPts);
+					return;
 				}
 			}
 		}
