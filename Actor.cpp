@@ -251,14 +251,18 @@ bool AdultGrasshopper::jump()
 		int angle = randInt(0, 364);
 
 		// defining x & y
-		int x = ceil(radius*cos(angle*PI/180));
-		int y = ceil(radius*sin(angle*PI/180));
+		int dx = ceil(radius*cos(angle*PI/180));
+		int dy = ceil(radius*sin(angle*PI/180));
+
+		// new x and new y
+		int newX = getX() + dx;
+		int newY = getY() + dy;
 
 		// checking if slot is open
-		if (!m_game->isBlocked(x, y))
+		if (!m_game->isBlocked(newX, newY) && isInBounds(newX, newY))
 		{
 			jumped = true;
-			jumpTo(x, y); // found a place to jump to
+			jumpTo(newX, newY); // found a place to jump to
 		} else
 			trialCount++;
 	}
@@ -272,6 +276,10 @@ void AdultGrasshopper::jumpTo(int x, int y)
 	moveTo(x, y);
 }
 
+bool AdultGrasshopper::isInBounds(int x, int y)
+{
+	return (x < 64 && x > 0 && y < 64 && y > 0);
+}
 
 ///////////////////////////////////////////////////////////////
 ////////////////////// ANT IMPLEMENTATION /////////////////////

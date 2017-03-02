@@ -404,6 +404,7 @@ class AdultGrasshopper: public Grasshopper {
 		// jumping
 		bool jump();
 		void jumpTo(int x, int y);
+		bool isInBounds(int x, int y);
 
 		// storing coordinates
 		struct Coord{
