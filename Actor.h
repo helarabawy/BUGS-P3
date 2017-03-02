@@ -51,6 +51,8 @@ class InanimateActor: public Actor{
 		virtual bool isAnimate() {return false;} // main distinguishing characteristic
 		virtual bool canDecay() {return false;} // by default they do not decay
 		virtual bool isBlocker() {return false;}; // by default is not a blocker
+	private:
+
 };
 
 #endif // INANIMATEACTOR_H_
@@ -73,8 +75,9 @@ class Pebble: public InanimateActor{
 		virtual ~Pebble() {}
 
 		// Public Interface
-		virtual void doSomething() {return;} // Pebble should do nothing during tick
 		virtual bool isBlocker() {return true;} // only blocker inanimate actpr
+	private:
+		virtual void doSomething() {return;} // Pebble should do nothing during tick
 };
 
 #endif // PEBBLE_H_
@@ -97,11 +100,10 @@ class Water: public InanimateActor{
 		// Destructor
 		virtual ~Water() {}
 
-		// Public Interface
-		virtual void doSomething() {m_game->hurtInsects(getX(), getY(), 's');} // stun insects at x, y
-
 	private:
 		StudentWorld* m_game;
+	
+		virtual void doSomething() {m_game->hurtInsects(getX(), getY(), 's');} // stun insects at x, y
 };
 
 #endif // WATER_H_
@@ -124,11 +126,10 @@ class Poison: public InanimateActor{
 		// Destructor
 		virtual ~Poison() {}
 
-		// Public Interface
-		virtual void doSomething() {m_game->hurtInsects(getX(), getY(),'p');} // poison insects at x, y
-
 	private:
 		StudentWorld* m_game;
+		
+		virtual void doSomething() {m_game->hurtInsects(getX(), getY(),'p');} // poison insects at x, y
 };
 
 #endif // PEBBLE_H_
@@ -187,8 +188,10 @@ class Food: public DecayableActor{
 		virtual ~Food() {} // do nothing
 
 		// Public Interface
-		virtual void doSomething() {return;} // do nothing
 		virtual bool isEdible() {return true;}
+		
+	private:
+		virtual void doSomething() {return;} // do nothing
 };
 
 #endif // FOOD_H_
@@ -240,7 +243,6 @@ class Anthill: public DecayableActor {
 		virtual ~Anthill() {}
 
 		// Public Interface
-		virtual void doSomething();
 		void virtual doFunction(); 
 		int getColony() {return m_colony;}
 		
@@ -248,6 +250,8 @@ class Anthill: public DecayableActor {
 		StudentWorld* m_game;
 		Compiler* m_c;
 		int m_colony;
+		
+		virtual void doSomething();
 };
 
 #endif // ANT_H_
@@ -436,11 +440,8 @@ class Ant: public AnimateActor {
 		
 		// Public Interface
 		virtual bool isSleeping();
-		int getColony() {return m_colony;}
+		virtual int getColony() {return m_colony;}
 		virtual bool isColonized() {return true;}
-
-		virtual void doSomething();
-		virtual void doFunction();
 
 		void storeFood(int amount);
 		
@@ -448,6 +449,9 @@ class Ant: public AnimateActor {
 		void gotBitten() {bitten = true;}
 
 	private:
+
+		virtual void doSomething();
+		virtual void doFunction();
 
 		Compiler* m_compiler;
 		StudentWorld* m_game;

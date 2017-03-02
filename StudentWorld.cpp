@@ -671,7 +671,7 @@ list<Actor*>::const_iterator StudentWorld::removeDeadActorsAndGetNext(list<Actor
 		AnimateActor* aap = dynamic_cast<AnimateActor*>(*it);
 		 if (aap->isDead()) // Dead?
 		 {
-			dropFood((*it)->getX(), (*it)->getY(), 100);
+			dropFood(nullptr, (*it)->getX(), (*it)->getY(), 100); // doesnt matter who is dropping food unless ant
 			
 			// delete dead actor
 			delete *it;
@@ -745,19 +745,25 @@ void StudentWorld::redirectActorPtrs()
 }
 
 // DROP FOOD AT X, Y
-void StudentWorld::dropFood(int x, int y, int foodPts)
+void StudentWorld::dropFood(Actor* antptr, int x, int y, int foodPts)
 {
 	// finding ID and setting a check of whether food was found
 	int id = findID(x, y);
 	
 	// looking for existing food objects and if so adding
-	Actor* ap = hasFood(x, y);
-	Food* fp = dynamic_cast<Food*>(ap);
+	Actor* actorptr = hasFood(x, y);
+
+	Food* fp = dynamic_cast<Food*>(actorptr);
+	Anthill* ahp = dynamic_cast<Anthill*>(actorptr);
+	Ant* ap = dynamic_cast<Ant*>(antptr);
 
 	if (fp != nullptr) // found some food object
 	{
 		fp->setEnergy(fp->getEnergy() + foodPts);
 		return;
+	} else if (ahp != nullptr && (ap->getColony() == ahp->getColony())) // found some anthill object of same colony
+	{
+		ahp->setEnergy(ahp->getEnergy() + foodPts);
 	} else
 	{
 		virtualWorld[id].push_back(new Food(this, x, y, 100));

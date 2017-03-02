@@ -37,9 +37,8 @@ public:
 	int eatFood(int x, int y, int amount);
 	void growGrasshopper(Actor* bgh, int x, int y);
 	void newAntBorn(int x, int y, int colony, Compiler* c);
-	int getNumAntsInColony(int colony);
 	void decrementAntCount(int colony);
-	void dropFood(int x, int y, int foodPts);
+	void dropFood(Actor* antptr, int x, int y, int foodPts);
 	void emitPheromone(int x, int y, int colony);
 
 	// colony locations
@@ -73,6 +72,7 @@ private:
 	void updateDisplayText();
 	void redirectActorPtrs();
 	int findID(int x, int y) {return x*VIEW_WIDTH + y;}
+	int getNumAntsInColony(int colony);
 
 	struct Coord{
 		int x;

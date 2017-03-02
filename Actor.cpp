@@ -321,7 +321,7 @@ void Ant::storeFood(int amount)
 	if (storedFood + toStore > 1800)
 	{
 		storedFood = 1800;
-		m_game->dropFood(getX(), getY(), storedFood + toStore - 1800);
+		m_game->dropFood(this, getX(), getY(), storedFood + toStore - 1800);
 	}
 
 }
@@ -363,7 +363,7 @@ void Ant::doFunction()
 
 			case Compiler::Opcode::dropFood:
 			{
-				m_game->dropFood(getX(), getY(), storedFood); // TODO: make sure to define getFoodPts
+				m_game->dropFood(this, getX(), getY(), storedFood); // TODO: make sure to define getFoodPts
 				ic++;
 				return;
 			}
