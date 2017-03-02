@@ -78,6 +78,7 @@ private:
 	vector<Coord> colonyLocations;
 	vector<Compiler*> compiledEntrants; // entrants
 	vector<int> antCount; // TODO: should this keep track of score
+	vector<string> filenames;
 };
 
 #endif // STUDENTWORLD_H_

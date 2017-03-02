@@ -28,14 +28,14 @@ int StudentWorld::init()
 
 	// Making sure field/entrant entries load/compile correctly
 	if (!compileAntPrograms() || !loadField())
-		{
-			return GWSTATUS_LEVEL_ERROR;
-		}
+	{
+		return GWSTATUS_LEVEL_ERROR;
+	}
 	else
-		{
-		
-			return GWSTATUS_CONTINUE_GAME;
-		}
+	{
+
+		return GWSTATUS_CONTINUE_GAME;
+	}
 }
 
 // DOING EACH MOVE
@@ -74,7 +74,10 @@ int StudentWorld::move()
 		if (getWinner() == -1)
 			return GWSTATUS_NO_WINNER;
 		else
+		{
+			setWinner(filenames[getWinner()]);
 			return GWSTATUS_PLAYER_WON;
+		}
 	}
 	
 	// continue simulation
@@ -115,7 +118,7 @@ bool StudentWorld::compileAntPrograms()
 	// anthills
 	Anthill *ah0, *ah1, *ah2, *ah3;
 	
-	vector<string> filenames = getFilenamesOfAntPrograms();
+	filenames = getFilenamesOfAntPrograms();
 	string error;
 	
 	// ENTRANT 0 
@@ -320,22 +323,22 @@ void StudentWorld::updateDisplayText()
 	if (size >= 1)
 	{
 		ants0 = getNumAntsInColony(0);
-		oss << getFilenamesOfAntPrograms()[0] << ": " << ants0 << "  ";
+		oss << filenames[0] << ": " << ants0 << "  ";
 	}
 	if (size >= 2)
 	{
 		ants1 = getNumAntsInColony(1);
-		oss << getFilenamesOfAntPrograms()[1] << ": " << ants1 << "  ";
+		oss << filenames[1] << ": " << ants1 << "  ";
 	}
 	if (size >= 3)
 	{
 		ants2 = getNumAntsInColony(2);
-		oss << getFilenamesOfAntPrograms()[2] << ": " << ants2 << "  ";
+		oss << filenames[2] << ": " << ants2 << "  ";
 	}
 	if (size >= 4)
 	{
 		ants3 = getNumAntsInColony(3);
-		oss << getFilenamesOfAntPrograms()[0] << ": " << ants3 << "  ";
+		oss << filenames[0] << ": " << ants3 << "  ";
 	}
 	
 	setGameStatText(oss.str());
