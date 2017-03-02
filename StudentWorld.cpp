@@ -493,26 +493,16 @@ Actor* StudentWorld::hasPheromone(int x, int y, int colony)
 	 it = virtualWorld[id].begin();
 	 while(it != virtualWorld[id].end())
 	 {		 
-		 // pheromones are inanimate
-		 if ((*it)->isAnimate() == false)
-		 {
-			InanimateActor* iap = dynamic_cast<InanimateActor*>(*it);
-			// pheromones are decayable
-			if (iap->canDecay() == true)
+		Pheromone* pp = dynamic_cast<Pheromone*>(*it);
+		// is a pheromone!
+		if (pp != nullptr)
+		{
+			if (pp->getColony() == colony)
 			{
-				DecayableActor* dp = dynamic_cast<DecayableActor*>(iap);
-				// is a pheromone!
-				if (dp->isPheromone() == true)
-				{
-					Pheromone* pp = dynamic_cast<Pheromone*>(dp);
-					if (pp->getColony() == colony)
-					{
-						return pp; // the ant can smell this pheromone
-					}
-				}
+				return pp; // the ant can smell this pheromone
 			}
-		 } 
-		 it++;
+		}
+		it++;
 	 }
 	 // no pheromone found
 	 return nullptr;

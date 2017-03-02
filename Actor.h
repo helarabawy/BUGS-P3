@@ -47,10 +47,10 @@ class InanimateActor: public Actor{
 		virtual void doSomething() = 0;
 
 		// Getting inanimate actor status
-		virtual bool canDie() {return canDecay();} //TODO: make sure overriden correctly
-		virtual bool isAnimate() {return false;}
-		virtual bool canDecay() {return false;}
-		virtual bool isBlocker() {return false;};
+		virtual bool canDie() {return canDecay();} 
+		virtual bool isAnimate() {return false;} // main distinguishing characteristic
+		virtual bool canDecay() {return false;} // by default they do not decay
+		virtual bool isBlocker() {return false;}; // by default is not a blocker
 };
 
 #endif // INANIMATEACTOR_H_
@@ -74,7 +74,7 @@ class Pebble: public InanimateActor{
 
 		// Public Interface
 		virtual void doSomething() {return;} // Pebble should do nothing during tick
-		virtual bool isBlocker() {return true;} 
+		virtual bool isBlocker() {return true;} // only blocker inanimate actpr
 };
 
 #endif // PEBBLE_H_
@@ -155,9 +155,8 @@ class DecayableActor: public InanimateActor{
 		virtual void doSomething() {setEnergy(getEnergy() - 1);};
 
 		// getters and setters - status
-		virtual bool canDecay() {return true;}
-		virtual bool isEdible() {return false;}
-		virtual bool isPheromone() {return false;}
+		virtual bool canDecay() {return true;} // main characteristic of this subclass
+		virtual bool isEdible() {return false;} // by default decayable actors are not edible
 		
 		virtual int getEnergy() {return m_energy;} // change from points to energy to differentiate it from alive actors
 		virtual int setEnergy(int modifiedEnergy) {m_energy = modifiedEnergy;}
@@ -213,7 +212,6 @@ class Pheromone: public DecayableActor{
 		virtual ~Pheromone() {}
 
 		// Public Interface
-		virtual bool isPheromone() {return true;}
 		int getColony() {return m_colony;}
 				
 	private:
@@ -275,39 +273,38 @@ class AnimateActor : public Actor{
 		// Public Interface
 		virtual void doSomething();
 
-			// Direction
-			GraphObject::Direction randDir();
+		// Direction
+		GraphObject::Direction randDir();
 
-			// dealing with points
-			int getPoints() {return m_points;} // return number of points
-			void setPoints(int modifiedPoints) { m_points = modifiedPoints;} // set points to new value
+		// dealing with points
+		int getPoints() {return m_points;} // return number of points
+		void setPoints(int modifiedPoints) { m_points = modifiedPoints;} // set points to new value
 
-			// status
-			virtual bool canDie() {return true;}
-			virtual bool isAnimate() {return true;}
-			virtual bool isDead() {return m_points <= 0;}
-			virtual bool isSleeping() = 0;
+		// status
+		virtual bool canDie() {return true;}
+		virtual bool isAnimate() {return true;}
+		virtual bool isDead() {return m_points <= 0;}
+		virtual bool isSleeping() = 0;
 
-			// blocking
-			bool isBlocked(int x, int y) {return m_game->isBlocked(x, y);}
+		// blocking
+		bool isBlocked(int x, int y) {return m_game->isBlocked(x, y);}
 
-			// stunning
-			virtual void stun() {stunned = true;}
-			virtual bool checkStunStatus() {return stunned;}
-			void unstun() {stunned = false;}
+		// stunning
+		virtual void stun() {stunned = true;}
+		virtual bool checkStunStatus() {return stunned;}
+		void unstun() {stunned = false;}
 
-			// eating
-			bool eat(int maxFood);
+		// eating
+		bool eat(int maxFood);
 
-			// poisoning
-			virtual void poison();
+		// poisoning
+		virtual void poison();
+		
+		// moving
+		virtual bool moveStep(Direction dir, int oldX, int oldY);
+		virtual int getDistanceToMove() {return distanceToMove;}
+		virtual void setDistanceToMove(int modifiedDistance) {distanceToMove = modifiedDistance;}
 			
-			// moving
-			virtual bool moveStep(Direction dir, int oldX, int oldY);
-			virtual int getDistanceToMove() {return distanceToMove;}
-			virtual void setDistanceToMove(int modifiedDistance) {distanceToMove = modifiedDistance;}
-			
-
 	private:
 		int distanceToMove = randInt(2, 10);
 		bool poisoned = false;
@@ -330,8 +327,8 @@ class Grasshopper: public AnimateActor {
 	public:
 		// Constructor
 		Grasshopper(StudentWorld* game, int ImageID, int startX, int startY, int points)
-		:AnimateActor(game, ImageID, startX, startY, /*random direction*/ randDir(), points) 
-		{m_game = game; setDistanceToMove(randInt(2, 10));}
+		:AnimateActor(game, ImageID, startX, startY, randDir(), points) 
+		{m_game = game; setDistanceToMove(randInt(2, 10)); setDirection(randDir);}
 
 		// Destructor
 		virtual ~Grasshopper() {}
@@ -398,23 +395,23 @@ class AdultGrasshopper: public Grasshopper {
 		// Public Interface
 		virtual void poison() {return;} // never gets poisoned
 		virtual bool checkStunStatus() {return false;} // never gets stunned
-		virtual bool doFunction();
+		virtual bool doFunction(); // deciding to jump or bite
 
 	private:
+		StudentWorld* m_game;
+
 		// jumping
 		bool jump();
-		void jumpTo(int x, int y);
-		bool isInBounds(int x, int y);
+		void jumpTo(int x, int y); 
+		bool isInBounds(int x, int y); // to check if in bounds
 
 		// storing coordinates
 		struct Coord{
 			int x;
 			int y;
 		};
-
+		
 		vector<Coord> jumpOptions;
-
-		StudentWorld* m_game;
 };
 
 #endif // ADULTGRASSHOPPER_H_
@@ -451,18 +448,20 @@ class Ant: public AnimateActor {
 		void gotBitten() {bitten = true;}
 
 	private:
+
+		Compiler* m_compiler;
+		StudentWorld* m_game;
+		
 		// direction change
 		void rotateClockwise();
 		void rotateCounterClockwise();
 		
 		bool bitten = false;
 		
-		int ic = 0;
+		int ic = 0; // instruction counter
 		int m_colony;
 		int storedFood = 0;
 		int ticksToSleep = 0;
-		Compiler* m_compiler;
-		StudentWorld* m_game;
 
 };
 
