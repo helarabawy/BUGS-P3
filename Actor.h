@@ -207,7 +207,7 @@ class Pheromone: public DecayableActor{
 		// Constructor
 		Pheromone(StudentWorld* game, int imageID, int startX, int startY, int colony)
 		: DecayableActor(game, imageID, startX, startY, 256)
-		{m_game = game; m_colony = colony;}
+		{m_game = game; m_colony = colony; moveTo(startX, startY);}
 		
 		// Destructor
 		virtual ~Pheromone() {}
@@ -456,6 +456,7 @@ class Ant: public AnimateActor {
 		
 		bool bitten = false;
 		
+		int ic = 0;
 		int m_colony;
 		int storedFood = 0;
 		int ticksToSleep = 0;

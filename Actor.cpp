@@ -311,7 +311,6 @@ void Ant::storeFood(int amount)
 }
 bool Ant::doFunction()
 {
-	int ic = 0; // instruction counter
 	int commandCount = 0;
 	int rand;
 	bool isDone = false, gotBlocked;
