@@ -98,7 +98,7 @@ class Water: public InanimateActor{
 		virtual ~Water() {}
 
 		// Public Interface
-		virtual void doSomething() {m_game->hurtInsects(getX(), getY(), 's');}
+		virtual void doSomething() {m_game->hurtInsects(getX(), getY(), 's');} // stun insects at x, y
 
 	private:
 		StudentWorld* m_game;
@@ -118,14 +118,14 @@ class Poison: public InanimateActor{
 	public:
 		// Constructor
 		Poison(StudentWorld* game, int startX, int startY)
-		: InanimateActor(game, IID_POISON, startX, startY, 2)
+		: InanimateActor(game, IID_POISON, startX, startY)
 		{m_game = game;}
 
 		// Destructor
 		virtual ~Poison() {}
 
 		// Public Interface
-		virtual void doSomething() {m_game->hurtInsects(getX(), getY(),'p');} 
+		virtual void doSomething() {m_game->hurtInsects(getX(), getY(),'p');} // poison insects at x, y
 
 	private:
 		StudentWorld* m_game;
@@ -185,7 +185,7 @@ class Food: public DecayableActor{
 		: DecayableActor(game, IID_FOOD, startX, startY, foodPts) {}
 
 		// Destructor
-		virtual ~Food() {}
+		virtual ~Food() {} // do nothing
 
 		// Public Interface
 		virtual void doSomething() {return;} // do nothing
@@ -388,7 +388,8 @@ class AdultGrasshopper: public Grasshopper {
 
 	public:
 		// Constructor
-		AdultGrasshopper(StudentWorld* game, int startX, int startY): Grasshopper(game, IID_ADULT_GRASSHOPPER, startX, startY, 1600)
+		AdultGrasshopper(StudentWorld* game, int startX, int startY)
+		: Grasshopper(game, IID_ADULT_GRASSHOPPER, startX, startY, 1600)
 		{ m_game = game;}
 
 		// Destructor
@@ -442,12 +443,12 @@ class Ant: public AnimateActor {
 		virtual bool isColonized() {return true;}
 
 		virtual void doSomething();
-		virtual bool doFunction();
+		virtual void doFunction();
 
 		void storeFood(int amount);
 		
 		// change bitten status
-		void gotBitten() {bitten = true;} // TODO: WHEN DOES THIS REVERT BACK
+		void gotBitten() {bitten = true;}
 
 	private:
 		// direction change

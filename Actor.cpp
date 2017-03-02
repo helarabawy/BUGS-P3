@@ -290,7 +290,14 @@ void Ant::doSomething()
 	AnimateActor::doSomething();
 	
 	// check if died
-	if (isDead() || isSleeping())
+	if (isDead())
+	{
+		m_game->decrementAntCount(getColony());
+		return;
+	}
+
+	// check if sleeping
+	if (isSleeping())
 		return;
 	
 	doFunction();
@@ -309,7 +316,7 @@ void Ant::storeFood(int amount)
 	}
 
 }
-bool Ant::doFunction()
+void Ant::doFunction()
 {
 	int commandCount = 0;
 	int rand;
@@ -321,71 +328,64 @@ bool Ant::doFunction()
 		if (!m_compiler->getCommand(ic, cmd))
 		{
 			setPoints(0);
-			return false; // there was an error
+			return; // there was an error
 		}
 
 		commandCount++;
 		switch (cmd.opcode)
 		{
-			case Compiler::Opcode::moveForward: // DONE
+			case Compiler::Opcode::moveForward:
 			{
-				cerr << "MOVING FORWARD" << endl;
+				bitten = false;
 				gotBlocked = moveStep(getDirection(), getX(), getY());
 				ic++;
-				break;
+				return;
 			}
 
-			case Compiler::Opcode::eatFood: // DONE
+			case Compiler::Opcode::eatFood:
 			{
-				cerr << "EATING FOOD" << endl;
 				eat(100);
 				ic++;
-				break;
+				return;
 			}
 
-			case Compiler::Opcode::dropFood: // DONE
+			case Compiler::Opcode::dropFood:
 			{
-				cerr << "DROPPING FOOD" << endl;
 				m_game->dropFood(getX(), getY(), storedFood); // TODO: make sure to define getFoodPts
 				ic++;
-				break;
+				return;
 			}
 
-			case Compiler::Opcode::bite: // DONE
+			case Compiler::Opcode::bite:
 			{
-				cerr << "BITING" << endl;
 				m_game->biteRandomInsect(this, getX(), getY(), 15);
 				ic++;
-				break;
+				return;
 			}
 
-			case Compiler::Opcode::pickupFood: // DONE
+			case Compiler::Opcode::pickupFood:
 			{
-				cerr << "PICKING UP FOOD" << endl;
 				storeFood(400);
 				ic++;
-				break;
+				return;
 			}
 
-			case Compiler::Opcode::emitPheromone: // DONE
+			case Compiler::Opcode::emitPheromone:
 			{
-				cerr << "EMITTING PHEROMONE" << endl;
 				m_game->emitPheromone(getX(), getY(), getColony());
 				ic++;
-				break;
+				return;
 			}
 
-			case Compiler::Opcode::faceRandomDirection: // DONE
+			case Compiler::Opcode::faceRandomDirection:
 			{
-				cerr << "FACING RANDOM DIRECTION" << endl;
 				setDirection(randDir());
 				ic++;
-				break;
+				return;
 			}
 
-			case Compiler::Opcode::generateRandomNumber: // DONE
+			case Compiler::Opcode::generateRandomNumber:
 			{
-				cerr << "GENERATING RANDOM NUM" << endl;
 				if (cmd.operand1.at(0) - '0' != 0)
 					rand = randInt(0, cmd.operand1.at(0) - '0' - 1);
 				else
@@ -394,66 +394,64 @@ bool Ant::doFunction()
 				break;
 			}
 
-			case Compiler::Opcode::rotateClockwise: // DONE
+			case Compiler::Opcode::rotateClockwise:
 			{
-				cerr << "ROTATING CLOCKWISE" << endl;
 				rotateClockwise();
 				ic++;
-				break;
+				return;
 			}
 
-			case Compiler::Opcode::rotateCounterClockwise: // DONE
+			case Compiler::Opcode::rotateCounterClockwise:
 			{
-				cerr << "ROTATING COUNTERCLOCKWISE" << endl;
 				rotateCounterClockwise();
 				ic++;
-				break;
+				return;
 			}
 
-			case Compiler::Opcode::goto_command: // DONE
+			case Compiler::Opcode::goto_command:
 			{
 				ic = cmd.operand1.at(0) - '0';
 				break;
 			}
-
+			// IF COMMAND, ADJUSTING IC
 			case Compiler::Opcode::if_command:
 			{
 				switch (cmd.operand1.at(0) - '0')
 				{
-					case Compiler::Condition::last_random_number_was_zero: // DONE
+					case Compiler::Condition::last_random_number_was_zero:
 					{
 						if (rand == 0)
 							ic = cmd.operand2.at(0) - '0';
 						break;
 					}
-					case Compiler::Condition::i_am_carrying_food: // DONE
+					case Compiler::Condition::i_am_carrying_food:
 					{
 						if (storedFood > 0)
 							ic = cmd.operand2.at(0) - '0';
 						break;
 					}
-					case Compiler::Condition::i_am_hungry: // DONE
+					case Compiler::Condition::i_am_hungry:
 					{
 						if (getPoints() <= 25)
 							ic = cmd.operand2.at(0) - '0';
 						break;
 					}
 
-					case Compiler::Condition::i_am_standing_with_an_enemy: // DONE
+					case Compiler::Condition::i_am_standing_with_an_enemy:
 					{
 						if (m_game->hasEnemy(getX(), getY(), getColony()))
 							ic = cmd.operand2.at(0) - '0';
 						break;
 					}
 
-					case Compiler::Condition::i_am_standing_on_food: // DONE
+					case Compiler::Condition::i_am_standing_on_food:
 					{
 						if (m_game->hasFood(getX(), getY()) != nullptr)
 							ic = cmd.operand2.at(0) - '0';
 						break;
 					}
 
-					case Compiler::Condition::i_am_standing_on_my_anthill: // DONE
+					case Compiler::Condition::i_am_standing_on_my_anthill:
 					{
 						if (getX() == m_game->getColonyX(m_colony) &&
 							getY() == m_game->getColonyY(m_colony))
@@ -461,7 +459,7 @@ bool Ant::doFunction()
 						break;
 					}
 
-					case Compiler::Condition::i_smell_pheromone_in_front_of_me: // DONE
+					case Compiler::Condition::i_smell_pheromone_in_front_of_me:
 					{
 						switch (getDirection())
 						{
@@ -493,14 +491,14 @@ bool Ant::doFunction()
 						break;
 					}
 
-					case Compiler::Condition::i_was_bit: // DONE
+					case Compiler::Condition::i_was_bit:
 					{
 						if (bitten == true)
 							ic = cmd.operand2.at(0) - '0';
 						break;
 					}
 
-					case Compiler::Condition::i_was_blocked_from_moving: // DONE
+					case Compiler::Condition::i_was_blocked_from_moving:
 					{
 						if (gotBlocked)
 							ic = cmd.operand2.at(0) - '0';
@@ -631,7 +629,7 @@ void Anthill::doFunction()
 	// no food? check if there is enough energy (>= 2000 hit points to produce new ant
 	// add new ant on square
 	// lose 1500 points
-	// ask student world ot increase count of total number of ants that this colony has produced (to see who is winning)
+	// ask student world it increase count of total number of ants that this colony has produced (to see who is winning)
 	if (getEnergy() >= 2000)
 	{
 		m_game->newAntBorn(getX(), getY(), getColony(), m_c);

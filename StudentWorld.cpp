@@ -304,6 +304,10 @@ int StudentWorld::getNumAntsInColony(int colony)
 	return antCount[colony];
 }
 
+void StudentWorld::decrementAntCount(int colony)
+{
+	antCount[colony]--;
+}
 
 // UPDATE DISPLAY TEXT
 #include <sstream>
@@ -323,22 +327,22 @@ void StudentWorld::updateDisplayText()
 	if (size >= 1)
 	{
 		ants0 = getNumAntsInColony(0);
-		oss << filenames[0] << ": " << ants0 << "  ";
+		oss << filenames[0].substr(0, filenames[0].size() - 4) << ": " << ants0 << "  ";
 	}
 	if (size >= 2)
 	{
 		ants1 = getNumAntsInColony(1);
-		oss << filenames[1] << ": " << ants1 << "  ";
+		oss << filenames[1].substr(0, filenames[1].size() - 4) << ": " << ants1 << "  ";
 	}
 	if (size >= 3)
 	{
 		ants2 = getNumAntsInColony(2);
-		oss << filenames[2] << ": " << ants2 << "  ";
+		oss << filenames[2].substr(0, filenames[2].size() - 4) << ": " << ants2 << "  ";
 	}
 	if (size >= 4)
 	{
 		ants3 = getNumAntsInColony(3);
-		oss << filenames[0] << ": " << ants3 << "  ";
+		oss << filenames[3].substr(0, filenames[3].size() - 4) << ": " << ants3 << "  ";
 	}
 	
 	setGameStatText(oss.str());
@@ -348,14 +352,23 @@ int StudentWorld::getWinner() // TODO: This is not extremely accurate, what if t
 {
 	int max = -1;
 	int winner = -1;
+
+	// traversing ant counts
 	for (int i = 0; i < antCount.size(); i++)
 	{
+		// checking who has most ants
 		if (antCount[i] > max)
 		{
 			winner = i;
 			max = antCount[i];
 		}
+
+		// WHAT IF THERE IS A TIE <-----TODO: tackle this
 	}
+	// there must be at least 6 winners
+	if (antCount[winner] < 6)
+		return -1;
+
 	return winner;
 }
 
@@ -652,6 +665,7 @@ void StudentWorld::newAntBorn(int x, int y, int colony, Compiler* c)
 	int id = findID(x, y);
 	int imageID;
 
+	// setting correct respective image id
 	switch (colony)
 		{
 			case 0: {imageID = IID_ANT_TYPE0; break;}
@@ -660,6 +674,7 @@ void StudentWorld::newAntBorn(int x, int y, int colony, Compiler* c)
 			case 3: {imageID = IID_ANT_TYPE3; break;}
 		}
 
+	//new ant
 	virtualWorld[id].push_back(new Ant(this, imageID, x, y, colony, c)); // remember id changes with colony
 	antCount[colony]++;
 }

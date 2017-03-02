@@ -38,6 +38,7 @@ public:
 	void growGrasshopper(Actor* bgh, int x, int y);
 	void newAntBorn(int x, int y, int colony, Compiler* c);
 	int getNumAntsInColony(int colony);
+	void decrementAntCount(int colony);
 	void dropFood(int x, int y, int foodPts);
 	void emitPheromone(int x, int y, int colony);
 
