@@ -123,6 +123,7 @@ bool StudentWorld::compileAntPrograms()
 	{
 		compilerForEntrant0 = new Compiler;
 		compiledEntrants.push_back(compilerForEntrant0);
+		antCount.push_back(0); // initialize ant count to 0;
 	
 		// spot and set error
 		if (!compilerForEntrant0->compile(filenames[0], error))
@@ -139,6 +140,7 @@ bool StudentWorld::compileAntPrograms()
 	{
 		compilerForEntrant1 = new Compiler;
 		compiledEntrants.push_back(compilerForEntrant1);
+		antCount.push_back(0); // initialize ant count to 0;
 		
 		// spot and set error
 		if (!compilerForEntrant1->compile(filenames[1], error))
@@ -155,6 +157,7 @@ bool StudentWorld::compileAntPrograms()
 	{
 		compilerForEntrant2 = new Compiler;
 		compiledEntrants.push_back(compilerForEntrant2);
+		antCount.push_back(0); // initialize ant count to 0;
 		
 		// spot and set error
 		if (!compilerForEntrant2->compile(filenames[2], error))
@@ -171,6 +174,7 @@ bool StudentWorld::compileAntPrograms()
 	{
 		compilerForEntrant3 = new Compiler;
 		compiledEntrants.push_back(compilerForEntrant3);
+		antCount.push_back(0); // initialize ant count to 0;
 		
 		// spot and set error
 		if (!compilerForEntrant3->compile(filenames[3], error))
@@ -337,7 +341,7 @@ void StudentWorld::updateDisplayText()
 	setGameStatText(oss.str());
 }
 
-int StudentWorld::getWinner() 
+int StudentWorld::getWinner() // TODO: This is not extremely accurate, what if there is a tie
 {
 	int max = -1;
 	int winner = -1;
@@ -349,6 +353,7 @@ int StudentWorld::getWinner()
 			max = antCount[i];
 		}
 	}
+	return winner;
 }
 
 ///////////////////////////////////////////////////////////////

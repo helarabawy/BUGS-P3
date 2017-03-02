@@ -49,7 +49,6 @@ public:
 	int getWinner(); // todo: look at entrant requirments to win
 
 private:
-
 	map<int, list<Actor*>> virtualWorld; // class container
 	int currTicks; // keeping track of current ticks
 

@@ -21,7 +21,7 @@ GraphObject::Direction AnimateActor::randDir()
 		case 2: return GraphObject::right;
 		case 3: return GraphObject::down;
 		case 4: return GraphObject::left;
-		default:return GraphObject::none; // TODO: check if none should be an option
+		default:return GraphObject::none;
 	}
 }
 
