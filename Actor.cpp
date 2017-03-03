@@ -335,11 +335,13 @@ void Ant::doFunction()
 	// reset all variables
 	int commandCount = 0;
 	int rand;
+	string::size_type sz;
 	bool gotBlocked = false;
 	Compiler::Command cmd;
 	
 	while (commandCount <= 10)
 	{
+
 		if (!m_compiler->getCommand(ic, cmd))
 		{
 			setPoints(0);
@@ -366,7 +368,7 @@ void Ant::doFunction()
 
 			case Compiler::Opcode::dropFood:
 			{
-				m_game->dropFood(this, getX(), getY(), storedFood); // TODO: make sure to define getFoodPts
+				m_game->dropFood(this, getX(), getY(), storedFood);
 				ic++;
 				return;
 			}
@@ -401,8 +403,9 @@ void Ant::doFunction()
 
 			case Compiler::Opcode::generateRandomNumber:
 			{
-				if (cmd.operand1.at(0) - '0' != 0)
-					rand = randInt(0, cmd.operand1.at(0) - '0' - 1);
+				int op1 = stoi(cmd.operand1, &sz);
+				if (op1 != 0)
+					rand = randInt(0, op1 - 1);
 				else
 					rand = 0;
 				ic++;
@@ -425,44 +428,48 @@ void Ant::doFunction()
 			// GOTO COMMAND
 			case Compiler::Opcode::goto_command:
 			{
-				ic = cmd.operand1.at(0) - '0';
+
+				int op1 = stoi(cmd.operand1, &sz);
+				ic = op1;
 				break;
 			}
 			// IF COMMAND, ADJUSTING IC
 			case Compiler::Opcode::if_command:
 			{
-				switch (cmd.operand1.at(0) - '0')
+				int op1 = stoi(cmd.operand1, &sz);
+				int op2 = stoi(cmd.operand2, &sz);
+				switch (op1)
 				{
 					case Compiler::Condition::last_random_number_was_zero:
 					{
 						if (rand == 0)
-							ic = cmd.operand2.at(0) - '0';
+							ic = op2;
 						break;
 					}
 					case Compiler::Condition::i_am_carrying_food:
 					{
 						if (storedFood > 0)
-							ic = cmd.operand2.at(0) - '0';
+							ic = op2;
 						break;
 					}
 					case Compiler::Condition::i_am_hungry:
 					{
 						if (getPoints() <= 25)
-							ic = cmd.operand2.at(0) - '0';
+							ic = op2;
 						break;
 					}
 
 					case Compiler::Condition::i_am_standing_with_an_enemy:
 					{
 						if (m_game->hasEnemy(getX(), getY(), getColony()))
-							ic = cmd.operand2.at(0) - '0';
+							ic = op2;
 						break;
 					}
 
 					case Compiler::Condition::i_am_standing_on_food:
 					{
 						if (m_game->hasFood(getX(), getY()) != nullptr)
-							ic = cmd.operand2.at(0) - '0';
+							ic = op2;
 						break;
 					}
 
@@ -470,7 +477,7 @@ void Ant::doFunction()
 					{
 						if (getX() == m_game->getColonyX(m_colony) &&
 							getY() == m_game->getColonyY(m_colony))
-							ic = cmd.operand2.at(0) - '0';
+							ic = op2;
 						break;
 					}
 
@@ -482,25 +489,25 @@ void Ant::doFunction()
 							case GraphObject::up:
 							{
 								if (m_game->hasPheromone(getX(), getY() + 1, getColony()))
-									ic = cmd.operand2.at(0) - '0';
+									ic = op2;
 								break;
 							}
 							case GraphObject::down:
 							{
 								if (m_game->hasPheromone(getX(), getY() - 1, getColony()))
-									ic = cmd.operand2.at(0) - '0';
+									ic = op2;
 								break;
 							}
 							case GraphObject::right:
 							{
 								if (m_game->hasPheromone(getX() + 1, getY(), getColony()))
-									ic = cmd.operand2.at(0) - '0';
+									ic = op2;
 								break;
 							}
 							case GraphObject::left:
 							{
 								if (m_game->hasPheromone(getX() - 1, getY() + 1, getColony()))
-									ic = cmd.operand2.at(0) - '0';
+									ic = op2;
 								break;
 							}
 						}
@@ -510,14 +517,14 @@ void Ant::doFunction()
 					case Compiler::Condition::i_was_bit:
 					{
 						if (bitten == true)
-							ic = cmd.operand2.at(0) - '0';
+							ic = op2;
 						break;
 					}
 
 					case Compiler::Condition::i_was_blocked_from_moving:
 					{
 						if (gotBlocked)
-							ic = cmd.operand2.at(0) - '0';
+							ic = op2;
 						break;
 					}
 
