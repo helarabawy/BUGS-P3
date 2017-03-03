@@ -103,6 +103,13 @@ void StudentWorld::cleanUp()
 			 it = virtualWorld[i].begin();
 		}
 	}
+
+	// compiler entrants deconstruction
+	for (int i = 0; i < compiledEntrants.size(); i++)
+	{
+		delete compiledEntrants[i];
+	}
+	compiledEntrants.clear();
 }
 
 // COMPILE ANT PROGRAMS

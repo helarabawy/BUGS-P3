@@ -160,7 +160,7 @@ class DecayableActor: public InanimateActor{
 		virtual bool isEdible() {return false;} // by default decayable actors are not edible
 		
 		virtual int getEnergy() {return m_energy;} // change from points to energy to differentiate it from alive actors
-		virtual int setEnergy(int modifiedEnergy) {m_energy = modifiedEnergy;}
+		virtual bool setEnergy(int modifiedEnergy) {m_energy = modifiedEnergy;}
 		virtual bool isGone() {return getEnergy() == 0;}
 
 	private:
