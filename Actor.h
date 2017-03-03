@@ -160,7 +160,7 @@ class DecayableActor: public InanimateActor{
 		virtual bool isEdible() {return false;} // by default decayable actors are not edible
 		
 		virtual int getEnergy() {return m_energy;} // change from points to energy to differentiate it from alive actors
-		virtual bool setEnergy(int modifiedEnergy) {m_energy = modifiedEnergy;}
+		virtual void setEnergy(int modifiedEnergy) {m_energy = modifiedEnergy;}
 		virtual bool isGone() {return getEnergy() == 0;}
 
 	private:
@@ -332,7 +332,7 @@ class Grasshopper: public AnimateActor {
 		// Constructor
 		Grasshopper(StudentWorld* game, int ImageID, int startX, int startY, int points)
 		:AnimateActor(game, ImageID, startX, startY, randDir(), points) 
-		{m_game = game; setDistanceToMove(randInt(2, 10));}
+		{m_game = game; setDistanceToMove(randInt(2, 10)); setDirection(randDir());}
 
 		// Destructor
 		virtual ~Grasshopper() {}
@@ -432,8 +432,8 @@ class Ant: public AnimateActor {
 	public:
 		// Constructor
 		Ant(StudentWorld* game, int ImageID, int startX, int startY, int colony, Compiler* compiler)
-		: AnimateActor(game, ImageID, startX, startY, randDir(), 1500, 1)
-		{ m_game = game; unstun(); m_colony = colony; m_compiler = compiler;}
+		: AnimateActor(game, ImageID, startX, startY, right, 1500, 1)
+		{ m_game = game; unstun(); m_colony = colony; m_compiler = compiler; setDirection(randDir());}
 
 		// Destructor
 		virtual ~Ant() {}

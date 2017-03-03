@@ -53,6 +53,10 @@ int StudentWorld::move()
 		 // calling all actors at (x, y) to do sth
 		 while(it != virtualWorld[i].end())
 		 {
+			 if (*it == nullptr)
+			 {
+				break;
+			 }
 			 (*it)->doSomething();
 
 			 // remove dead actors
@@ -105,9 +109,10 @@ void StudentWorld::cleanUp()
 	}
 
 	// compiler entrants deconstruction
-	for (int i = 0; i < compiledEntrants.size(); i++)
+	vector<Compiler*>::const_iterator it2;
+	for (it2 = compiledEntrants.begin(); it2 < compiledEntrants.end(); it2++)
 	{
-		delete compiledEntrants[i];
+		delete *it2;
 	}
 	compiledEntrants.clear();
 }
@@ -220,7 +225,7 @@ bool StudentWorld::loadField()
 		 int y = i%VIEW_WIDTH;
 
 		 // storing item at (x, y)
-		 Field::FieldItem item = f.getContentsOf(y, x);
+		 Field::FieldItem item = f.getContentsOf(x, y);
 
 		 ///////////////////////// ANIMATE //////////////////////////////
 		 
@@ -319,7 +324,6 @@ void StudentWorld::decrementAntCount(int colony)
 #include <sstream>
 void StudentWorld::updateDisplayText()
 {
-	// TODO: finish this, page 23 in spec
 	string text = "Ticks: ";
 	
 	int size = getFilenamesOfAntPrograms().size();

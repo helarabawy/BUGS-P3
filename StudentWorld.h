@@ -19,7 +19,7 @@ public:
 	StudentWorld(std::string assetDir)
 	 : GameWorld(assetDir) {}
 
-	virtual ~StudentWorld() {cleanUp();}
+	virtual ~StudentWorld() {}
 	virtual int init();
 	virtual int move();
 	virtual void cleanUp();
